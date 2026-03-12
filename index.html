@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GROW-WIN · PHARMA LOGIC ENGINE v104 EXTENDED</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 13px; }
+.card { background: #161b22; border: 1px solid #30363d; border-radius: 1.5rem; transition: 0.3s; display: flex; flex-direction: column; height: 100%; }
+.card:hover { border-color: #2ea44f; }
+.input-field { background: #0d1117; border: 1px solid #3b434b; color: #2ea44f; padding: 0.4rem 0.8rem; border-radius: 0.75rem; width: 100%; font-weight: bold; outline: none; transition: 0.2s; }
+.input-field:focus { border-color: #2ea44f; box-shadow: 0 0 5px #2ea44f44; }
+.auto-field { background: #1c2128; color: #8b949e; border: 1px dashed #484f58; cursor: not-allowed; }
+.btn { background: #2ea44f; color: black; font-weight: 800; padding: 0.75rem; border-radius: 1rem; transition: 0.2s; border: none; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; }
+.btn:hover { background: #3fb950; box-shadow: 0 0 15px #2ea44f; transform: translateY(-1px); }
+.section-title { color: #2ea44f; font-weight: 900; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 1rem; border-left: 3px solid #2ea44f; padding-left: 8px; }
+.label-text { font-size: 10px; font-weight: 700; color: #8b949e; text-transform: uppercase; margin-bottom: 4px; display: block; }
+.brain-box { border: 1px solid #2ea44f44; background: #0d1117; border-radius: 1rem; padding: 12px; margin-top: 10px; min-height: 100px; overflow-y: auto; }
+.insight-item { border-bottom: 1px solid #21262d; padding: 6px 0; font-family: monospace; }
+.watermark { text-align: center; margin-top: 2rem; font-size: 10px; color: #30363d; letter-spacing: 2px; font-weight: bold; }
+.result-box { background: #161b22; border: 1px solid #30363d; border-radius: 1rem; padding: 12px; }
+.history-table th { color: #8b949e; font-size: 10px; text-transform: uppercase; padding: 8px; border-bottom: 1px solid #30363d; }
+.history-table td { padding: 8px; border-bottom: 1px solid #21262d; font-family: monospace; }
+</style>
+</head>
+<body class="p-6">
+
+<div class="max-w-[1400px] mx-auto">
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span class="text-[#2ea44f]">Pharma Engine</span></h1>
+        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v104 · R&D DECISION-MAKING & LEAD OPTIMIZATION SUITE</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div class="card p-5 border-l-4 border-blue-500">
+            <h2 class="section-title">Structural Inputs</h2>
+            <div class="space-y-3">
+                <div><label class="label-text">Target Track</label>
+                    <select id="targetType" class="input-field text-[10px]">
+                        <option value="0">GENERIC</option>
+                        <option value="1">ONCOLOGY</option>
+                        <option value="2">ANTI-INFECTIVE</option>
+                        <option value="3">IMMUNO</option>
+                        <option value="4">ENDOCRINE</option>
+                        <option value="5">CNS_NEURO</option>
+                        <option value="6">CNS_HIGH</option>
+                        <option value="7" selected>CARDIOVASCULAR</option>
+                        <option value="8">RENAL</option>
+                        <option value="9">HEPATIC</option>
+                        <option value="10">INFLAMMATION</option>
+                        <option value="11">RESPIRATORY</option>
+                        <option value="12">GASTRO</option>
+                        <option value="13">DERMAL</option>
+                        <option value="14">METABOLIC</option>
+                        <option value="15">OPHTHALMIC</option>
+                        <option value="16">AUDITORY</option>
+                        <option value="17">NEUROMODULATOR</option>
+                        <option value="18">HEMATOLOGICAL</option>
+                        <option value="19">MUSCULOSKELETAL</option>
+                    </select>
+                </div>
+                <div><label class="label-text">Affinity (kcal/mol)</label><input id="affinity" type="number" step="0.1" class="input-field" placeholder=""></div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="label-text">LogP</label><input id="logP" type="number" step="0.1" class="input-field" placeholder=""></div>
+                    <div><label class="label-text">MW (Da)</label><input id="mw" type="number" class="input-field" placeholder=""></div>
+                </div>
+                <div><label class="label-text">PSA (Å²)</label><input id="psa" type="number" class="input-field" placeholder=""></div>
+            </div>
+        </div>
+
+        <div class="card p-5 border-l-4 border-yellow-500">
+            <h2 class="section-title">In-Silico Lab Data</h2>
+            <div class="space-y-3">
+                <div><label class="label-text">Bioavailability</label><input id="bio" class="input-field auto-field" readonly></div>
+                <div><label class="label-text">Metabolic Stability</label><input id="metStab" class="input-field auto-field" readonly></div>
+                <div><label class="label-text">Synthesis Steps</label><input id="steps" class="input-field auto-field" readonly></div>
+            </div>
+        </div>
+
+        <div class="card p-5 border-l-4 border-green-500">
+            <h2 class="section-title">Safety Profiling</h2>
+            <div class="space-y-2 text-[11px] font-bold">
+                <div class="flex justify-between border-b border-[#30363d] pb-1"><span>hERG Block:</span> <span id="pred-herg" class="text-blue-400">--</span></div>
+                <div class="flex justify-between border-b border-[#30363d] pb-1"><span>DILI Risk:</span> <span id="pred-dili" class="text-blue-400">--</span></div>
+                <div class="flex justify-between border-b border-[#30363d] pb-1"><span>Ames Test:</span> <span id="pred-ames" class="text-blue-400">--</span></div>
+                <div class="flex justify-between border-b border-[#30363d] pb-1"><span>Aggregation:</span> <span id="pred-agg" class="text-blue-400">--</span></div>
+                <div class="flex justify-between border-b border-[#30363d] pb-1"><span>Lipinski:</span> <span id="pred-lipinski" class="text-green-500">--</span></div>
+            </div>
+        </div>
+
+        <div class="card p-5 lg:col-span-2">
+            <h2 class="section-title">R&D Brain Reasoning</h2>
+            <div class="brain-box text-xs leading-relaxed" id="brain-reasoning">Awaiting lead compound data...</div>
+            <button class="btn" onclick="runEngine()">Sieve & Benchmark</button>
+        </div>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="result-box">
+            <span class="text-gray-500 uppercase font-black mb-2 block text-[10px] tracking-widest">Sieve Violations & Strategy</span>
+            <div id="logic-log" class="min-h-[100px]"></div>
+        </div>
+        <div class="result-box flex flex-col items-center justify-center">
+            <div id="multiplierLabel" class="text-[10px] text-gray-500 uppercase font-bold mb-1">Risk Multiplier: 1.00x</div>
+            <div class="flex items-center gap-6">
+                <span id="globalScore" class="text-7xl font-black text-white">0.0</span>
+                <span id="globalRank" class="text-7xl font-black text-gray-700">-</span>
+            </div>
+            <div id="approvalStatus" class="mt-4 text-2xl font-black uppercase text-gray-600 tracking-widest">Idle</div>
+        </div>
+    </div>
+
+    <div class="mt-8 result-box">
+        <h3 class="section-title text-blue-400">R&D Comparison Bench (History)</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left history-table">
+                <thead>
+                    <tr>
+                        <th>Lead/Track</th>
+                        <th>Affinity</th>
+                        <th>LogP</th>
+                        <th>MW</th>
+                        <th>PSA</th>
+                        <th>Final Score</th>
+                        <th>Rank</th>
+                    </tr>
+                </thead>
+                <tbody id="history-log-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="watermark">GROW-WIN INDUSTRIAL BIOTECH · V104 R&D · U. ANANTH KUMAR</div>
+</div>
+
+<script>
+const targetTracks = {
+    0:{name:"GENERIC",hERG:25,MW:600,PSA:140},
+    1:{name:"ONCOLOGY",hERG:30,MW:550,PSA:120},
+    2:{name:"ANTI-INFECTIVE",hERG:25,MW:500,PSA:120},
+    3:{name:"IMMUNO",hERG:20,MW:500,PSA:100},
+    4:{name:"ENDOCRINE",hERG:15,MW:450,PSA:90},
+    5:{name:"CNS_NEURO",hERG:20,MW:500,PSA:90},
+    6:{name:"CNS_HIGH",hERG:20,MW:480,PSA:85},
+    7:{name:"CARDIOVASCULAR",hERG:15,MW:500,PSA:100},
+    8:{name:"RENAL",hERG:25,MW:550,PSA:110},
+    9:{name:"HEPATIC",hERG:25,MW:550,PSA:110},
+    10:{name:"INFLAMMATION",hERG:10,MW:500,PSA:90},
+    11:{name:"RESPIRATORY",hERG:20,MW:500,PSA:95},
+    12:{name:"GASTRO",hERG:25,MW:500,PSA:100},
+    13:{name:"DERMAL",hERG:25,MW:550,PSA:120},
+    14:{name:"METABOLIC",hERG:20,MW:500,PSA:90},
+    15:{name:"OPHTHALMIC",hERG:15,MW:480,PSA:85},
+    16:{name:"AUDITORY",hERG:20,MW:500,PSA:90},
+    17:{name:"NEUROMODULATOR",hERG:20,MW:500,PSA:90},
+    18:{name:"HEMATOLOGICAL",hERG:25,MW:550,PSA:100},
+    19:{name:"MUSCULOSKELETAL",hERG:25,MW:550,PSA:110}
+};
+
+function runEngine() {
+    let trackID = document.getElementById('targetType').value;
+    let affinityVal = document.getElementById('affinity').value;
+    let mwVal = document.getElementById('mw').value;
+    let logPVal = document.getElementById('logP').value;
+    let psaVal = document.getElementById('psa').value;
+
+    if (affinityVal === "" || mwVal === "" || logPVal === "" || psaVal === "") {
+        alert("CRITICAL ERROR: All structural inputs must be provided for R&D Benchmarking.");
+        return;
+    }
+
+    let affinity = parseFloat(affinityVal);
+    let mw = parseFloat(mwVal);
+    let logP = parseFloat(logPVal);
+    let psa = parseFloat(psaVal);
+    let track = targetTracks[trackID];
+
+    let ro5Errors = 0;
+    if (mw > 500) ro5Errors++;
+    if (logP > 5) ro5Errors++;
+    if (psa > 140) ro5Errors++;
+    document.getElementById('pred-lipinski').innerText = ro5Errors > 1 ? "FAILED" : "PASSED";
+    document.getElementById('pred-lipinski').className = ro5Errors > 1 ? "text-red-500" : "text-green-500";
+
+    let calcBio = Math.min(100, Math.max(20, 50 + (-affinity * 3) - (logP * 2) + (mw / 10))).toFixed(1);
+    let calcMet = Math.min(100, Math.max(20, 70 - (logP * 3) + (mw / 15))).toFixed(1);
+    document.getElementById('bio').value = calcBio + "%";
+    document.getElementById('metStab').value = calcMet + "%";
+    document.getElementById('steps').value = Math.floor((mw / 100) + Math.abs(logP));
+
+    let hergVal = parseFloat((5 + 0.5 * logP + 0.02 * (mw - 300)).toFixed(1));
+    document.getElementById('pred-herg').innerText = hergVal + "%";
+    document.getElementById('pred-dili').innerText = (affinity < -7.5 && mw < 500) ? "LOW" : "HIGH";
+    document.getElementById('pred-ames').innerText = (mw > 650 || logP > 5.5) ? "POS" : "NEG";
+    document.getElementById('pred-agg').innerText = Math.min(50, 5 + 2 * Math.pow((logP - 3), 2)).toFixed(1) + "%";
+
+    let riskMultiplier = 1.0;
+    let failedGates = [];
+    let strategy = [];
+
+    if (track.name === "CARDIOVASCULAR") {
+        if (logP > 3.5) {
+            riskMultiplier *= 0.5;
+            failedGates.push("GATE-CV01: High Lipophilicity (LogP > 3.5)");
+            strategy.push("Reduce LogP below 3.0 to avoid cardiotoxicity.");
+        }
+        if (hergVal > 10) {
+            riskMultiplier *= 0.4;
+            failedGates.push(`GATE-CV02: Critical hERG interference (${hergVal}%)`);
+            strategy.push("Structure shows risk of QT prolongation. Redesign scaffold.");
+        }
+    }
+
+    if (logP > 4.5 && mw > 450) {
+        riskMultiplier *= 0.7; 
+        failedGates.push("GATE09: Low Quality Lead (LogP/MW Ratio)");
+        strategy.push("Lead in Danger Zone for solubility.");
+    }
+
+    if (affinity > -6.5) { riskMultiplier = 0; failedGates.push("GATE01: Sub-Potent Affinity"); }
+    if (track.name.includes("CNS") && psa > 90) { riskMultiplier *= 0.75; failedGates.push("GATE15: Poor BBB Penetration"); }
+
+    let finalScore = (Math.abs(affinity) * 4 + parseFloat(calcBio) * 0.1) * riskMultiplier;
+    let rank = "F", color = "#8b949e", status = "REJECTED";
+
+    // UPDATED RANK THRESHOLDS
+    if (finalScore > 40) { 
+        rank = "A+"; color = "#2ea44f"; status = "R&D READY"; 
+    } else if (finalScore >= 30 && finalScore <= 40) { 
+        rank = "B"; color = "#f2cc60"; status = "ACCELERATE / OPTIMIZE"; 
+    } else { 
+        rank = "C / F"; color = "#f85149"; status = "REJECTED"; 
+    }
+
+    document.getElementById('globalScore').innerText = finalScore.toFixed(1);
+    document.getElementById('globalRank').innerText = rank;
+    document.getElementById('multiplierLabel').innerText = `Risk Multiplier: ${riskMultiplier.toFixed(2)}x`;
+    document.getElementById('approvalStatus').innerText = status;
+    document.getElementById('approvalStatus').style.color = color;
+    document.getElementById('brain-reasoning').innerText = "R&D Engine Alignment: Real-world safety constraints applied.";
+
+    let logHtml = failedGates.map(l => `<div class='insight-item text-red-400'>${l}</div>`).join('');
+    if (strategy.length > 0) {
+        logHtml += `<div class='mt-3 text-[10px] text-green-400 font-bold uppercase'>Strategy:</div>`;
+        logHtml += strategy.map(s => `<div class='insight-item text-gray-400'>• ${s}</div>`).join('');
+    }
+    document.getElementById('logic-log').innerHTML = logHtml || "<div class='text-green-500 font-bold'>✔ ALL GATES CLEARED</div>";
+
+    let bench = document.getElementById('history-log-body');
+    let row = bench.insertRow(0);
+    row.style.color = color;
+    row.innerHTML = `<td>${track.name}</td><td>${affinity}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td class='font-bold'>${finalScore.toFixed(1)}</td><td class='font-black'>${rank}</td>`;
+}
+</script>
+</body>
+</html>
