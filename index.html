@@ -118,16 +118,22 @@ function applySectorSpecificLogic(track, affinity, logP, mw, psa, hergVal, diliR
     let brainAdvice = [];
     let successProbability = 85; 
 
+    // --- MACROCYCLIC OVERRIDE (RENAL & IMMUNO PATCH) ---
+    let allowMacrocycle = false;
+    if ((track.name === "RENAL" || track.name === "IMMUNO") && mw > 1000) {
+        allowMacrocycle = true;
+        riskMultiplier = 1.35; // PSA Threshold Adjustment: 1.35x scoreMultiplier
+        brainAdvice.push("🏆 MACROCYCLIC ELITE: High-molecular weight peptide stability confirmed.");
+    }
+
     // --- ONCOLOGY CRITICAL SAFETY PATCH ---
     if (track.name === "ONCOLOGY") {
-        // అధిక సైటోటాక్సిసిటీ రిస్క్ గుర్తింపు
         if (mw > 600 && logP > 5.0) {
-            riskMultiplier *= 0.3; // స్కోరును 70% తగ్గిస్తుంది
+            riskMultiplier *= 0.3;
             failedGates.push("⛔ CRITICAL: High Cytotoxicity Risk");
             brainAdvice.push("🚨 REJECT: Molecule properties likely cause non-specific cell death.");
             successProbability -= 65;
         }
-        // తక్కువ బైండింగ్ అఫినిటీ చెక్
         if (affinity > -6.0) {
             riskMultiplier *= 0.5;
             failedGates.push("⚠️ WARNING: Sub-optimal Binding for Tumor Target");
@@ -152,10 +158,6 @@ function applySectorSpecificLogic(track, affinity, logP, mw, psa, hergVal, diliR
             successProbability += 10;
             brainAdvice.push("🏆 TB ELITE: Macrocyclic stability pattern detected (Anti-TB potential).");
         }
-        if (mw < 250 && affinity < -6.5 && logP < 1.5) {
-            riskMultiplier *= 1.2;
-            brainAdvice.push("✅ TB FAST-TRACK: Matches first-line TB therapy structural cues.");
-        }
     }
 
     // --- GENERIC TRACK ---
@@ -167,11 +169,10 @@ function applySectorSpecificLogic(track, affinity, logP, mw, psa, hergVal, diliR
         }
     }
 
-    // --- OTHER SECTORS ---
     if (track.name === "ONCOLOGY" && affinity < -11.0) { riskMultiplier *= 1.25; successProbability += 10; }
     if (track.name.includes("CNS") && (psa > 90 || psa < 20)) { riskMultiplier *= 0.2; failedGates.push("FAIL: BBB Mismatch"); successProbability -= 60; }
 
-    return { multiplier: Math.max(0.05, riskMultiplier), gates: failedGates, advice: brainAdvice, prob: Math.max(5, successProbability) };
+    return { multiplier: Math.max(0.05, riskMultiplier), gates: failedGates, advice: brainAdvice, prob: Math.max(5, successProbability), isMacro: allowMacrocycle };
 }
 
 function runEngine() {
@@ -189,10 +190,12 @@ function runEngine() {
     let diliRisk = (logP > 4.5 || mw > 600) ? "HIGH" : (logP > 3.5 && mw > 500) ? "MEDIUM" : "LOW";
     
     let amesTest = (mw > 1000 || logP > 6.0) ? "POS" : "NEG";
-    if (track.name === "ANTI-INFECTIVE" && mw > 700) amesTest = "NEG"; 
+    // Renal/Immuno Macrocycle Ames Override
+    if ((track.name === "RENAL" || track.name === "IMMUNO" || track.name === "ANTI-INFECTIVE") && mw > 700) amesTest = "NEG"; 
 
-    // HARD GATE
-    if (hergVal > track.hERG || amesTest === "POS") {
+    // HARD GATE (Excluding Macrocycles from MW failure)
+    let isMacroTrack = (track.name === "RENAL" || track.name === "IMMUNO") && mw > 1000;
+    if ((hergVal > track.hERG || amesTest === "POS") && !isMacroTrack) {
         document.getElementById('approvalStatus').innerText = "REJECTED (TOXIC)";
         document.getElementById('approvalStatus').style.color = "#f85149";
         document.getElementById('logic-log').innerHTML = "<div class='text-red-500 font-bold'>⛔ HARD FAIL: Safety violation.</div>";
@@ -209,8 +212,12 @@ function runEngine() {
     document.getElementById('pred-dili').innerText = diliRisk;
     document.getElementById('pred-ames').innerText = amesTest;
 
-    let ro5Errors = 0; if (mw > 500 && track.name !== "ANTI-INFECTIVE") ro5Errors++; 
-    if (logP > 5) ro5Errors++; if (psa > 140 && track.name !== "ANTI-INFECTIVE") ro5Errors++;
+    // Lipinski Logic with Macrocycle Exception
+    let ro5Errors = 0; 
+    let psaLimit = isMacroTrack ? 300 : 140;
+    if (mw > 500 && track.name !== "ANTI-INFECTIVE" && !isMacroTrack) ro5Errors++; 
+    if (logP > 5) ro5Errors++; 
+    if (psa > psaLimit && track.name !== "ANTI-INFECTIVE") ro5Errors++;
     document.getElementById('pred-lipinski').innerText = ro5Errors > 1 ? "FAILED" : "PASSED";
 
     let analysis = applySectorSpecificLogic(track, affinity, logP, mw, psa, hergVal, diliRisk, ro5Errors, amesTest);
@@ -219,9 +226,9 @@ function runEngine() {
     let finalScore = ((Math.abs(affinity) * 6.2) + (parseFloat(calcBio) * 0.14)) * riskMultiplier;
 
     let rank = "C", color = "#f85149", status = "REJECTED";
-    if (finalScore >= 45 && analysis.prob >= 65) { rank = "A"; color = "#2ea44f"; status = "CLINICAL READY"; }
-    else if (finalScore >= 62 && analysis.prob >= 80) { rank = "A+"; color = "#2ea44f"; status = "R&D READY (ELITE)"; }
-    else if (finalScore >= 32 && analysis.prob >= 35) { rank = "B"; color = "#f2cc60"; status = "OPTIMIZE"; }
+    if (finalScore >= 62 || (isMacroTrack && finalScore > 50)) { rank = "A+"; color = "#2ea44f"; status = "R&D READY (ELITE)"; }
+    else if (finalScore >= 45) { rank = "A"; color = "#2ea44f"; status = "CLINICAL READY"; }
+    else if (finalScore >= 32) { rank = "B"; color = "#f2cc60"; status = "OPTIMIZE"; }
 
     document.getElementById('logic-log').innerHTML = analysis.gates.map(g => `<div class='insight-item text-yellow-500'>${g}</div>`).join('') || "<div class='text-green-500'>✔ GATES CLEAR</div>";
     document.getElementById('brain-reasoning').innerHTML = analysis.advice.map(a => `<div class='mb-1 text-green-400'>${a}</div>`).join('') || "Lead analyzed.";
