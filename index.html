@@ -122,8 +122,14 @@ function applySectorSpecificLogic(track, affinity, logP, mw, psa, hergVal, diliR
     let allowMacrocycle = false;
     if ((track.name === "RENAL" || track.name === "IMMUNO") && mw > 1000) {
         allowMacrocycle = true;
-        riskMultiplier = 1.35; // PSA Threshold Adjustment: 1.35x scoreMultiplier
+        riskMultiplier = 1.35; 
         brainAdvice.push("🏆 MACROCYCLIC ELITE: High-molecular weight peptide stability confirmed.");
+    }
+
+    // --- RENAL TOXICITY PATCH (ADDED) ---
+    if (track.name === "RENAL" && logP > 5.5) { 
+        riskMultiplier = 0.1; 
+        failedGates.push("⛔ CRITICAL: Nephrotoxicity Risk (LogP too high)"); 
     }
 
     // --- ONCOLOGY CRITICAL SAFETY PATCH ---
@@ -190,10 +196,8 @@ function runEngine() {
     let diliRisk = (logP > 4.5 || mw > 600) ? "HIGH" : (logP > 3.5 && mw > 500) ? "MEDIUM" : "LOW";
     
     let amesTest = (mw > 1000 || logP > 6.0) ? "POS" : "NEG";
-    // Renal/Immuno Macrocycle Ames Override
     if ((track.name === "RENAL" || track.name === "IMMUNO" || track.name === "ANTI-INFECTIVE") && mw > 700) amesTest = "NEG"; 
 
-    // HARD GATE (Excluding Macrocycles from MW failure)
     let isMacroTrack = (track.name === "RENAL" || track.name === "IMMUNO") && mw > 1000;
     if ((hergVal > track.hERG || amesTest === "POS") && !isMacroTrack) {
         document.getElementById('approvalStatus').innerText = "REJECTED (TOXIC)";
@@ -212,7 +216,6 @@ function runEngine() {
     document.getElementById('pred-dili').innerText = diliRisk;
     document.getElementById('pred-ames').innerText = amesTest;
 
-    // Lipinski Logic with Macrocycle Exception
     let ro5Errors = 0; 
     let psaLimit = isMacroTrack ? 300 : 140;
     if (mw > 500 && track.name !== "ANTI-INFECTIVE" && !isMacroTrack) ro5Errors++; 
