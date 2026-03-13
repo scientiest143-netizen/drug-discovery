@@ -30,7 +30,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 <div class="max-w-[1400px] mx-auto">
     <div class="text-center mb-8">
         <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span class="text-[#2ea44f]">Pharma Engine</span></h1>
-        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v116.3 · UNIVERSAL INTEGRITY (SMALL & LARGE)</p>
+        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v116.3 · CLINICAL INTEGRITY (PRO)</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -51,12 +51,12 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
                         <option value="18">HEMATOLOGICAL</option><option value="19">MUSCULOSKELETAL</option>
                     </select>
                 </div>
-                <div><label class="label-text">Affinity (kcal/mol)</label><input id="affinity" type="number" step="0.1" class="input-field" placeholder=""></div>
+                <div><label class="label-text">Affinity (kcal/mol)</label><input id="affinity" type="number" step="0.1" class="input-field"></div>
                 <div class="grid grid-cols-2 gap-2">
-                    <div><label class="label-text">LogP</label><input id="logP" type="number" step="0.1" class="input-field" placeholder=""></div>
-                    <div><label class="label-text">MW (Da)</label><input id="mw" type="number" class="input-field" placeholder=""></div>
+                    <div><label class="label-text">LogP</label><input id="logP" type="number" step="0.1" class="input-field"></div>
+                    <div><label class="label-text">MW (Da)</label><input id="mw" type="number" class="input-field"></div>
                 </div>
-                <div><label class="label-text">PSA (Å²)</label><input id="psa" type="number" class="input-field" placeholder=""></div>
+                <div><label class="label-text">PSA (Å²)</label><input id="psa" type="number" class="input-field"></div>
             </div>
         </div>
 
@@ -112,90 +112,72 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 <script>
 const targetTracks = { 0:{name:"GENERIC",hERG:25,MW:600,PSA:140}, 1:{name:"ONCOLOGY",hERG:30,MW:550,PSA:120}, 2:{name:"ANTI-INFECTIVE",hERG:25,MW:980,PSA:220}, 3:{name:"IMMUNO",hERG:20,MW:500,PSA:100}, 4:{name:"ENDOCRINE",hERG:15,MW:450,PSA:90}, 5:{name:"CNS_NEURO",hERG:20,MW:500,PSA:90}, 6:{name:"CNS_HIGH",hERG:20,MW:480,PSA:85}, 7:{name:"CARDIOVASCULAR",hERG:12,MW:500,PSA:100}, 8:{name:"RENAL",hERG:25,MW:550,PSA:110}, 9:{name:"HEPATIC",hERG:25,MW:550,PSA:110}, 10:{name:"INFLAMMATION",hERG:10,MW:500,PSA:90}, 11:{name:"RESPIRATORY",hERG:20,MW:500,PSA:95}, 12:{name:"GASTRO",hERG:25,MW:500,PSA:100}, 13:{name:"DERMAL",hERG:25,MW:550,PSA:120}, 14:{name:"METABOLIC",hERG:20,MW:500,PSA:90}, 15:{name:"OPHTHALMIC",hERG:15,MW:480,PSA:85}, 16:{name:"AUDITORY",hERG:20,MW:500,PSA:90}, 17:{name:"NEUROMODULATOR",hERG:20,MW:500,PSA:90}, 18:{name:"HEMATOLOGICAL",hERG:25,MW:550,PSA:100}, 19:{name:"MUSCULOSKELETAL",hERG:25,MW:550,PSA:110} };
 
-// --- NEW BIOLOGIC MODULE (Handles Insulin, etc.) ---
-function applyBiologicSieve(track, affinity, mw, psa) {
-    let riskMultiplier = 1.1; // Biologics often have high potential
-    let failedGates = [];
-    let brainAdvice = ["🧬 BIOLOGIC MODE ACTIVE (Large Molecule)"];
-    let successProbability = 75;
-
-    if (mw < 3000) { riskMultiplier *= 0.5; failedGates.push("⚠️ WARNING: Protein size likely unstable."); }
-    if (psa < 200) { riskMultiplier *= 0.8; failedGates.push("⚠️ WARNING: Low Surface Area for Biologic."); }
-    
-    brainAdvice.push("🏆 PROTEIN ELITE: Evaluating as an injectable biologic drug.");
-    return { multiplier: riskMultiplier, gates: failedGates, advice: brainAdvice, prob: successProbability, hardReject: false };
-}
-
-// --- YOUR ORIGINAL CODE (UNCHANGED) ---
-function applySectorSpecificLogic(track, affinity, logP, mw, psa, hergVal, diliRisk, ro5Errors, ames) {
+// --- INTEGRATED CLINICAL FAILURE MODULE v1.0 ---
+function universalFailureGates(track, affinity, logP, MW, PSA) {
     let riskMultiplier = 1.0;
-    let failedGates = [];
-    let brainAdvice = ["🧪 SMALL MOLECULE MODE ACTIVE"];
-    let successProbability = 85; 
+    let gates = [];
+    let advice = [];
+    let successProb = 85; 
     let hardReject = false;
 
-    if (track.name === "METABOLIC") {
-        if (logP > 4.2 || mw > 550) {
-           riskMultiplier = 0.05; 
-           failedGates.push("⛔ CRITICAL: Metabolic Syndrome Risk (Lipid Disruption)");
-           brainAdvice.push("🚨 REJECT: Molecule fails metabolic safety sieve due to high lipophilicity.");
-           successProbability = 5;
-           hardReject = true;
+    if(track.name === "HEPATIC") {
+        if(PSA > 75 && affinity < -6.5) {
+            riskMultiplier *= 0.1;
+            gates.push("⛔ CRITICAL: Mitochondrial Toxicity Risk (FIAU/BMS-986094)");
+            advice.push("🚨 LETHAL: Matches Fialuridine liver failure pattern");
+            successProb = 2; hardReject = true;
+        } else if(logP > 4.5) {
+            riskMultiplier *= 0.3;
+            gates.push("⚠️ WARNING: Hepatotoxicity Risk (borderline)");
+            successProb -= 30;
         }
     }
-    if (track.name === "INFLAMMATION") {
-        if (psa > 110 || logP > 4.5) {
-           riskMultiplier *= 0.3;
-           failedGates.push("⚠️ WARNING: Potential Hepatotoxicity");
-           brainAdvice.push("🚨 CAUTION: Chronic inflammation leads require lower lipophilicity.");
-           successProbability -= 40;
+    if(track.name === "CARDIOVASCULAR") {
+        if(logP > 4.5 && affinity < -6.5) {
+            riskMultiplier *= 0.2;
+            gates.push("⛔ CRITICAL: Cardiotoxicity / Arrhythmia (Torcetrapib/Rofecoxib)");
+            advice.push("🚨 LETHAL: High lipophilicity + strong binding risk");
+            successProb = 5; hardReject = true;
+        } else if(MW > 550) {
+            riskMultiplier *= 0.5;
+            gates.push("⚠️ WARNING: Borderline cardiac risk");
+            successProb -= 25;
         }
     }
-    let allowMacrocycle = false;
-    if ((track.name === "RENAL" || track.name === "IMMUNO") && mw > 1000) {
-       allowMacrocycle = true;
-       riskMultiplier = 1.35; 
-       brainAdvice.push("🏆 MACROCYCLIC ELITE: High-molecular weight peptide stability confirmed.");
-    }
-    if (track.name === "RENAL" && logP > 5.5) { riskMultiplier = 0.1; failedGates.push("⛔ CRITICAL: Nephrotoxicity Risk (LogP too high)"); }
-    if (track.name === "HEMATOLOGICAL") {
-        if (logP > 4.5) {
-           riskMultiplier = 0.2; 
-           failedGates.push("⛔ CRITICAL: Hemolysis / Thrombotic Risk (LogP > 4.5)");
-           brainAdvice.push("🚨 REJECT: High RBC membrane disruption risk.");
-           successProbability -= 55;
-           hardReject = true;
+    if(track.name.includes("CNS")) {
+        if(logP > 5.0) {
+            riskMultiplier *= 0.15;
+            gates.push("⛔ CRITICAL: CNS Off-target (BIA 10-2474)");
+            advice.push("🚨 REJECT: Non-specific brain binding risk");
+            successProb = 8; hardReject = true;
+        }
+        if(PSA > 90 || PSA < 20) {
+            riskMultiplier *= 0.2;
+            gates.push("FAIL: BBB permeability mismatch");
+            successProb -= 60;
         }
     }
-    if (track.name === "ONCOLOGY") {
-        if (mw > 600 && logP > 5.0) {
-           riskMultiplier *= 0.3;
-           failedGates.push("⛔ CRITICAL: High Cytotoxicity Risk");
-           brainAdvice.push("🚨 REJECT: Molecule properties likely cause non-specific cell death.");
-           successProbability -= 65;
-           hardReject = true;
-        }
-        if (affinity > -6.0) { riskMultiplier *= 0.5; failedGates.push("⚠️ WARNING: Sub-optimal Binding for Tumor Target"); successProbability -= 30; }
+    if(track.name === "METABOLIC") {
+        if(logP > 4.8) { riskMultiplier *= 0.3; gates.push("⚠️ WARNING: Metabolic instability"); successProb -= 40; }
+        if(MW > 600 || logP > 5.0) { riskMultiplier *= 0.1; gates.push("⛔ CRITICAL: Lipid disruption"); hardReject = true; successProb = 5; }
     }
-    if (track.name === "CARDIOVASCULAR") {
-        if (hergVal > 14.0 || (hergVal > 10 && logP > 4.5)) {
-           riskMultiplier *= 0.15;
-           failedGates.push("⛔ CRITICAL: Arrhythmogenic Risk (hERG/Lipid imbalance)");
-           brainAdvice.push("🚨 LETHAL: Molecule profile matches Torsades de Pointes risk.");
-           successProbability -= 75;
-           hardReject = true;
-        }
+    if(track.name === "RENAL") {
+        if(logP > 5.0) { riskMultiplier *= 0.25; gates.push("⛔ CRITICAL: Nephrotoxicity Risk"); hardReject = true; successProb = 10; }
+        else if(PSA > 110) { riskMultiplier *= 0.4; gates.push("⚠️ WARNING: Borderline renal risk"); successProb -= 30; }
     }
-    if (track.name === "ANTI-INFECTIVE") {
-        if (mw > 650 && psa > 160 && affinity < -9.5) { riskMultiplier *= 1.4; successProbability += 10; brainAdvice.push("🏆 TB ELITE: Macrocyclic stability pattern detected."); }
-    }
-    if (track.name === "GENERIC") {
-        if (affinity < -9.0 && logP > 2.5) { riskMultiplier *= 0.45; failedGates.push("🚨 RISK: POTENTIAL THROMBOTIC EVENT"); successProbability -= 50; }
-    }
-    if (track.name === "ONCOLOGY" && affinity < -11.0) { riskMultiplier *= 1.25; successProbability += 10; }
-    if (track.name.includes("CNS") && (psa > 90 || psa < 20)) { riskMultiplier *= 0.2; failedGates.push("FAIL: BBB Mismatch"); successProbability -= 60; }
+    if(track.name === "INFLAMMATION" && (PSA > 110 || logP > 4.5)) { riskMultiplier *= 0.3; gates.push("⚠️ WARNING: Hepatotoxicity risk"); successProb -= 40; }
+    if(track.name === "HEMATOLOGICAL" && logP > 4.5) { riskMultiplier *= 0.2; gates.push("⛔ CRITICAL: Hemolysis risk"); hardReject = true; successProb = 5; }
+    if(track.name === "ONCOLOGY" && (MW > 600 && logP > 5.0)) { riskMultiplier *= 0.3; gates.push("⛔ CRITICAL: High cytotoxicity"); hardReject = true; successProb = 5; }
+    if(track.name === "GENERIC" && affinity < -9.0 && logP > 2.5) { riskMultiplier *= 0.45; gates.push("🚨 RISK: Thrombotic event potential"); successProb -= 50; }
 
-    return { multiplier: Math.max(0.05, riskMultiplier), gates: failedGates, advice: brainAdvice, prob: Math.max(5, successProbability), isMacro: allowMacrocycle, hardReject: hardReject };
+    // Macrocyclic Elite Exception (Immuno/Renal)
+    if((track.name === "IMMUNO" || track.name === "RENAL") && MW > 1000) { riskMultiplier = 1.35; advice.push("🏆 MACROCYCLIC ELITE confirmed"); }
+
+    let hERG = 4 + 0.7*logP + 0.015*MW;
+    let ames = (MW > 1000 || logP > 6.0) ? "POS" : "NEG";
+    if(hERG > track.hERG || ames === "POS") { gates.push("⛔ CRITICAL: hERG / Mutagenicity violation"); hardReject = true; successProb = 0; }
+
+    return { multiplier: Math.max(0.05, riskMultiplier), gates: gates, advice: advice, prob: Math.max(2, successProb), hardReject: hardReject };
 }
 
 function runEngine() {
@@ -208,46 +190,42 @@ function runEngine() {
     if (affinityVal === "" || mwVal === "" || logPVal === "" || psaVal === "") { alert("Inputs required."); return; }
 
     let affinity = parseFloat(affinityVal), mw = parseFloat(mwVal), logP = parseFloat(logPVal), psa = parseFloat(psaVal), track = targetTracks[trackID];
-    let hergVal = parseFloat((4 + (0.7 * logP) + (0.015 * mw)).toFixed(1));
-    let diliRisk = (logP > 4.5 || mw > 600) ? "HIGH" : (logP > 3.5 && mw > 500) ? "MEDIUM" : "LOW";
-    let amesTest = (mw > 1000 || logP > 6.0) ? "POS" : "NEG";
-    if ((track.name === "RENAL" || track.name === "IMMUNO" || track.name === "ANTI-INFECTIVE") && mw > 700) amesTest = "NEG"; 
 
-    // --- THE ROUTER ---
-    let analysis;
-    if (mw > 800) {
-        analysis = applyBiologicSieve(track, affinity, mw, psa);
-        document.getElementById('bio').value = "N/A (Injectable)";
-        document.getElementById('pred-herg').innerText = "N/A";
-        document.getElementById('pred-lipinski').innerText = "IGNORE (BIO)";
-    } else {
-        let ro5Errors = 0; if (mw > 500 && track.name !== "ANTI-INFECTIVE") ro5Errors++; if (logP > 5) ro5Errors++; if (psa > 140 && track.name !== "ANTI-INFECTIVE") ro5Errors++;
-        analysis = applySectorSpecificLogic(track, affinity, logP, mw, psa, hergVal, diliRisk, ro5Errors, amesTest);
-        document.getElementById('bio').value = Math.min(100, Math.max(20, 50 + (-affinity * 3) - (logP * 2))).toFixed(1) + "%";
-        document.getElementById('pred-herg').innerText = hergVal + "%";
-        document.getElementById('pred-lipinski').innerText = ro5Errors > 1 ? "FAILED" : "PASSED";
-    }
-
+    // Pred-data UI update
+    let calcBio = Math.min(100, Math.max(20, 50 + (-affinity * 3) - (logP * 2))).toFixed(1);
+    document.getElementById('bio').value = calcBio + "%";
     document.getElementById('metStab').value = Math.min(100, Math.max(20, 70 - (logP * 3) + (mw / 15))).toFixed(1) + "%";
-    document.getElementById('steps').value = mw > 800 ? "Cell Culture" : Math.floor((mw / 100) + Math.abs(logP));
-    document.getElementById('pred-dili').innerText = diliRisk;
-    document.getElementById('pred-ames').innerText = amesTest;
+    document.getElementById('steps').value = Math.floor((mw / 100) + Math.abs(logP));
+    
+    let hergVal = (4 + (0.7 * logP) + (0.015 * mw)).toFixed(1);
+    document.getElementById('pred-herg').innerText = hergVal + "%";
+    document.getElementById('pred-dili').innerText = (logP > 4.5 || mw > 600) ? "HIGH" : "LOW";
+    document.getElementById('pred-ames').innerText = (mw > 1000 || logP > 6.0) ? "POS" : "NEG";
+    
+    let ro5Errors = 0;
+    if (mw > 500 && track.name !== "ANTI-INFECTIVE" && mw <= 1000) ro5Errors++;
+    if (logP > 5) ro5Errors++;
+    if (psa > 140 && track.name !== "ANTI-INFECTIVE") ro5Errors++;
+    document.getElementById('pred-lipinski').innerText = ro5Errors > 1 ? "FAILED" : "PASSED";
 
-    let riskMultiplier = analysis.multiplier;
-    let finalScore = ((Math.abs(affinity) * 6.2) + (mw > 800 ? 15 : 5)) * riskMultiplier;
+    // CALLING INTEGRATED MODULE
+    let analysis = universalFailureGates(track, affinity, logP, mw, psa);
+
+    let finalScore = ((Math.abs(affinity) * 6.2) + (parseFloat(calcBio) * 0.14)) * analysis.multiplier;
+    if (analysis.hardReject) finalScore = 0.0;
 
     let rank = "C", color = "#f85149", status = "REJECTED";
-    if (analysis.hardReject) { rank = "F"; finalScore = 0.0; status = "REJECTED (SAFETY)"; }
-    else if (finalScore >= 62) { rank = "A+"; color = "#2ea44f"; status = "ELITE LEAD"; }
+    if (analysis.hardReject) { rank = "F"; status = "REJECTED (SAFETY)"; }
+    else if (finalScore >= 62) { rank = "A+"; color = "#2ea44f"; status = "R&D READY (ELITE)"; }
     else if (finalScore >= 45) { rank = "A"; color = "#2ea44f"; status = "CLINICAL READY"; }
     else if (finalScore >= 32) { rank = "B"; color = "#f2cc60"; status = "OPTIMIZE"; }
 
     document.getElementById('logic-log').innerHTML = analysis.gates.map(g => `<div class='insight-item text-yellow-500'>${g}</div>`).join('') || "<div class='text-green-500'>✔ GATES CLEAR</div>";
-    document.getElementById('brain-reasoning').innerHTML = analysis.advice.map(a => `<div class='mb-1 text-green-400'>${a}</div>`).join('');
+    document.getElementById('brain-reasoning').innerHTML = analysis.advice.map(a => `<div class='mb-1 text-green-400'>${a}</div>`).join('') || "Lead analyzed.";
     document.getElementById('globalScore').innerText = finalScore.toFixed(1);
     document.getElementById('globalRank').innerText = rank;
-    document.getElementById('multiplierLabel').innerText = `Risk Multiplier: ${riskMultiplier.toFixed(2)}x`;
-    document.getElementById('successProbLabel').innerText = `Success Probability: ${analysis.prob}%`;
+    document.getElementById('multiplierLabel').innerText = `Risk Multiplier: ${analysis.multiplier.toFixed(2)}x`;
+    document.getElementById('successProbLabel').innerText = `Success Probability: ${analysis.prob.toFixed(1)}%`;
     document.getElementById('approvalStatus').innerText = status;
     document.getElementById('approvalStatus').style.color = color;
 
