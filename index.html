@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · PHARMA LOGIC ENGINE v116.3 CLINICAL-INTEGRITY</title>
+<title>GROW-WIN · PHARMA LOGIC ENGINE v116.6</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -30,7 +30,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 <div class="max-w-[1400px] mx-auto">
     <div class="text-center mb-8">
         <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span class="text-[#2ea44f]">Pharma Engine</span></h1>
-        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v116.3 · CLINICAL INTEGRITY (PRO)</p>
+        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v116.6 · UNIVERSAL SECTOR LOGIC (PRO)</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -106,13 +106,23 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
         <h3 class="section-title text-blue-400">R&D Comparison Bench (History)</h3>
         <div class="overflow-x-auto"><table class="w-full text-left history-table"><thead><tr><th>Lead/Track</th><th>Affinity</th><th>LogP</th><th>MW</th><th>PSA</th><th>Final Score</th><th>Rank</th></tr></thead><tbody id="history-log-body"></tbody></table></div>
     </div>
-    <div class="watermark">GROW-WIN INDUSTRIAL BIOTECH · V116.3 · U. ANANTH KUMAR</div>
+    <div class="watermark">GROW-WIN INDUSTRIAL BIOTECH · V116.6 · U. ANANTH KUMAR</div>
 </div>
 
 <script>
-const targetTracks = { 0:{name:"GENERIC",hERG:25,MW:600,PSA:140}, 1:{name:"ONCOLOGY",hERG:30,MW:550,PSA:120}, 2:{name:"ANTI-INFECTIVE",hERG:25,MW:980,PSA:220}, 3:{name:"IMMUNO",hERG:20,MW:500,PSA:100}, 4:{name:"ENDOCRINE",hERG:15,MW:450,PSA:90}, 5:{name:"CNS_NEURO",hERG:20,MW:500,PSA:90}, 6:{name:"CNS_HIGH",hERG:20,MW:480,PSA:85}, 7:{name:"CARDIOVASCULAR",hERG:12,MW:500,PSA:100}, 8:{name:"RENAL",hERG:25,MW:550,PSA:110}, 9:{name:"HEPATIC",hERG:25,MW:550,PSA:110}, 10:{name:"INFLAMMATION",hERG:10,MW:500,PSA:90}, 11:{name:"RESPIRATORY",hERG:20,MW:500,PSA:95}, 12:{name:"GASTRO",hERG:25,MW:500,PSA:100}, 13:{name:"DERMAL",hERG:25,MW:550,PSA:120}, 14:{name:"METABOLIC",hERG:20,MW:500,PSA:90}, 15:{name:"OPHTHALMIC",hERG:15,MW:480,PSA:85}, 16:{name:"AUDITORY",hERG:20,MW:500,PSA:90}, 17:{name:"NEUROMODULATOR",hERG:20,MW:500,PSA:90}, 18:{name:"HEMATOLOGICAL",hERG:25,MW:550,PSA:100}, 19:{name:"MUSCULOSKELETAL",hERG:25,MW:550,PSA:110} };
+const targetTracks = { 
+    0:{name:"GENERIC",hERG:25,MW:600,PSA:140}, 1:{name:"ONCOLOGY",hERG:30,MW:550,PSA:120}, 
+    2:{name:"ANTI-INFECTIVE",hERG:25,MW:980,PSA:220}, 3:{name:"IMMUNO",hERG:20,MW:500,PSA:100}, 
+    4:{name:"ENDOCRINE",hERG:15,MW:450,PSA:90}, 5:{name:"CNS_NEURO",hERG:20,MW:500,PSA:90}, 
+    6:{name:"CNS_HIGH",hERG:20,MW:480,PSA:85}, 7:{name:"CARDIOVASCULAR",hERG:12,MW:500,PSA:100}, 
+    8:{name:"RENAL",hERG:25,MW:550,PSA:110}, 9:{name:"HEPATIC",hERG:25,MW:550,PSA:110}, 
+    10:{name:"INFLAMMATION",hERG:10,MW:500,PSA:90}, 11:{name:"RESPIRATORY",hERG:20,MW:500,PSA:95}, 
+    12:{name:"GASTRO",hERG:25,MW:500,PSA:100}, 13:{name:"DERMAL",hERG:25,MW:550,PSA:120}, 
+    14:{name:"METABOLIC",hERG:20,MW:500,PSA:90}, 15:{name:"OPHTHALMIC",hERG:15,MW:480,PSA:85}, 
+    16:{name:"AUDITORY",hERG:20,MW:500,PSA:90}, 17:{name:"NEUROMODULATOR",hERG:20,MW:500,PSA:90}, 
+    18:{name:"HEMATOLOGICAL",hERG:25,MW:550,PSA:100}, 19:{name:"MUSCULOSKELETAL",hERG:25,MW:550,PSA:110} 
+};
 
-// --- INTEGRATED CLINICAL FAILURE MODULE v1.0 ---
 function universalFailureGates(track, affinity, logP, MW, PSA) {
     let riskMultiplier = 1.0;
     let gates = [];
@@ -120,64 +130,158 @@ function universalFailureGates(track, affinity, logP, MW, PSA) {
     let successProb = 85; 
     let hardReject = false;
 
-    if(track.name === "HEPATIC") {
-        if(PSA > 75 && affinity < -6.5) {
-            riskMultiplier *= 0.1;
-            gates.push("⛔ CRITICAL: Mitochondrial Toxicity Risk (FIAU/BMS-986094)");
-            advice.push("🚨 LETHAL: Matches Fialuridine liver failure pattern");
-            successProb = 2; hardReject = true;
-        } else if(logP > 4.5) {
-            riskMultiplier *= 0.3;
-            gates.push("⚠️ WARNING: Hepatotoxicity Risk (borderline)");
-            successProb -= 30;
-        }
+    // 1. GENERIC (VIOXX PATTERN)
+    if(track.name === "GENERIC" && affinity <= -9.0 && logP > 2.5) {
+        riskMultiplier *= 0.45; gates.push("⛔ GENERIC: VIOXX-Pattern (Thrombotic Risk)");
+        advice.push("💡 STRATEGY: Reduce LogP < 2.0 or slightly lower Affinity to -7.5 to exit the Vioxx-failure zone.");
+        hardReject = true; successProb = 15;
     }
-    if(track.name === "CARDIOVASCULAR") {
-        if(logP > 4.5 && affinity < -6.5) {
-            riskMultiplier *= 0.2;
-            gates.push("⛔ CRITICAL: Cardiotoxicity / Arrhythmia (Torcetrapib/Rofecoxib)");
-            advice.push("🚨 LETHAL: High lipophilicity + strong binding risk");
-            successProb = 5; hardReject = true;
-        } else if(MW > 550) {
-            riskMultiplier *= 0.5;
-            gates.push("⚠️ WARNING: Borderline cardiac risk");
-            successProb -= 25;
-        }
-    }
-    if(track.name.includes("CNS")) {
-        if(logP > 5.0) {
-            riskMultiplier *= 0.15;
-            gates.push("⛔ CRITICAL: CNS Off-target (BIA 10-2474)");
-            advice.push("🚨 REJECT: Non-specific brain binding risk");
-            successProb = 8; hardReject = true;
-        }
-        if(PSA > 90 || PSA < 20) {
-            riskMultiplier *= 0.2;
-            gates.push("FAIL: BBB permeability mismatch");
-            successProb -= 60;
-        }
-    }
-    if(track.name === "METABOLIC") {
-        if(logP > 4.8) { riskMultiplier *= 0.3; gates.push("⚠️ WARNING: Metabolic instability"); successProb -= 40; }
-        if(MW > 600 || logP > 5.0) { riskMultiplier *= 0.1; gates.push("⛔ CRITICAL: Lipid disruption"); hardReject = true; successProb = 5; }
-    }
-    if(track.name === "RENAL") {
-        if(logP > 5.0) { riskMultiplier *= 0.25; gates.push("⛔ CRITICAL: Nephrotoxicity Risk"); hardReject = true; successProb = 10; }
-        else if(PSA > 110) { riskMultiplier *= 0.4; gates.push("⚠️ WARNING: Borderline renal risk"); successProb -= 30; }
-    }
-    if(track.name === "INFLAMMATION" && (PSA > 110 || logP > 4.5)) { riskMultiplier *= 0.3; gates.push("⚠️ WARNING: Hepatotoxicity risk"); successProb -= 40; }
-    if(track.name === "HEMATOLOGICAL" && logP > 4.5) { riskMultiplier *= 0.2; gates.push("⛔ CRITICAL: Hemolysis risk"); hardReject = true; successProb = 5; }
-    if(track.name === "ONCOLOGY" && (MW > 600 && logP > 5.0)) { riskMultiplier *= 0.3; gates.push("⛔ CRITICAL: High cytotoxicity"); hardReject = true; successProb = 5; }
-    if(track.name === "GENERIC" && affinity < -9.0 && logP > 2.5) { riskMultiplier *= 0.45; gates.push("🚨 RISK: Thrombotic event potential"); successProb -= 50; }
 
-    // Macrocyclic Elite Exception (Immuno/Renal)
-    if((track.name === "IMMUNO" || track.name === "RENAL") && MW > 1000) { riskMultiplier = 1.35; advice.push("🏆 MACROCYCLIC ELITE confirmed"); }
+    // 2. ONCOLOGY (CYTOTOXICITY LIMIT)
+    if(track.name === "ONCOLOGY" && MW > 600 && logP > 5.0) {
+        riskMultiplier *= 0.3; gates.push("⛔ ONCO: High Non-specific Toxicity");
+        advice.push("💡 STRATEGY: Reduce MW < 550 and LogP < 4.0 to improve selectivity and reduce systemic toxicity.");
+        hardReject = true;
+    }
 
+    // 3. ANTI-INFECTIVE (MACRO-STRUCTURE ALLOWANCE)
+    if(track.name === "ANTI-INFECTIVE" && (MW > 500 || PSA > 140)) {
+        riskMultiplier = 1.1; 
+        advice.push("🛡️ SECTOR PASS: Antibiotic Macro-structure allowed.");
+        advice.push("💡 SUCCESS: High MW/PSA is optimal for bacterial cell wall penetration.");
+    }
+
+    // 4. IMMUNO (CYTOKINE STORM RISK)
+    if(track.name === "IMMUNO" && affinity < -10.0 && PSA > 120) {
+        riskMultiplier *= 0.2; gates.push("⛔ IMMUNO: TGN1412-Pattern (Over-activation Risk)");
+        advice.push("💡 STRATEGY: Moderate the Affinity or decrease PSA to <90 to prevent hyper-immune response.");
+        hardReject = true;
+    }
+
+    // 5. ENDOCRINE (ROSIGLITAZONE PATTERN)
+    if(track.name === "ENDOCRINE" && logP > 3.5 && PSA < 70) {
+        riskMultiplier *= 0.5; gates.push("⚠️ ENDO: Cardiovascular Signal (MACE Risk)");
+        advice.push("💡 STRATEGY: Increase PSA > 85 to limit intra-cellular accumulation in cardiac tissue.");
+    }
+
+    // 6. CNS_NEURO (BBB PERMEABILITY)
+    if(track.name === "CNS_NEURO" && (PSA > 90 || PSA < 20)) {
+        riskMultiplier *= 0.15; gates.push("⛔ CNS: Blood-Brain Barrier Mismatch");
+        advice.push("💡 STRATEGY: Optimize PSA between 40-70 Å² for efficient Blood-Brain Barrier crossing.");
+        hardReject = true;
+    }
+
+    // 7. CNS_HIGH (ANESTHETIC/SEDATIVE RISK)
+    if(track.name === "CNS_HIGH" && logP > 5.0 && MW < 300) {
+        riskMultiplier *= 0.1; gates.push("⛔ CNS_HIGH: Respiratory Depression Risk");
+        advice.push("💡 STRATEGY: Lower LogP < 3.5 to prevent dangerous rapid-onset sedation levels.");
+        hardReject = true;
+    }
+
+    // 8. CARDIOVASCULAR (TERFENADINE/HERG)
+    if(track.name === "CARDIOVASCULAR" && logP > 4.5 && affinity < -7.0) {
+        riskMultiplier *= 0.15; gates.push("⛔ CARDIO: hERG/Arrhythmia Risk");
+        advice.push("💡 STRATEGY: Drastically reduce LogP < 3.0 to prevent hERG channel binding and QT prolongation.");
+        hardReject = true;
+    }
+
+    // 9. RENAL (TENOFOVIR PATTERN)
+    if(track.name === "RENAL" && PSA > 110 && affinity < -7.0 && MW < 450) {
+        riskMultiplier *= 0.25; gates.push("⛔ RENAL: Proximal Tubulopathy Risk");
+        advice.push("💡 STRATEGY: Decrease PSA < 90 or Increase MW > 500 to stop accumulation in nephrons.");
+        hardReject = true;
+    }
+
+    // 10. HEPATIC (TROGLITAZONE PATTERN)
+    if(track.name === "HEPATIC" && logP > 3.0 && PSA < 80 && MW > 400) {
+        riskMultiplier *= 0.15; gates.push("⛔ HEPATIC: Mitochondrial DILI Risk");
+        advice.push("💡 STRATEGY: Reduce LogP and MW; add polar groups to increase PSA > 100 for safer metabolism.");
+        hardReject = true;
+    }
+
+    // 11. INFLAMMATION (PEXELIZUMAB PATTERN)
+    if(track.name === "INFLAMMATION" && affinity > -6.0) {
+        riskMultiplier *= 0.5; gates.push("⚠️ INFLAM: Efficacy Threshold Failure");
+        advice.push("💡 STRATEGY: High affinity (at least -8.5) is required to suppress cytokine cascades.");
+    }
+
+    // 12. RESPIRATORY (ZILEUTON PATTERN)
+    if(track.name === "RESPIRATORY" && MW < 300 && logP > 3.5) {
+        riskMultiplier *= 0.4; gates.push("⚠️ RESP: Hepatic enzyme elevation risk");
+        advice.push("💡 STRATEGY: Increase MW > 400 to change the metabolic pathway away from CYP450 saturation.");
+    }
+
+    // 13. GASTRO (ALOSETRON PATTERN)
+    if(track.name === "GASTRO" && logP > 4.0 && affinity < -9.0) {
+        riskMultiplier *= 0.2; gates.push("⛔ GASTRO: Ischemic Colitis Risk");
+        advice.push("💡 STRATEGY: Balance Affinity to -7.5; reduce LogP to < 3.0 to prevent colon tissue toxicity.");
+        hardReject = true;
+    }
+
+    // 14. DERMAL (RETINOID PATTERN)
+    if(track.name === "DERMAL" && logP > 6.0 && MW > 500) {
+        riskMultiplier *= 0.5; gates.push("⚠️ DERMAL: Systemic Absorption Risk");
+        advice.push("💡 STRATEGY: Lower LogP < 5.0 to ensure the drug stays in the skin layers (topical) vs systemic.");
+    }
+
+    // 15. METABOLIC (SIBUTRAMINE PATTERN)
+    if(track.name === "METABOLIC" && MW < 350 && logP > 4.0) {
+        riskMultiplier *= 0.25; gates.push("⛔ METABOLIC: CNS-Stimulant BP Risk");
+        advice.push("💡 STRATEGY: Increase MW > 450 to prevent crossing into the brain's appetite/BP control centers.");
+        hardReject = true;
+    }
+
+    // 16. OPHTHALMIC (VASCULITIS RISK)
+    if(track.name === "OPHTHALMIC" && PSA > 130 && affinity < -9.0) {
+        riskMultiplier *= 0.3; gates.push("⛔ OPHTHALMIC: Retinal Vasculitis Risk");
+        advice.push("💡 STRATEGY: Lower PSA < 100 to ensure drug clears the vitreous humor without inflammation.");
+        hardReject = true;
+    }
+
+    // 17. AUDITORY (OTOTOXICITY PATTERN)
+    if(track.name === "AUDITORY" && PSA > 150 && MW > 600) {
+        riskMultiplier *= 0.2; gates.push("⛔ AUDITORY: Hair Cell Ototoxicity Risk");
+        advice.push("💡 STRATEGY: Reduce MW and PSA to prevent permanent accumulation in the inner ear lymph.");
+        hardReject = true;
+    }
+
+    // 18. NEUROMODULATOR (RIMONABANT PATTERN)
+    if(track.name === "NEUROMODULATOR" && logP > 4.5 && PSA < 40) {
+        riskMultiplier *= 0.1; gates.push("⛔ NEURO: Psychiatric Depression Risk");
+        advice.push("💡 STRATEGY: Increase PSA > 60 and lower LogP < 3.5 to limit non-specific deep brain binding.");
+        hardReject = true;
+    }
+
+    // 19. HEMATOLOGICAL (XIMELAGATRAN PATTERN)
+    if(track.name === "HEMATOLOGICAL" && logP > 4.5 && affinity < -8.0) {
+        riskMultiplier *= 0.25; gates.push("⛔ HEMAT: Idiosyncratic Liver-Blood Risk");
+        advice.push("💡 STRATEGY: Lower LogP < 3.0 to stabilize hepatic clearance and prevent blood-marker spikes.");
+        hardReject = true;
+    }
+
+    // 20. MUSCULOSKELETAL (CERIVASTATIN PATTERN)
+    if(track.name === "MUSCULOSKELETAL" && logP > 5.0 && affinity < -8.5) {
+        riskMultiplier *= 0.15; gates.push("⛔ MUSCULO: Rhabdomyolysis Risk");
+        advice.push("💡 STRATEGY: Reduce LogP to < 4.0 to prevent the drug from penetrating and lysing muscle cells.");
+        hardReject = true;
+    }
+
+    // Final hERG check
     let hERG = 4 + 0.7*logP + 0.015*MW;
-    let ames = (MW > 1000 || logP > 6.0) ? "POS" : "NEG";
-    if(hERG > track.hERG || ames === "POS") { gates.push("⛔ CRITICAL: hERG / Mutagenicity violation"); hardReject = true; successProb = 0; }
+    if(hERG > track.hERG) {
+        if(riskMultiplier < 1.0 || hardReject) {
+            gates.push("⛔ CRITICAL: hERG violation");
+            hardReject = true; successProb = 0;
+        }
+    }
 
-    return { multiplier: Math.max(0.05, riskMultiplier), gates: gates, advice: advice, prob: Math.max(2, successProb), hardReject: hardReject };
+    return { 
+        multiplier: Math.max(0.05, riskMultiplier), 
+        gates: gates, 
+        advice: advice, 
+        prob: Math.max(2, successProb), 
+        hardReject: hardReject 
+    };
 }
 
 function runEngine() {
@@ -191,7 +295,6 @@ function runEngine() {
 
     let affinity = parseFloat(affinityVal), mw = parseFloat(mwVal), logP = parseFloat(logPVal), psa = parseFloat(psaVal), track = targetTracks[trackID];
 
-    // Pred-data UI update
     let calcBio = Math.min(100, Math.max(20, 50 + (-affinity * 3) - (logP * 2))).toFixed(1);
     document.getElementById('bio').value = calcBio + "%";
     document.getElementById('metStab').value = Math.min(100, Math.max(20, 70 - (logP * 3) + (mw / 15))).toFixed(1) + "%";
@@ -208,9 +311,7 @@ function runEngine() {
     if (psa > 140 && track.name !== "ANTI-INFECTIVE") ro5Errors++;
     document.getElementById('pred-lipinski').innerText = ro5Errors > 1 ? "FAILED" : "PASSED";
 
-    // CALLING INTEGRATED MODULE
     let analysis = universalFailureGates(track, affinity, logP, mw, psa);
-
     let finalScore = ((Math.abs(affinity) * 6.2) + (parseFloat(calcBio) * 0.14)) * analysis.multiplier;
     if (analysis.hardReject) finalScore = 0.0;
 
