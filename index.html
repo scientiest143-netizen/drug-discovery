@@ -130,6 +130,36 @@ function universalFailureGates(track, affinity, logP, MW, PSA) {
     let successProb = 85; 
     let hardReject = false;
 
+    // Balanced booster
+    if (MW > 450 && logP > 3.0 && PSA > 100) {
+        riskMultiplier *= 0.75;
+        gates.push("⚠️ GLOBAL: DILI Cluster Risk");
+    }
+
+    if (logP > 4.5 && MW > 400) {
+        riskMultiplier *= 0.8;
+        gates.push("⚠️ GLOBAL: Bioaccumulation Risk");
+    }
+
+    if (logP > 3.5 && PSA < 70 && track.name !== "CNS_NEURO") {
+        riskMultiplier *= 0.8;
+        gates.push("⚠️ GLOBAL: CNS Exposure Risk");
+    }
+
+    if (affinity < -10.0) {
+        riskMultiplier *= 0.85;
+        gates.push("⚠️ GLOBAL: Overbinding Risk");
+    }
+
+    let randomFail = Math.random();
+    if (randomFail < 0.05) {
+        riskMultiplier *= 0.8;
+        gates.push("⚠️ GLOBAL: Unknown Risk");
+    }
+
+    // SAFETY FLOOR
+    riskMultiplier = Math.max(0.4, riskMultiplier);
+
     // 1. GENERIC (VIOXX PATTERN)
     if(track.name === "GENERIC" && affinity <= -9.0 && logP > 2.5) {
         riskMultiplier *= 0.45; gates.push("⛔ GENERIC: VIOXX-Pattern (Thrombotic Risk)");
