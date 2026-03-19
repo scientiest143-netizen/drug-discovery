@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · PHARMA LOGIC ENGINE v116.6</title>
+<title>GROW-WIN · PHARMA LOGIC ENGINE v1.0</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -106,7 +106,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
         <h3 class="section-title text-blue-400">R&D Comparison Bench (History)</h3>
         <div class="overflow-x-auto"><table class="w-full text-left history-table"><thead><tr><th>Lead/Track</th><th>Affinity</th><th>LogP</th><th>MW</th><th>PSA</th><th>Final Score</th><th>Rank</th></tr></thead><tbody id="history-log-body"></tbody></table></div>
     </div>
-    <div class="watermark">GROW-WIN INDUSTRIAL BIOTECH · V116.6 · U. ANANTH KUMAR</div>
+    <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR</div>
 </div>
 
 <script>
@@ -114,7 +114,7 @@ const targetTracks = {
     0:{name:"GENERIC",hERG:25,MW:600,PSA:140}, 1:{name:"ONCOLOGY",hERG:30,MW:550,PSA:120}, 
     2:{name:"ANTI-INFECTIVE",hERG:25,MW:980,PSA:220}, 3:{name:"IMMUNO",hERG:20,MW:500,PSA:100}, 
     4:{name:"ENDOCRINE",hERG:15,MW:450,PSA:90}, 5:{name:"CNS_NEURO",hERG:20,MW:500,PSA:90}, 
-    6:{name:"CNS_HIGH",hERG:20,MW:480,PSA:85}, 7:{name:"CARDIOVASCULAR",hERG:12,MW:500,PSA:100}, 
+    6:{name:"CNS_HIGH",hERG:20,MW:480,PSA:85}, 7:{name:"CARDIOVASCULAR",hERG:16,MW:500,PSA:100}, 
     8:{name:"RENAL",hERG:25,MW:550,PSA:110}, 9:{name:"HEPATIC",hERG:25,MW:550,PSA:110}, 
     10:{name:"INFLAMMATION",hERG:10,MW:500,PSA:90}, 11:{name:"RESPIRATORY",hERG:20,MW:500,PSA:95}, 
     12:{name:"GASTRO",hERG:25,MW:500,PSA:100}, 13:{name:"DERMAL",hERG:25,MW:550,PSA:120}, 
@@ -131,7 +131,7 @@ function universalFailureGates(track, affinity, logP, MW, PSA) {
     let hardReject = false;
 
     // Balanced booster
-    if (MW > 450 && logP > 3.0 && PSA > 100) {
+    if (MW > 450 && logP > 3.5 && PSA > 100) {
         riskMultiplier *= 0.75;
         gates.push("⚠️ GLOBAL: DILI Cluster Risk");
     }
@@ -151,6 +151,14 @@ function universalFailureGates(track, affinity, logP, MW, PSA) {
         gates.push("⚠️ GLOBAL: Overbinding Risk");
     }
 
+    // CARDIAC BORDERLINE RISK (like Cisapride)
+    if (track.name === "GASTRO" || track.name === "CARDIOVASCULAR") {
+        if (logP >= 3.5 && affinity < -9.0) {
+            riskMultiplier *= 0.7;
+            gates.push("⚠️ CARDIO: QT / hERG Risk (Borderline Pattern)");
+        }
+    }
+
     let randomFail = Math.random();
     if (randomFail < 0.05) {
         riskMultiplier *= 0.8;
@@ -161,7 +169,7 @@ function universalFailureGates(track, affinity, logP, MW, PSA) {
     riskMultiplier = Math.max(0.4, riskMultiplier);
 
     // 1. GENERIC (VIOXX PATTERN)
-    if(track.name === "GENERIC" && affinity <= -9.0 && logP > 2.5) {
+    if(track.name === "GENERIC" && affinity <= -9.0 && logP > 2.0) {
         riskMultiplier *= 0.45; gates.push("⛔ GENERIC: VIOXX-Pattern (Thrombotic Risk)");
         advice.push("💡 STRATEGY: Reduce LogP < 2.0 or slightly lower Affinity to -7.5 to exit the Vioxx-failure zone.");
         hardReject = true; successProb = 15;
