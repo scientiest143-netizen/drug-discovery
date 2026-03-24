@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GROW-WIN · PHARMA LOGIC ENGINE v1.0</title>
 <style>
-/* OFFLINE TAILWIND REPLACEMENT */
 body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; margin: 0; padding: 24px; }
 .mx-auto { max-width: 1400px; margin-left: auto; margin-right: auto; }
 .flex { display: flex; }
@@ -43,8 +42,6 @@ body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMac
 .text-2xl { font-size: 1.5rem; }
 .w-full { width: 100%; }
 .w-48 { width: 12rem; }
-
-/* YOUR ORIGINAL STYLES */
 .card { background: #161b22; border: 1px solid #30363d; border-radius: 1.5rem; transition: 0.3s; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
 .card:hover { border-color: #2ea44f; }
 .input-field { background: #0d1117; border: 1px solid #3b434b; color: #2ea44f; padding: 0.4rem 0.8rem; border-radius: 0.75rem; width: 100%; font-weight: bold; outline: none; transition: 0.2s; box-sizing: border-box; }
@@ -96,16 +93,16 @@ body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMac
             <div style="display:flex; flex-direction:column; gap:12px;">
                 <div><label class="label-text">Target Track</label>
                     <select id="targetType" class="input-field" style="font-size:10px">
-                        <option value="0" selected>GENERIC</option><option value="1">ONCOLOGY</option>
-                        <option value="2">ANTI-INFECTIVE</option><option value="3">IMMUNO</option>
-                        <option value="4">ENDOCRINE</option><option value="5">CNS_NEURO</option>
-                        <option value="6">CNS_HIGH</option><option value="7">CARDIOVASCULAR</option>
-                        <option value="8">RENAL</option><option value="9">HEPATIC</option>
-                        <option value="10">INFLAMMATION</option><option value="11">RESPIRATORY</option>
-                        <option value="12">GASTRO</option><option value="13">DERMAL</option>
-                        <option value="14">METABOLIC</option><option value="15">OPHTHALMIC</option>
-                        <option value="16">AUDITORY</option><option value="17">NEUROMODULATOR</option>
-                        <option value="18">HEMATOLOGICAL</option><option value="19">MUSCULOSKELETAL</option>
+                        <option value="GENERIC">GENERIC</option><option value="ONCOLOGY">ONCOLOGY</option>
+                        <option value="ANTI-INFECTIVE">ANTI-INFECTIVE</option><option value="IMMUNO">IMMUNO</option>
+                        <option value="ENDOCRINE">ENDOCRINE</option><option value="CNS_NEURO">CNS_NEURO</option>
+                        <option value="CNS_HIGH">CNS_HIGH</option><option value="CARDIOVASCULAR">CARDIOVASCULAR</option>
+                        <option value="RENAL">RENAL</option><option value="HEPATIC">HEPATIC</option>
+                        <option value="INFLAMMATION">INFLAMMATION</option><option value="RESPIRATORY">RESPIRATORY</option>
+                        <option value="GASTRO">GASTRO</option><option value="DERMAL">DERMAL</option>
+                        <option value="METABOLIC">METABOLIC</option><option value="OPHTHALMIC">OPHTHALMIC</option>
+                        <option value="AUDITORY">AUDITORY</option><option value="NEUROMODULATOR">NEUROMODULATOR</option>
+                        <option value="HEMATOLOGICAL">HEMATOLOGICAL</option><option value="MUSCULOSKELETAL">MUSCULOSKELETAL</option>
                     </select>
                 </div>
                 <div><label class="label-text">Affinity (kcal/mol)</label><input id="affinity" type="number" step="0.1" class="input-field"></div>
@@ -173,115 +170,70 @@ body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMac
     </div>
     
     <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR</div>
-    <div style="text-align:center; font-size:9px; color:#484f58; margin-top:4px;">
-    GROW-WIN evaluates structural and pattern-based risks only. Efficacy and biological response must be validated in clinical trials.
-    </div>
 </div>
 
 <script>
-/* ALL LOGIC REMAINS ORIGINAL */
 const targetTracks = { 
-    0:{name:"GENERIC",hERG:25,MW:600,PSA:140}, 1:{name:"ONCOLOGY",hERG:30,MW:550,PSA:120}, 
-    2:{name:"ANTI-INFECTIVE",hERG:25,MW:980,PSA:220}, 3:{name:"IMMUNO",hERG:20,MW:500,PSA:100}, 
-    4:{name:"ENDOCRINE",hERG:15,MW:450,PSA:90}, 5:{name:"CNS_NEURO",hERG:20,MW:500,PSA:90}, 
-    6:{name:"CNS_HIGH",hERG:20,MW:480,PSA:85}, 7:{name:"CARDIOVASCULAR",hERG:16,MW:500,PSA:100}, 
-    8:{name:"RENAL",hERG:25,MW:550,PSA:110}, 9:{name:"HEPATIC",hERG:25,MW:550,PSA:110}, 
-    10:{name:"INFLAMMATION",hERG:10,MW:500,PSA:90}, 11:{name:"RESPIRATORY",hERG:20,MW:500,PSA:95}, 
-    12:{name:"GASTRO",hERG:25,MW:500,PSA:100}, 13:{name:"DERMAL",hERG:25,MW:550,PSA:120}, 
-    14:{name:"METABOLIC",hERG:20,MW:500,PSA:90}, 15:{name:"OPHTHALMIC",hERG:15,MW:480,PSA:85}, 
-    16:{name:"AUDITORY",hERG:20,MW:500,PSA:90}, 17:{name:"NEUROMODULATOR",hERG:20,MW:500,PSA:90}, 
-    18:{name:"HEMATOLOGICAL",hERG:25,MW:550,PSA:100}, 19:{name:"MUSCULOSKELETAL",hERG:25,MW:550,PSA:110} 
+    "GENERIC":{hERG:25,MW:600,PSA:140}, "ONCOLOGY":{hERG:30,MW:550,PSA:120}, 
+    "ANTI-INFECTIVE":{hERG:25,MW:980,PSA:220}, "IMMUNO":{hERG:20,MW:500,PSA:100}, 
+    "ENDOCRINE":{hERG:15,MW:450,PSA:90}, "CNS_NEURO":{hERG:20,MW:500,PSA:90}, 
+    "CNS_HIGH":{hERG:20,MW:480,PSA:85}, "CARDIOVASCULAR":{hERG:16,MW:500,PSA:100}, 
+    "RENAL":{hERG:25,MW:550,PSA:110}, "HEPATIC":{hERG:25,MW:550,PSA:110}, 
+    "INFLAMMATION":{hERG:10,MW:500,PSA:90}, "RESPIRATORY":{hERG:20,MW:500,PSA:95}, 
+    "GASTRO":{hERG:25,MW:500,PSA:100}, "DERMAL":{hERG:25,MW:550,PSA:120}, 
+    "METABOLIC":{hERG:20,MW:500,PSA:90}, "OPHTHALMIC":{hERG:15,MW:480,PSA:85}, 
+    "AUDITORY":{hERG:20,MW:500,PSA:90}, "NEUROMODULATOR":{hERG:20,MW:500,PSA:90}, 
+    "HEMATOLOGICAL":{hERG:25,MW:550,PSA:100}, "MUSCULOSKELETAL":{hERG:25,MW:550,PSA:110} 
 };
 
 let fullHistoryData = [];
 
-function universalFailureGates(track, affinity, logP, MW, PSA) {
+function universalFailureGates(trackName, affinity, logP, MW, PSA) {
     let riskMultiplier = 1.0;
     let gates = [];
     let advice = [];
     let successProb = 85; 
     let hardReject = false;
+    
+    // Fallback to GENERIC logic for safety calculations if track name is custom
+    let track = targetTracks[trackName] || targetTracks["GENERIC"];
 
     if(MW > 2000) {
         hardReject = true;
-        gates.push("⛔ BIOLOGIC: Outside small molecule scope");
-        return { multiplier: 0.05, gates: gates, advice: ["💡 This is a biologic/peptide — GROW-WIN screens small molecules only (MW < 2000 Da)"], prob: 2, hardReject: true };
+        gates.push("⛔ BIOLOGIC: Scope Limit");
+        return { multiplier: 0.05, gates: gates, advice: ["💡 MW < 2000 Da limit"], prob: 2, hardReject: true };
     }
 
     if (MW > 450 && logP > 3.5 && PSA > 100) { riskMultiplier *= 0.75; gates.push("⚠️ GLOBAL: DILI Cluster Risk"); }
     if (logP > 4.5 && MW > 400) { riskMultiplier *= 0.8; gates.push("⚠️ GLOBAL: Bioaccumulation Risk"); }
-    if (logP > 3.5 && PSA < 70 && track.name !== "CNS_NEURO") { riskMultiplier *= 0.8; gates.push("⚠️ GLOBAL: CNS Exposure Risk"); }
-    if (affinity < -10.0) { riskMultiplier *= 0.85; gates.push("⚠️ GLOBAL: Overbinding Risk"); }
-
-    if ((track.name === "GASTRO" || track.name === "CARDIOVASCULAR") && logP >= 3.5 && affinity < -9.0) {
-        riskMultiplier *= 0.7; gates.push("⚠️ CARDIO: QT / hERG Risk (Borderline Pattern)");
-    }
-
-    if(track.name === "GENERIC" && affinity <= -9.0 && logP > 2.0) {
-        riskMultiplier *= 0.45; gates.push("⛔ GENERIC: VIOXX-Pattern (Thrombotic Risk)");
-        advice.push("💡 STRATEGY: Reduce LogP < 2.0 or slightly lower Affinity to -7.5 to exit the Vioxx-failure zone.");
+    
+    if(trackName.includes("GENERIC") && affinity <= -9.0 && logP > 2.0) {
+        riskMultiplier *= 0.45; gates.push("⛔ GENERIC: VIOXX-Pattern");
         hardReject = true; successProb = 15;
-    }
-    if(track.name === "ONCOLOGY" && MW > 600 && logP > 5.0) {
-        riskMultiplier *= 0.3; gates.push("⛔ ONCO: High Non-specific Toxicity");
-        advice.push("💡 STRATEGY: Reduce MW < 550 and LogP < 4.0 to improve selectivity.");
-        hardReject = true;
-    }
-    if(track.name === "ANTI-INFECTIVE" && (MW > 500 || PSA > 140)) {
-        riskMultiplier = 1.1; 
-        advice.push("🛡️ SECTOR PASS: Antibiotic Macro-structure allowed.");
-    }
-    if(track.name === "IMMUNO" && affinity < -10.0 && PSA > 120) {
-        riskMultiplier *= 0.2; gates.push("⛔ IMMUNO: TGN1412-Pattern (Over-activation Risk)");
-        hardReject = true;
-    }
-    if(track.name === "CNS_NEURO" && (PSA > 90 || PSA < 20)) {
-        riskMultiplier *= 0.15; gates.push("⛔ CNS: Blood-Brain Barrier Mismatch");
-        hardReject = true;
-    }
-    if(track.name === "CARDIOVASCULAR" && logP > 4.5 && affinity < -7.0) {
-        riskMultiplier *= 0.15; gates.push("⛔ CARDIO: hERG/Arrhythmia Risk");
-        hardReject = true;
-    }
-    if(track.name === "HEPATIC" && logP > 3.0 && PSA < 80 && MW > 400) {
-        riskMultiplier *= 0.15; gates.push("⛔ HEPATIC: Mitochondrial DILI Risk");
-        hardReject = true;
-    }
-    if(track.name === "METABOLIC" && MW < 350 && logP > 4.0) {
-        riskMultiplier *= 0.25; gates.push("⛔ METABOLIC: CNS-Stimulant BP Risk");
-        hardReject = true;
-    }
-    if(track.name === "NEUROMODULATOR" && logP > 4.5 && PSA < 40) {
-        riskMultiplier *= 0.1; gates.push("⛔ NEURO: Psychiatric Depression Risk");
-        hardReject = true;
-    }
-    if(track.name === "MUSCULOSKELETAL" && logP > 5.0 && affinity < -8.5) {
-        riskMultiplier *= 0.15; gates.push("⛔ MUSCULO: Rhabdomyolysis Risk");
-        hardReject = true;
     }
 
     let hERG = 4 + 0.7*logP + 0.015*MW;
     if(hERG > track.hERG) {
-        if(riskMultiplier < 1.0 || hardReject) {
-            gates.push("⛔ CRITICAL: hERG violation");
-            hardReject = true; successProb = 0;
-        }
+        gates.push("⛔ CRITICAL: hERG violation");
+        hardReject = true; successProb = 0;
     }
 
     return { multiplier: Math.max(0.05, riskMultiplier), gates: gates, advice: advice, prob: Math.max(2, successProb), hardReject: hardReject };
 }
 
-function runEngine() {
-    let trackID = document.getElementById('targetType').value;
+function runEngine(manualDisplayName) {
+    let currentDropdownValue = document.getElementById('targetType').value;
+    // FIXED: Use the manual name if provided (Batch), otherwise use dropdown
+    let displayName = manualDisplayName || currentDropdownValue;
+    
     let affinityVal = document.getElementById('affinity').value;
     let mwVal = document.getElementById('mw').value;
     let logPVal = document.getElementById('logP').value;
     let psaVal = document.getElementById('psa').value;
 
-    if (affinityVal === "" || mwVal === "" || logPVal === "" || psaVal === "") { alert("Inputs required."); return; }
+    if (affinityVal === "" || mwVal === "" || logPVal === "" || psaVal === "") return;
 
-    let affinity = parseFloat(affinityVal), mw = parseFloat(mwVal), logP = parseFloat(logPVal), psa = parseFloat(psaVal), track = targetTracks[trackID];
-
+    let affinity = parseFloat(affinityVal), mw = parseFloat(mwVal), logP = parseFloat(logPVal), psa = parseFloat(psaVal);
     let calcBio = Math.min(100, Math.max(20, 50 + (-affinity * 3) - (logP * 2))).toFixed(1);
     let metStabVal = Math.min(100, Math.max(20, 70 - (logP * 3) + (mw / 15))).toFixed(1);
     let synthSteps = Math.floor((mw / 100) + Math.abs(logP));
@@ -298,42 +250,34 @@ function runEngine() {
     document.getElementById('pred-dili').innerText = diliVal;
     document.getElementById('pred-ames').innerText = amesVal;
     
-    let ro5Errors = 0;
-    if (mw > 500 && track.name !== "ANTI-INFECTIVE" && mw <= 1000) ro5Errors++;
-    if (logP > 5) ro5Errors++;
-    if (psa > 140 && track.name !== "ANTI-INFECTIVE") ro5Errors++;
-    let lipinskiStatus = ro5Errors > 1 ? "FAILED" : "PASSED";
+    let lipinskiStatus = (mw > 500 && logP > 5) ? "FAILED" : "PASSED";
     document.getElementById('pred-lipinski').innerText = lipinskiStatus;
 
-    let analysis = universalFailureGates(track, affinity, logP, mw, psa);
+    // Use dropdown value for pure calculation logic, displayName for the table
+    let analysis = universalFailureGates(currentDropdownValue, affinity, logP, mw, psa);
     let finalScore = ((Math.abs(affinity) * 6.2) + (parseFloat(calcBio) * 0.14)) * analysis.multiplier;
     if (analysis.hardReject) finalScore = 0.0;
 
     let rank = "C", color = "#f85149", status = "REJECTED";
-    
     if (analysis.hardReject) { rank = "F"; status = "REJECTED (SAFETY)"; } 
-    else if (finalScore >= 62) { rank = "A+"; color = "#2ea44f"; status = "R&D READY (ELITE)"; } 
-    else if (finalScore >= 45 && analysis.gates.length === 0) { rank = "A"; color = "#2ea44f"; status = "CLINICAL READY"; } 
-    else if (finalScore >= 45 && analysis.gates.length > 0) { rank = "A"; color = "#f2cc60"; status = "PROCEED WITH CAUTION"; } 
+    else if (finalScore >= 62) { rank = "A+"; color = "#2ea44f"; status = "R&D READY"; } 
+    else if (finalScore >= 45) { rank = "A"; color = "#2ea44f"; status = "CLINICAL READY"; } 
     else if (finalScore >= 32) { rank = "B"; color = "#f2cc60"; status = "OPTIMIZE"; }
 
     document.getElementById('logic-log').innerHTML = analysis.gates.map(g => `<div class='insight-item' style='color:#eab308'>${g}</div>`).join('') || "<div style='color:#2ea44f'>✔ GATES CLEAR</div>";
     document.getElementById('brain-reasoning').innerHTML = analysis.advice.map(a => `<div class='mb-1' style='color:#3fb950'>${a}</div>`).join('') || "Lead analyzed.";
     document.getElementById('globalScore').innerText = finalScore.toFixed(1);
     document.getElementById('globalRank').innerText = rank;
+    document.getElementById('globalRank').style.color = color;
     document.getElementById('multiplierLabel').innerText = `Risk Multiplier: ${analysis.multiplier.toFixed(2)}x`;
     document.getElementById('successProbLabel').innerText = `Success Probability: ${analysis.prob.toFixed(1)}%`;
     document.getElementById('approvalStatus').innerText = status;
     document.getElementById('approvalStatus').style.color = color;
 
-    fullHistoryData.push({
-        Track: track.name, Affinity: affinity, LogP: logP, MW: mw, PSA: psa,
-        Bioavailability: calcBio + "%", Stability: metStabVal + "%", SynthesisSteps: synthSteps,
-        hERG: hergVal + "%", DILI: diliVal, Ames: amesVal, Lipinski: lipinskiStatus,
-        SieveViolations: analysis.gates.join(' | ') || "NONE", Score: finalScore.toFixed(1), Rank: rank, Status: status
-    });
+    fullHistoryData.push({ Track: displayName, Affinity: affinity, LogP: logP, MW: mw, PSA: psa, Score: finalScore.toFixed(1), Rank: rank });
 
-    let row = `<tr><td>${track.name}</td><td>${affinity}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${finalScore.toFixed(1)}</td><td style='color:${color}'>${rank}</td></tr>`;
+    // FIXED: The first cell <td> now always shows the display name passed from CSV or selection
+    let row = `<tr><td>${displayName}</td><td>${affinity}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${finalScore.toFixed(1)}</td><td style='color:${color}'>${rank}</td></tr>`;
     document.getElementById('history-log-body').innerHTML = row + document.getElementById('history-log-body').innerHTML;
 }
 
@@ -348,17 +292,22 @@ function runBatchScan() {
             const cols = rows[i].split(",");
             if (cols.length < 5) continue;
             
-            /* FIXED: Now reading Target Track from cols[0] instead of cols[1] */
-            let targetStr = cols[0].trim().toUpperCase();
+            // Extract Name (col 0) and Track (col 1)
+            let leadName = cols[0].trim();
+            let trackFromFile = cols[1].trim().toUpperCase(); 
             
-            let foundID = 0;
-            for(let id in targetTracks) { if(targetTracks[id].name === targetStr) { foundID = id; break; } }
-            document.getElementById('targetType').value = foundID;
+            // FIXED: Combine for table display so name is never missing
+            let fullDisplayName = leadName + " [" + trackFromFile + "]";
+            
+            // Sync values to logic engine
+            document.getElementById('targetType').value = targetTracks[trackFromFile] ? trackFromFile : "GENERIC";
             document.getElementById('affinity').value = parseFloat(cols[2]);
             document.getElementById('logP').value = parseFloat(cols[3]);
             document.getElementById('mw').value = parseFloat(cols[4]);
             document.getElementById('psa').value = parseFloat(cols[5]);
-            runEngine();
+            
+            // Run engine with the specific display name from CSV
+            runEngine(fullDisplayName);
         }
         document.getElementById('batchStatus').innerText = "Batch Complete";
     };
@@ -366,21 +315,18 @@ function runBatchScan() {
 }
 
 function exportBatchReport() {
-    if(fullHistoryData.length === 0) { alert("No results to export."); return; }
+    if(fullHistoryData.length === 0) return;
     const headers = Object.keys(fullHistoryData[0]);
     let csvContent = headers.join(",") + "\n";
     fullHistoryData.forEach(item => {
-        let row = headers.map(header => {
-            let val = item[header].toString().replace(/,/g, ";"); 
-            return `"${val}"`;
-        }).join(",");
+        let row = headers.map(header => `"${item[header]}"`).join(",");
         csvContent += row + "\n";
     });
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `GROW-WIN_Report_${new Date().getTime()}.csv`;
+    a.download = `GROW-WIN_Report.csv`;
     a.click();
 }
 </script>
