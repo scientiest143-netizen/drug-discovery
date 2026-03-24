@@ -4,13 +4,50 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GROW-WIN · PHARMA LOGIC ENGINE v1.0</title>
-<script src="https://cdn.tailwindcss.com"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 13px; }
-.card { background: #161b22; border: 1px solid #30363d; border-radius: 1.5rem; transition: 0.3s; display: flex; flex-direction: column; height: 100%; }
+/* OFFLINE TAILWIND REPLACEMENT */
+body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; margin: 0; padding: 24px; }
+.mx-auto { max-width: 1400px; margin-left: auto; margin-right: auto; }
+.flex { display: flex; }
+.justify-between { justify-content: space-between; }
+.items-start { align-items: flex-start; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.flex-col { flex-direction: column; }
+.flex-1 { flex: 1 1 0%; }
+.mb-8 { margin-bottom: 2rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
+.p-3 { padding: 0.75rem; }
+.p-5 { padding: 1.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+.grid { display: grid; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+@media (min-width: 768px) { .md-grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .md-grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .lg-grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } .lg-col-span-2 { grid-column: span 2 / span 2; } }
+.text-center { text-align: center; }
+.uppercase { text-transform: uppercase; }
+.font-black { font-weight: 900; }
+.font-bold { font-weight: 700; }
+.tracking-tighter { letter-spacing: -0.05em; }
+.tracking-widest { letter-spacing: 0.1em; }
+.text-4xl { font-size: 2.25rem; }
+.text-7xl { font-size: 4.5rem; }
+.text-xs { font-size: 0.75rem; }
+.text-2xl { font-size: 1.5rem; }
+.w-full { width: 100%; }
+.w-48 { width: 12rem; }
+
+/* YOUR ORIGINAL STYLES */
+.card { background: #161b22; border: 1px solid #30363d; border-radius: 1.5rem; transition: 0.3s; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
 .card:hover { border-color: #2ea44f; }
-.input-field { background: #0d1117; border: 1px solid #3b434b; color: #2ea44f; padding: 0.4rem 0.8rem; border-radius: 0.75rem; width: 100%; font-weight: bold; outline: none; transition: 0.2s; }
+.input-field { background: #0d1117; border: 1px solid #3b434b; color: #2ea44f; padding: 0.4rem 0.8rem; border-radius: 0.75rem; width: 100%; font-weight: bold; outline: none; transition: 0.2s; box-sizing: border-box; }
 .input-field:focus { border-color: #2ea44f; box-shadow: 0 0 5px #2ea44f44; }
 .auto-field { background: #1c2128; color: #8b949e; border: 1px dashed #484f58; cursor: not-allowed; }
 .btn { background: #2ea44f; color: black; font-weight: 800; padding: 0.75rem; border-radius: 1rem; transition: 0.2s; border: none; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; }
@@ -20,37 +57,45 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 .brain-box { border: 1px solid #2ea44f44; background: #0d1117; border-radius: 1rem; padding: 12px; margin-top: 10px; min-height: 100px; overflow-y: auto; }
 .insight-item { border-bottom: 1px solid #21262d; padding: 6px 0; font-family: monospace; }
 .watermark { text-align: center; margin-top: 2rem; font-size: 10px; color: #30363d; letter-spacing: 2px; font-weight: bold; }
-.result-box { background: #161b22; border: 1px solid #30363d; border-radius: 1rem; padding: 12px; }
-.history-table th { color: #8b949e; font-size: 10px; text-transform: uppercase; padding: 8px; border-bottom: 1px solid #30363d; }
+.result-box { background: #161b22; border: 1px solid #30363d; border-radius: 1rem; padding: 12px; box-sizing: border-box; }
+.history-table { width: 100%; border-collapse: collapse; }
+.history-table th { color: #8b949e; font-size: 10px; text-transform: uppercase; padding: 8px; border-bottom: 1px solid #30363d; text-align: left; }
 .history-table td { padding: 8px; border-bottom: 1px solid #21262d; font-family: monospace; }
 .btn-batch { background: #30363d; color: #e6edf3; margin-top: 0; width: auto; padding: 0.4rem 1rem; font-size: 10px; }
 .btn-batch:hover { background: #484f58; }
+.border-blue-500 { border-left: 4px solid #3b82f6; }
+.border-yellow-500 { border-left: 4px solid #eab308; }
+.border-green-500 { border-left: 4px solid #22c55e; }
+.text-blue-400 { color: #60a5fa; }
+.text-green-500 { color: #22c55e; }
+.text-gray-500 { color: #6b7280; }
+.text-white { color: #ffffff; }
 </style>
 </head>
-<body class="p-6">
+<body>
 
-<div class="max-w-[1400px] mx-auto">
+<div class="mx-auto">
     <div class="flex justify-between items-start mb-8">
         <div class="flex-1"></div>
         <div class="text-center flex-1">
-            <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span class="text-[#2ea44f]">Pharma Engine</span></h1>
+            <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span style="color:#2ea44f">Pharma Engine</span></h1>
             <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v1.0 · UNIVERSAL SECTOR LOGIC </p>
         </div>
         <div class="flex-1 flex flex-col items-end">
             <div class="w-48 p-3 bg-[#161b22] border border-[#30363d] rounded-xl">
                 <label class="label-text">Batch Upload (.csv)</label>
-                <input type="file" id="csvInput" accept=".csv" class="input-field text-[9px] mb-2" onchange="runBatchScan()">
-                <div id="batchStatus" class="text-[9px] text-gray-500 font-bold uppercase">Ready for file...</div>
+                <input type="file" id="csvInput" accept=".csv" class="input-field mb-2" style="font-size:9px" onchange="runBatchScan()">
+                <div id="batchStatus" class="text-xs text-gray-500 font-bold uppercase" style="font-size:9px">Ready for file...</div>
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <div class="card p-5 border-l-4 border-blue-500">
+    <div class="grid grid-cols-1 md-grid-cols-3 lg-grid-cols-5 gap-4">
+        <div class="card p-5 border-blue-500">
             <h2 class="section-title">Structural Inputs</h2>
-            <div class="space-y-3">
+            <div style="display:flex; flex-direction:column; gap:12px;">
                 <div><label class="label-text">Target Track</label>
-                    <select id="targetType" class="input-field text-[10px]">
+                    <select id="targetType" class="input-field" style="font-size:10px">
                         <option value="0" selected>GENERIC</option><option value="1">ONCOLOGY</option>
                         <option value="2">ANTI-INFECTIVE</option><option value="3">IMMUNO</option>
                         <option value="4">ENDOCRINE</option><option value="5">CNS_NEURO</option>
@@ -64,7 +109,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
                     </select>
                 </div>
                 <div><label class="label-text">Affinity (kcal/mol)</label><input id="affinity" type="number" step="0.1" class="input-field"></div>
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid md-grid-cols-2 gap-2">
                     <div><label class="label-text">LogP</label><input id="logP" type="number" step="0.1" class="input-field"></div>
                     <div><label class="label-text">MW (Da)</label><input id="mw" type="number" class="input-field"></div>
                 </div>
@@ -72,55 +117,55 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
             </div>
         </div>
 
-        <div class="card p-5 border-l-4 border-yellow-500">
+        <div class="card p-5 border-yellow-500">
             <h2 class="section-title">In-Silico Lab Data</h2>
-            <div class="space-y-3">
+            <div style="display:flex; flex-direction:column; gap:12px;">
                 <div><label class="label-text">Bioavailability</label><input id="bio" class="input-field auto-field" readonly></div>
                 <div><label class="label-text">Metabolic Stability</label><input id="metStab" class="input-field auto-field" readonly></div>
                 <div><label class="label-text">Synthesis Steps</label><input id="steps" class="input-field auto-field" readonly></div>
             </div>
         </div>
 
-        <div class="card p-5 border-l-4 border-green-500">
+        <div class="card p-5 border-green-500">
             <h2 class="section-title">Safety Profiling</h2>
-            <div class="space-y-2 text-[11px] font-bold">
-                <div class="flex justify-between border-b border-[#30363d] pb-1"><span>hERG Block:</span> <span id="pred-herg" class="text-blue-400">--</span></div>
-                <div class="flex justify-between border-b border-[#30363d] pb-1"><span>DILI Risk:</span> <span id="pred-dili" class="text-blue-400">--</span></div>
-                <div class="flex justify-between border-b border-[#30363d] pb-1"><span>Ames Test:</span> <span id="pred-ames" class="text-blue-400">--</span></div>
-                <div class="flex justify-between border-b border-[#30363d] pb-1"><span>Lipinski:</span> <span id="pred-lipinski" class="text-green-500">--</span></div>
+            <div style="font-size:11px; font-weight:bold; display:flex; flex-direction:column; gap:8px;">
+                <div class="flex justify-between" style="border-bottom:1px solid #30363d; padding-bottom:4px;"><span>hERG Block:</span> <span id="pred-herg" class="text-blue-400">--</span></div>
+                <div class="flex justify-between" style="border-bottom:1px solid #30363d; padding-bottom:4px;"><span>DILI Risk:</span> <span id="pred-dili" class="text-blue-400">--</span></div>
+                <div class="flex justify-between" style="border-bottom:1px solid #30363d; padding-bottom:4px;"><span>Ames Test:</span> <span id="pred-ames" class="text-blue-400">--</span></div>
+                <div class="flex justify-between" style="border-bottom:1px solid #30363d; padding-bottom:4px;"><span>Lipinski:</span> <span id="pred-lipinski" class="text-green-500">--</span></div>
             </div>
         </div>
 
-        <div class="card p-5 lg:col-span-2">
+        <div class="card p-5 lg-col-span-2">
             <h2 class="section-title">R&D Brain Reasoning (Intelligence)</h2>
-            <div class="brain-box text-xs leading-relaxed" id="brain-reasoning">Awaiting lead compound data...</div>
+            <div class="brain-box text-xs" style="line-height:1.6" id="brain-reasoning">Awaiting lead compound data...</div>
             <button class="btn" onclick="runEngine()">Sieve & Benchmark</button>
         </div>
     </div>
 
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="mt-6 grid grid-cols-1 md-grid-cols-2 gap-4">
         <div class="result-box">
-            <span class="text-gray-500 uppercase font-black mb-2 block text-[10px] tracking-widest">Sieve Violations & Strategy</span>
-            <div id="logic-log" class="min-h-[100px]"></div>
+            <span class="text-gray-500 uppercase font-black mb-2 block tracking-widest" style="font-size:10px">Sieve Violations & Strategy</span>
+            <div id="logic-log" style="min-height:100px;"></div>
         </div>
         <div class="result-box flex flex-col items-center justify-center">
-            <div id="multiplierLabel" class="text-[10px] text-gray-500 uppercase font-bold mb-1">Risk Multiplier: 1.00x</div>
+            <div id="multiplierLabel" class="text-xs text-gray-500 uppercase font-bold mb-1" style="font-size:10px">Risk Multiplier: 1.00x</div>
             <div class="flex items-center gap-6">
                 <span id="globalScore" class="text-7xl font-black text-white">0.0</span>
-                <span id="globalRank" class="text-7xl font-black text-gray-700">-</span>
+                <span id="globalRank" class="text-7xl font-black" style="color:#30363d">-</span>
             </div>
-            <div id="successProbLabel" class="text-green-500 font-black mt-2 text-sm uppercase tracking-widest">Success Probability: --</div>
+            <div id="successProbLabel" class="text-green-500 font-black mt-2 text-xs uppercase tracking-widest">Success Probability: --</div>
             <div id="approvalStatus" class="mt-4 text-2xl font-black uppercase tracking-widest">Idle</div>
         </div>
     </div>
 
     <div class="mt-8 result-box">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="section-title text-blue-400 mb-0">R&D Comparison Bench (History)</h3>
+            <h3 class="section-title text-blue-400" style="margin-bottom:0">R&D Comparison Bench (History)</h3>
             <button id="downloadBtn" class="btn btn-batch" onclick="exportBatchReport()">EXPORT REPORT (.CSV)</button>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left history-table">
+        <div style="overflow-x:auto">
+            <table class="history-table">
                 <thead><tr><th>Lead/Track</th><th>Affinity</th><th>LogP</th><th>MW</th><th>PSA</th><th>Final Score</th><th>Rank</th></tr></thead>
                 <tbody id="history-log-body"></tbody>
             </table>
@@ -134,6 +179,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 </div>
 
 <script>
+/* ALL LOGIC REMAINS ORIGINAL */
 const targetTracks = { 
     0:{name:"GENERIC",hERG:25,MW:600,PSA:140}, 1:{name:"ONCOLOGY",hERG:30,MW:550,PSA:120}, 
     2:{name:"ANTI-INFECTIVE",hERG:25,MW:980,PSA:220}, 3:{name:"IMMUNO",hERG:20,MW:500,PSA:100}, 
@@ -222,13 +268,7 @@ function universalFailureGates(track, affinity, logP, MW, PSA) {
         }
     }
 
-    return { 
-        multiplier: Math.max(0.05, riskMultiplier), 
-        gates: gates, 
-        advice: advice, 
-        prob: Math.max(2, successProb), 
-        hardReject: hardReject 
-    };
+    return { multiplier: Math.max(0.05, riskMultiplier), gates: gates, advice: advice, prob: Math.max(2, successProb), hardReject: hardReject };
 }
 
 function runEngine() {
@@ -277,8 +317,8 @@ function runEngine() {
     else if (finalScore >= 45 && analysis.gates.length > 0) { rank = "A"; color = "#f2cc60"; status = "PROCEED WITH CAUTION"; } 
     else if (finalScore >= 32) { rank = "B"; color = "#f2cc60"; status = "OPTIMIZE"; }
 
-    document.getElementById('logic-log').innerHTML = analysis.gates.map(g => `<div class='insight-item text-yellow-500'>${g}</div>`).join('') || "<div class='text-green-500'>✔ GATES CLEAR</div>";
-    document.getElementById('brain-reasoning').innerHTML = analysis.advice.map(a => `<div class='mb-1 text-green-400'>${a}</div>`).join('') || "Lead analyzed.";
+    document.getElementById('logic-log').innerHTML = analysis.gates.map(g => `<div class='insight-item' style='color:#eab308'>${g}</div>`).join('') || "<div style='color:#2ea44f'>✔ GATES CLEAR</div>";
+    document.getElementById('brain-reasoning').innerHTML = analysis.advice.map(a => `<div class='mb-1' style='color:#3fb950'>${a}</div>`).join('') || "Lead analyzed.";
     document.getElementById('globalScore').innerText = finalScore.toFixed(1);
     document.getElementById('globalRank').innerText = rank;
     document.getElementById('multiplierLabel').innerText = `Risk Multiplier: ${analysis.multiplier.toFixed(2)}x`;
@@ -287,12 +327,10 @@ function runEngine() {
     document.getElementById('approvalStatus').style.color = color;
 
     fullHistoryData.push({
-        Track: track.name,
-        Affinity: affinity, LogP: logP, MW: mw, PSA: psa,
+        Track: track.name, Affinity: affinity, LogP: logP, MW: mw, PSA: psa,
         Bioavailability: calcBio + "%", Stability: metStabVal + "%", SynthesisSteps: synthSteps,
         hERG: hergVal + "%", DILI: diliVal, Ames: amesVal, Lipinski: lipinskiStatus,
-        SieveViolations: analysis.gates.join(' | ') || "NONE",
-        Score: finalScore.toFixed(1), Rank: rank, Status: status
+        SieveViolations: analysis.gates.join(' | ') || "NONE", Score: finalScore.toFixed(1), Rank: rank, Status: status
     });
 
     let row = `<tr><td>${track.name}</td><td>${affinity}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${finalScore.toFixed(1)}</td><td style='color:${color}'>${rank}</td></tr>`;
@@ -303,7 +341,6 @@ function runBatchScan() {
     const file = document.getElementById('csvInput').files[0];
     if (!file) return;
     document.getElementById('batchStatus').innerText = "Processing...";
-    
     const reader = new FileReader();
     reader.onload = function(e) {
         const rows = e.target.result.split("\n");
@@ -311,13 +348,11 @@ function runBatchScan() {
             const cols = rows[i].split(",");
             if (cols.length < 5) continue;
             
-            let targetStr = cols[1].trim().toUpperCase();
+            /* FIXED: Now reading Target Track from cols[0] instead of cols[1] */
+            let targetStr = cols[0].trim().toUpperCase();
             
             let foundID = 0;
-            for(let id in targetTracks) {
-                if(targetTracks[id].name === targetStr) { foundID = id; break; }
-            }
-
+            for(let id in targetTracks) { if(targetTracks[id].name === targetStr) { foundID = id; break; } }
             document.getElementById('targetType').value = foundID;
             document.getElementById('affinity').value = parseFloat(cols[2]);
             document.getElementById('logP').value = parseFloat(cols[3]);
@@ -332,10 +367,8 @@ function runBatchScan() {
 
 function exportBatchReport() {
     if(fullHistoryData.length === 0) { alert("No results to export."); return; }
-
     const headers = Object.keys(fullHistoryData[0]);
     let csvContent = headers.join(",") + "\n";
-
     fullHistoryData.forEach(item => {
         let row = headers.map(header => {
             let val = item[header].toString().replace(/,/g, ";"); 
@@ -343,12 +376,11 @@ function exportBatchReport() {
         }).join(",");
         csvContent += row + "\n";
     });
-
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `GROW-WIN_Full_Pharma_Report_${new Date().getTime()}.csv`;
+    a.download = `GROW-WIN_Report_${new Date().getTime()}.csv`;
     a.click();
 }
 </script>
