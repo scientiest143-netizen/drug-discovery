@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · PHARMA LOGIC ENGINE v2.0</title>
+<title>GROW-WIN · PHARMA LOGIC ENGINE v2.1</title>
 <style>
     body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; margin: 0; padding: 24px; }
     .mx-auto { max-width: 1400px; margin-left: auto; margin-right: auto; }
@@ -76,7 +76,7 @@
         <div class="flex-1"></div>
         <div class="text-center flex-1">
             <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span style="color:#2ea44f">Pharma Engine</span></h1>
-            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v2.0 · BIO-LOGIC INTEGRATED </p>
+            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v2.1 · BIO-LOGIC REFINED </p>
         </div>
         <div class="flex-1 flex flex-col items-end">
             <div class="w-48 p-3 bg-[#161b22] border border-[#30363d] rounded-xl">
@@ -275,13 +275,34 @@ function runEngine(manualDisplayName) {
     let analysis = universalFailureGates(currentDropdownValue, affinity, logP, mw, psa);
     let finalScore = ((Math.abs(affinity) * 6.2) + (parseFloat(calcBio) * 0.14)) * analysis.multiplier;
     
+    // అనంత్, ఇక్కడ v2.1 కి సంబంధించిన కీలకమైన Safety Override ని యాడ్ చేశాను:
+    if (diliVal === "HIGH" || amesVal === "POS") {
+        finalScore *= 0.7; // స్కోర్ ని 30% తగ్గించు
+        analysis.gates.push("⚠️ WARNING: Pre-clinical Safety Signal (DILI/Ames)");
+        analysis.advice.push("💡 Strategy: High risk detected. Validation required before R&D.");
+    }
+
     if (analysis.hardReject) finalScore = 0.0;
 
     let rank = "C", color = "#f85149", status = "REJECTED";
-    if (analysis.hardReject) { rank = "F"; status = "REJECTED (SAFETY)"; } 
-    else if (finalScore >= 62) { rank = "A+"; color = "#2ea44f"; status = "R&D READY"; } 
-    else if (finalScore >= 45) { rank = "A"; color = "#2ea44f"; status = "CLINICAL READY"; } 
-    else if (finalScore >= 32) { rank = "B"; color = "#f2cc60"; status = "OPTIMIZE"; }
+    if (analysis.hardReject) { 
+        rank = "F"; color = "#f85149"; status = "REJECTED (SAFETY)"; 
+    } 
+    else if (finalScore >= 62) { 
+        rank = "A+"; color = "#2ea44f"; status = "R&D READY (ELITE)"; 
+        
+        // Safety Override: ఒకవేళ DILI/Ames పాజిటివ్ అయితే A+ రాకుండా అడ్డుకోవడం
+        if (diliVal === "HIGH" || amesVal === "POS") {
+            rank = "A"; color = "#f2cc60"; status = "PROCEED WITH CAUTION";
+        }
+    } 
+    else if (finalScore >= 45) { 
+        rank = "A"; color = (analysis.gates.length > 0) ? "#f2cc60" : "#2ea44f"; 
+        status = (analysis.gates.length > 0) ? "PROCEED WITH CAUTION" : "CLINICAL READY"; 
+    } 
+    else if (finalScore >= 32) { 
+        rank = "B"; color = "#f2cc60"; status = "OPTIMIZE"; 
+    }
 
     const violations = analysis.gates.join(" | ") || "✔ GATES CLEAR";
     const brainAdvice = analysis.advice.join(" | ") || "Lead analyzed.";
@@ -296,7 +317,6 @@ function runEngine(manualDisplayName) {
     document.getElementById('approvalStatus').innerText = status;
     document.getElementById('approvalStatus').style.color = color;
 
-    // ఉదయాన అనంత్ గారు, ఇక్కడ మనం ఎక్స్‌పోర్ట్ కోసం అన్ని పారామీటర్లను స్టోర్ చేస్తున్నాము
     fullHistoryData.push({ 
         Track: displayName, 
         Affinity: affinity, 
@@ -360,7 +380,7 @@ function exportBatchReport() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `GROW-WIN_Pharma_Full_Report.csv`;
+    a.download = `GROW-WIN_Pharma_Full_Report_v2.1.csv`;
     a.click();
 }
 </script>
