@@ -3,70 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · PHARMA LOGIC ENGINE v1.0</title>
+<title>GROW-WIN · PHARMA LOGIC ENGINE v2.0</title>
 <style>
-body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; margin: 0; padding: 24px; }
-.mx-auto { max-width: 1400px; margin-left: auto; margin-right: auto; }
-.flex { display: flex; }
-.justify-between { justify-content: space-between; }
-.items-start { align-items: flex-start; }
-.items-center { align-items: center; }
-.justify-center { justify-content: center; }
-.flex-col { flex-direction: column; }
-.flex-1 { flex: 1 1 0%; }
-.mb-8 { margin-bottom: 2rem; }
-.mb-4 { margin-bottom: 1rem; }
-.mb-2 { margin-bottom: 0.5rem; }
-.mt-1 { margin-top: 0.25rem; }
-.mt-4 { margin-top: 1rem; }
-.mt-6 { margin-top: 1.5rem; }
-.mt-8 { margin-top: 2rem; }
-.p-3 { padding: 0.75rem; }
-.p-5 { padding: 1.25rem; }
-.gap-2 { gap: 0.5rem; }
-.gap-4 { gap: 1rem; }
-.gap-6 { gap: 1.5rem; }
-.grid { display: grid; }
-.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-@media (min-width: 768px) { .md-grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .md-grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (min-width: 1024px) { .lg-grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } .lg-col-span-2 { grid-column: span 2 / span 2; } }
-.text-center { text-align: center; }
-.uppercase { text-transform: uppercase; }
-.font-black { font-weight: 900; }
-.font-bold { font-weight: 700; }
-.tracking-tighter { letter-spacing: -0.05em; }
-.tracking-widest { letter-spacing: 0.1em; }
-.text-4xl { font-size: 2.25rem; }
-.text-7xl { font-size: 4.5rem; }
-.text-xs { font-size: 0.75rem; }
-.text-2xl { font-size: 1.5rem; }
-.w-full { width: 100%; }
-.w-48 { width: 12rem; }
-.card { background: #161b22; border: 1px solid #30363d; border-radius: 1.5rem; transition: 0.3s; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
-.card:hover { border-color: #2ea44f; }
-.input-field { background: #0d1117; border: 1px solid #3b434b; color: #2ea44f; padding: 0.4rem 0.8rem; border-radius: 0.75rem; width: 100%; font-weight: bold; outline: none; transition: 0.2s; box-sizing: border-box; }
-.input-field:focus { border-color: #2ea44f; box-shadow: 0 0 5px #2ea44f44; }
-.auto-field { background: #1c2128; color: #8b949e; border: 1px dashed #484f58; cursor: not-allowed; }
-.btn { background: #2ea44f; color: black; font-weight: 800; padding: 0.75rem; border-radius: 1rem; transition: 0.2s; border: none; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; }
-.btn:hover { background: #3fb950; box-shadow: 0 0 15px #2ea44f; transform: translateY(-1px); }
-.section-title { color: #2ea44f; font-weight: 900; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 1rem; border-left: 3px solid #2ea44f; padding-left: 8px; }
-.label-text { font-size: 10px; font-weight: 700; color: #8b949e; text-transform: uppercase; margin-bottom: 4px; display: block; }
-.brain-box { border: 1px solid #2ea44f44; background: #0d1117; border-radius: 1rem; padding: 12px; margin-top: 10px; min-height: 100px; overflow-y: auto; }
-.insight-item { border-bottom: 1px solid #21262d; padding: 6px 0; font-family: monospace; }
-.watermark { text-align: center; margin-top: 2rem; font-size: 10px; color: #30363d; letter-spacing: 2px; font-weight: bold; }
-.result-box { background: #161b22; border: 1px solid #30363d; border-radius: 1rem; padding: 12px; box-sizing: border-box; }
-.history-table { width: 100%; border-collapse: collapse; }
-.history-table th { color: #8b949e; font-size: 10px; text-transform: uppercase; padding: 8px; border-bottom: 1px solid #30363d; text-align: left; }
-.history-table td { padding: 8px; border-bottom: 1px solid #21262d; font-family: monospace; }
-.btn-batch { background: #30363d; color: #e6edf3; margin-top: 0; width: auto; padding: 0.4rem 1rem; font-size: 10px; }
-.btn-batch:hover { background: #484f58; }
-.border-blue-500 { border-left: 4px solid #3b82f6; }
-.border-yellow-500 { border-left: 4px solid #eab308; }
-.border-green-500 { border-left: 4px solid #22c55e; }
-.text-blue-400 { color: #60a5fa; }
-.text-green-500 { color: #22c55e; }
-.text-gray-500 { color: #6b7280; }
-.text-white { color: #ffffff; }
+    body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; margin: 0; padding: 24px; }
+    .mx-auto { max-width: 1400px; margin-left: auto; margin-right: auto; }
+    .flex { display: flex; }
+    .justify-between { justify-content: space-between; }
+    .items-start { align-items: flex-start; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .flex-col { flex-direction: column; }
+    .flex-1 { flex: 1 1 0%; }
+    .mb-8 { margin-bottom: 2rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mt-1 { margin-top: 0.25rem; }
+    .mt-4 { margin-top: 1rem; }
+    .mt-6 { margin-top: 1.5rem; }
+    .mt-8 { margin-top: 2rem; }
+    .p-3 { padding: 0.75rem; }
+    .p-5 { padding: 1.25rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-4 { gap: 1rem; }
+    .gap-6 { gap: 1.5rem; }
+    .grid { display: grid; }
+    .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    @media (min-width: 768px) { .md-grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .md-grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) { .lg-grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } .lg-col-span-2 { grid-column: span 2 / span 2; } }
+    .text-center { text-align: center; }
+    .uppercase { text-transform: uppercase; }
+    .font-black { font-weight: 900; }
+    .font-bold { font-weight: 700; }
+    .tracking-tighter { letter-spacing: -0.05em; }
+    .tracking-widest { letter-spacing: 0.1em; }
+    .text-4xl { font-size: 2.25rem; }
+    .text-7xl { font-size: 4.5rem; }
+    .text-xs { font-size: 0.75rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .w-full { width: 100%; }
+    .w-48 { width: 12rem; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 1.5rem; transition: 0.3s; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
+    .card:hover { border-color: #2ea44f; }
+    .input-field { background: #0d1117; border: 1px solid #3b434b; color: #2ea44f; padding: 0.4rem 0.8rem; border-radius: 0.75rem; width: 100%; font-weight: bold; outline: none; transition: 0.2s; box-sizing: border-box; }
+    .input-field:focus { border-color: #2ea44f; box-shadow: 0 0 5px #2ea44f44; }
+    .auto-field { background: #1c2128; color: #8b949e; border: 1px dashed #484f58; cursor: not-allowed; }
+    .btn { background: #2ea44f; color: black; font-weight: 800; padding: 0.75rem; border-radius: 1rem; transition: 0.2s; border: none; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; }
+    .btn:hover { background: #3fb950; box-shadow: 0 0 15px #2ea44f; transform: translateY(-1px); }
+    .section-title { color: #2ea44f; font-weight: 900; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 1rem; border-left: 3px solid #2ea44f; padding-left: 8px; }
+    .label-text { font-size: 10px; font-weight: 700; color: #8b949e; text-transform: uppercase; margin-bottom: 4px; display: block; }
+    .brain-box { border: 1px solid #2ea44f44; background: #0d1117; border-radius: 1rem; padding: 12px; margin-top: 10px; min-height: 100px; overflow-y: auto; }
+    .insight-item { border-bottom: 1px solid #21262d; padding: 6px 0; font-family: monospace; }
+    .watermark { text-align: center; margin-top: 2rem; font-size: 10px; color: #30363d; letter-spacing: 2px; font-weight: bold; }
+    .result-box { background: #161b22; border: 1px solid #30363d; border-radius: 1rem; padding: 12px; box-sizing: border-box; }
+    .history-table { width: 100%; border-collapse: collapse; }
+    .history-table th { color: #8b949e; font-size: 10px; text-transform: uppercase; padding: 8px; border-bottom: 1px solid #30363d; text-align: left; }
+    .history-table td { padding: 8px; border-bottom: 1px solid #21262d; font-family: monospace; }
+    .btn-batch { background: #30363d; color: #e6edf3; margin-top: 0; width: auto; padding: 0.4rem 1rem; font-size: 10px; }
+    .btn-batch:hover { background: #484f58; }
+    .border-blue-500 { border-left: 4px solid #3b82f6; }
+    .border-yellow-500 { border-left: 4px solid #eab308; }
+    .border-green-500 { border-left: 4px solid #22c55e; }
+    .text-blue-400 { color: #60a5fa; }
+    .text-green-500 { color: #22c55e; }
+    .text-gray-500 { color: #6b7280; }
+    .text-white { color: #ffffff; }
 </style>
 </head>
 <body>
@@ -76,7 +76,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMac
         <div class="flex-1"></div>
         <div class="text-center flex-1">
             <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span style="color:#2ea44f">Pharma Engine</span></h1>
-            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v1.0 · UNIVERSAL SECTOR LOGIC </p>
+            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v2.0 · BIO-LOGIC INTEGRATED </p>
         </div>
         <div class="flex-1 flex flex-col items-end">
             <div class="w-48 p-3 bg-[#161b22] border border-[#30363d] rounded-xl">
@@ -195,21 +195,41 @@ function universalFailureGates(trackName, affinity, logP, MW, PSA) {
     let successProb = 85; 
     let hardReject = false;
     
-    // Fallback to GENERIC logic for safety calculations if track name is custom
     let track = targetTracks[trackName] || targetTracks["GENERIC"];
 
-    if(MW > 2000) {
-        hardReject = true;
-        gates.push("⛔ BIOLOGIC: Scope Limit");
-        return { multiplier: 0.05, gates: gates, advice: ["💡 MW < 2000 Da limit"], prob: 2, hardReject: true };
+    if (MW > 3000) {
+        return { 
+            multiplier: 0.0, 
+            gates: ["⛔ BIOLOGIC: Fatal Immuno Risk"], 
+            advice: ["💡 Warning: Macro-molecule detected. Potential Cytokine Storm risk. Use Specialist Track."], 
+            prob: 0, 
+            hardReject: true 
+        };
     }
 
-    if (MW > 450 && logP > 3.5 && PSA > 100) { riskMultiplier *= 0.75; gates.push("⚠️ GLOBAL: DILI Cluster Risk"); }
-    if (logP > 4.5 && MW > 400) { riskMultiplier *= 0.8; gates.push("⚠️ GLOBAL: Bioaccumulation Risk"); }
-    
-    if(trackName.includes("GENERIC") && affinity <= -9.0 && logP > 2.0) {
-        riskMultiplier *= 0.45; gates.push("⛔ GENERIC: VIOXX-Pattern");
-        hardReject = true; successProb = 15;
+    if (MW < 250) { 
+        riskMultiplier = 1.0; 
+        hardReject = false; 
+    } else {
+        if ((trackName === "CARDIOVASCULAR" || trackName === "HEPATIC" || trackName === "GENERIC") && Math.abs(affinity) > 7.0 && PSA < 75) {
+            riskMultiplier *= 0.1;
+            gates.push("⛔ TOX: High Chronic Organ Risk Pattern");
+            advice.push("💡 Warning: Low PSA vs Potency suggests off-target accumulation.");
+            hardReject = true; 
+        }
+
+        if (logP > 3.8 && MW > 400 && PSA < 70) {
+            riskMultiplier *= 0.3;
+            gates.push("⛔ METABOLIC: CYP/DILI Cluster Risk");
+            advice.push("💡 Strategy: Increase PSA (>80) to improve metabolic clearance.");
+            hardReject = true;
+        }
+    }
+
+    if (Math.abs(affinity) > 9.0 && PSA > 100) {
+        riskMultiplier *= 1.2;
+        gates.push("✔ TOX: High PSA Polar Shield Active");
+        advice.push("💡 Insight: High PSA offsets toxicity risk of high potency.");
     }
 
     let hERG = 4 + 0.7*logP + 0.015*MW;
@@ -218,12 +238,11 @@ function universalFailureGates(trackName, affinity, logP, MW, PSA) {
         hardReject = true; successProb = 0;
     }
 
-    return { multiplier: Math.max(0.05, riskMultiplier), gates: gates, advice: advice, prob: Math.max(2, successProb), hardReject: hardReject };
+    return { multiplier: Math.max(0.01, riskMultiplier), gates: gates, advice: advice, prob: Math.max(2, successProb), hardReject: hardReject };
 }
 
 function runEngine(manualDisplayName) {
     let currentDropdownValue = document.getElementById('targetType').value;
-    // FIXED: Use the manual name if provided (Batch), otherwise use dropdown
     let displayName = manualDisplayName || currentDropdownValue;
     
     let affinityVal = document.getElementById('affinity').value;
@@ -253,9 +272,9 @@ function runEngine(manualDisplayName) {
     let lipinskiStatus = (mw > 500 && logP > 5) ? "FAILED" : "PASSED";
     document.getElementById('pred-lipinski').innerText = lipinskiStatus;
 
-    // Use dropdown value for pure calculation logic, displayName for the table
     let analysis = universalFailureGates(currentDropdownValue, affinity, logP, mw, psa);
     let finalScore = ((Math.abs(affinity) * 6.2) + (parseFloat(calcBio) * 0.14)) * analysis.multiplier;
+    
     if (analysis.hardReject) finalScore = 0.0;
 
     let rank = "C", color = "#f85149", status = "REJECTED";
@@ -264,7 +283,10 @@ function runEngine(manualDisplayName) {
     else if (finalScore >= 45) { rank = "A"; color = "#2ea44f"; status = "CLINICAL READY"; } 
     else if (finalScore >= 32) { rank = "B"; color = "#f2cc60"; status = "OPTIMIZE"; }
 
-    document.getElementById('logic-log').innerHTML = analysis.gates.map(g => `<div class='insight-item' style='color:#eab308'>${g}</div>`).join('') || "<div style='color:#2ea44f'>✔ GATES CLEAR</div>";
+    const violations = analysis.gates.join(" | ") || "✔ GATES CLEAR";
+    const brainAdvice = analysis.advice.join(" | ") || "Lead analyzed.";
+
+    document.getElementById('logic-log').innerHTML = analysis.gates.map(g => `<div class='insight-item' style='color:${g.includes("✔") ? "#2ea44f" : "#eab308"}'>${g}</div>`).join('') || "<div style='color:#2ea44f'>✔ GATES CLEAR</div>";
     document.getElementById('brain-reasoning').innerHTML = analysis.advice.map(a => `<div class='mb-1' style='color:#3fb950'>${a}</div>`).join('') || "Lead analyzed.";
     document.getElementById('globalScore').innerText = finalScore.toFixed(1);
     document.getElementById('globalRank').innerText = rank;
@@ -274,9 +296,26 @@ function runEngine(manualDisplayName) {
     document.getElementById('approvalStatus').innerText = status;
     document.getElementById('approvalStatus').style.color = color;
 
-    fullHistoryData.push({ Track: displayName, Affinity: affinity, LogP: logP, MW: mw, PSA: psa, Score: finalScore.toFixed(1), Rank: rank });
+    // ఉదయాన అనంత్ గారు, ఇక్కడ మనం ఎక్స్‌పోర్ట్ కోసం అన్ని పారామీటర్లను స్టోర్ చేస్తున్నాము
+    fullHistoryData.push({ 
+        Track: displayName, 
+        Affinity: affinity, 
+        LogP: logP, 
+        MW: mw, 
+        PSA: psa, 
+        Bioavailability: calcBio + "%",
+        Metabolic_Stability: metStabVal + "%",
+        Synthesis_Steps: synthSteps,
+        hERG_Block: hergVal + "%",
+        DILI_Risk: diliVal,
+        Ames_Test: amesVal,
+        Lipinski: lipinskiStatus,
+        Sieve_Violations: violations,
+        Brain_Reasoning: brainAdvice,
+        Final_Score: finalScore.toFixed(1), 
+        Rank: rank 
+    });
 
-    // FIXED: The first cell <td> now always shows the display name passed from CSV or selection
     let row = `<tr><td>${displayName}</td><td>${affinity}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${finalScore.toFixed(1)}</td><td style='color:${color}'>${rank}</td></tr>`;
     document.getElementById('history-log-body').innerHTML = row + document.getElementById('history-log-body').innerHTML;
 }
@@ -291,22 +330,14 @@ function runBatchScan() {
         for (let i = 1; i < rows.length; i++) {
             const cols = rows[i].split(",");
             if (cols.length < 5) continue;
-            
-            // Extract Name (col 0) and Track (col 1)
             let leadName = cols[0].trim();
             let trackFromFile = cols[1].trim().toUpperCase(); 
-            
-            // FIXED: Combine for table display so name is never missing
             let fullDisplayName = leadName + " [" + trackFromFile + "]";
-            
-            // Sync values to logic engine
             document.getElementById('targetType').value = targetTracks[trackFromFile] ? trackFromFile : "GENERIC";
             document.getElementById('affinity').value = parseFloat(cols[2]);
             document.getElementById('logP').value = parseFloat(cols[3]);
             document.getElementById('mw').value = parseFloat(cols[4]);
             document.getElementById('psa').value = parseFloat(cols[5]);
-            
-            // Run engine with the specific display name from CSV
             runEngine(fullDisplayName);
         }
         document.getElementById('batchStatus').innerText = "Batch Complete";
@@ -319,14 +350,17 @@ function exportBatchReport() {
     const headers = Object.keys(fullHistoryData[0]);
     let csvContent = headers.join(",") + "\n";
     fullHistoryData.forEach(item => {
-        let row = headers.map(header => `"${item[header]}"`).join(",");
+        let row = headers.map(header => {
+            let val = item[header] === null ? "" : item[header].toString();
+            return `"${val.replace(/"/g, '""')}"`;
+        }).join(",");
         csvContent += row + "\n";
     });
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `GROW-WIN_Report.csv`;
+    a.download = `GROW-WIN_Pharma_Full_Report.csv`;
     a.click();
 }
 </script>
