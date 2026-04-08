@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · PHARMA ENGINE v1.0</title>
+<title>GROW-WIN · PHARMA LOGIC ENGINE v2.1</title>
 <style>
     body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; margin: 0; padding: 24px; }
     .mx-auto { max-width: 1400px; margin-left: auto; margin-right: auto; }
@@ -76,7 +77,7 @@
         <div class="flex-1"></div>
         <div class="text-center flex-1">
             <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span style="color:#2ea44f">Pharma Engine</span></h1>
-            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v1.0</p>
+            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v2.1 · BIO-LOGIC REFINED </p>
         </div>
         <div class="flex-1 flex flex-col items-end">
             <div class="w-48 p-3 bg-[#161b22] border border-[#30363d] rounded-xl">
@@ -173,12 +174,6 @@
 </div>
 
 <script>
-// ============================================================================
-// GROW-WIN PHARMA ENGINE v3.0
-// PATTERN-BASED ONLY – NO DRUG-SPECIFIC EXACT MATCH RULES
-// Designed to screen ANY new molecule with ~90% accuracy
-// ============================================================================
-
 const targetTracks = { 
     "GENERIC":{hERG:25,MW:600,PSA:140}, "ONCOLOGY":{hERG:30,MW:550,PSA:120}, 
     "ANTI-INFECTIVE":{hERG:25,MW:980,PSA:220}, "IMMUNO":{hERG:20,MW:500,PSA:100}, 
@@ -203,308 +198,47 @@ function universalFailureGates(trackName, affinity, logP, MW, PSA) {
     
     let track = targetTracks[trackName] || targetTracks["GENERIC"];
 
-    // ===== PATTERN 1: BIOLOGICS (MW > 10000) - Auto Reject =====
-    if (MW > 10000) {
-        return { multiplier: 0.0, gates: ["⛔ BIOLOGIC: Large molecule >10kDa"], advice: ["💡 Biologics require specialist evaluation"], prob: 0, hardReject: true };
+    if (MW > 3000) {
+        return { 
+            multiplier: 0.0, 
+            gates: ["⛔ BIOLOGIC: Fatal Immuno Risk"], 
+            advice: ["💡 Warning: Macro-molecule detected. Potential Cytokine Storm risk. Use Specialist Track."], 
+            prob: 0, 
+            hardReject: true 
+        };
     }
 
-    // ===== hERG SAFETY CHECK =====
-    let hERG = 4 + 0.7*logP + 0.015*MW;
-    let hergViolation = (hERG > track.hERG);
-    if (hergViolation) {
-        gates.push("⛔ CRITICAL: hERG violation");
-        successProb = 0;
-    }
+    if (MW < 250) { 
+        riskMultiplier = 1.0; 
+        hardReject = false; 
+    } else {
+        if ((trackName === "CARDIOVASCULAR" || trackName === "HEPATIC" || trackName === "GENERIC") && Math.abs(affinity) > 7.0 && PSA < 75) {
+            riskMultiplier *= 0.1;
+            gates.push("⛔ TOX: High Chronic Organ Risk Pattern");
+            advice.push("💡 Warning: Low PSA vs Potency suggests off-target accumulation.");
+            hardReject = true; 
+        }
 
-    // ===== PATTERN 2: HIGH MW NATURAL PRODUCTS / VITAMINS (Approved) =====
-    // Pattern: MW 400-1500, LogP <5, PSA >80, affinity moderate
-    if ((trackName === "METABOLIC" || trackName === "ENDOCRINE") && MW > 400 && MW < 1500 && logP < 5 && PSA > 80 && Math.abs(affinity) < 9.0) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates = gates.filter(g => !g.includes("hERG violation"));
-        gates.push("✔ Natural product/vitamin pattern - approved");
-        advice.push("ℹ️ High MW natural product - clinically safe");
-        hergViolation = false;
-    }
-    
-    // ===== PATTERN 3: PEPTIDES (MW 1000-5000) - Approved biologics =====
-    if (MW > 1000 && MW < 5000 && (trackName === "ENDOCRINE" || trackName === "IMMUNO" || trackName === "ANTI-INFECTIVE")) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates = gates.filter(g => !g.includes("hERG violation"));
-        gates.push("✔ Peptide therapeutic - approved");
-        advice.push("ℹ️ Peptide - clinically approved");
-        hergViolation = false;
-    }
-    
-    // ===== PATTERN 4: CARDIAC GLYCOSIDES (Digoxin pattern) =====
-    // Pattern: MW 750-850, LogP 1.5-3.0, PSA 140-170, high affinity
-    if (trackName === "CARDIOVASCULAR" && MW > 750 && MW < 850 && logP > 1.5 && logP < 3.0 && PSA > 140 && PSA < 170 && Math.abs(affinity) > 8.0) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates = gates.filter(g => !g.includes("hERG violation"));
-        gates.push("✔ Cardiac glycoside pattern - approved");
-        advice.push("ℹ️ Narrow therapeutic index but approved");
-        hergViolation = false;
-    }
-    
-    // ===== PATTERN 5: AMIODARONE-LIKE (High MW antiarrhythmic) =====
-    // Pattern: MW 600-700, LogP 6.0-6.8, PSA <55, high affinity
-    if (trackName === "CARDIOVASCULAR" && MW > 600 && MW < 700 && logP > 6.0 && logP < 6.8 && PSA < 55 && Math.abs(affinity) > 8.0) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates = gates.filter(g => !g.includes("hERG violation"));
-        gates.push("✔ High-risk antiarrhythmic pattern - approved with monitoring");
-        advice.push("ℹ️ Clinically approved with careful monitoring");
-        hergViolation = false;
-    }
-    
-    // ===== PATTERN 6: PHOTOSENSITIZER (Verteporfin pattern) =====
-    // Pattern: MW 700-750, LogP 5.0-6.0, PSA 140-160, OPHTHALMIC
-    if (trackName === "OPHTHALMIC" && MW > 700 && MW < 750 && logP > 5.0 && logP < 6.0 && PSA > 140 && PSA < 160 && Math.abs(affinity) > 8.0) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates = gates.filter(g => !g.includes("hERG violation"));
-        gates.push("✔ Photosensitizer pattern - approved");
-        advice.push("ℹ️ Approved for ophthalmic use");
-        hergViolation = false;
-    }
-    
-    // ===== PATTERN 7: ANTI-ULCER AGENTS (Sucralfate pattern) =====
-    // Pattern: MW >1500, LogP negative (<0), PSA >400
-    if (trackName === "GASTRO" && MW > 1500 && logP < 0 && PSA > 400) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates = gates.filter(g => !g.includes("hERG violation"));
-        gates.push("✔ Anti-ulcer agent pattern - approved");
-        advice.push("ℹ️ Approved for gastrointestinal use");
-        hergViolation = false;
-    }
-    
-    // ===== PATTERN 8: IMMUNOSUPPRESSANT (Sirolimus pattern) =====
-    // Pattern: MW 900-1000, LogP 4.0-5.0, PSA 170-190, high affinity
-    if (trackName === "IMMUNO" && MW > 900 && MW < 1000 && logP > 4.0 && logP < 5.0 && PSA > 170 && PSA < 190 && Math.abs(affinity) > 9.0) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates = gates.filter(g => !g.includes("hERG violation"));
-        gates.push("✔ Immunosuppressant pattern - approved");
-        advice.push("ℹ️ Approved for transplant rejection");
-        hergViolation = false;
-    }
-
-    // ===== HARD REJECT PATTERNS (WITHDRAWN/FAILED DRUGS) =====
-    
-    // PATTERN A: STATIN MUSCLE TOXICITY (Cerivastatin pattern)
-    // Pattern: MUSCULOSKELETAL, LogP 4.0-4.5, MW 450-470, PSA 95-105, affinity >9.5
-    if (trackName === "MUSCULOSKELETAL" && logP > 4.0 && logP < 4.5 && MW > 450 && MW < 470 && PSA > 95 && PSA < 105 && Math.abs(affinity) > 9.5) {
-        hardReject = true;
-        gates.push("⛔ STATIN: Rhabdomyolysis risk");
-        advice.push("💡 High LogP statin with high potency – muscle toxicity pattern");
-    }
-    
-    // PATTERN B: HEPATOTOXICITY (Troglitazone, Ximelagatran, Pemoline pattern)
-    // Pattern: MW 170-500, LogP 1.0-4.5, PSA 70-140, affinity >7.5
-    if ((trackName === "HEPATIC" || trackName === "HEMATOLOGICAL" || (trackName === "CNS_NEURO" && MW < 200 && PSA > 80)) && 
-        MW > 170 && MW < 500 && logP > 1.0 && logP < 4.5 && PSA > 70 && PSA < 140 && Math.abs(affinity) > 7.5) {
-        hardReject = true;
-        gates.push("⛔ HEPATOTOX: Liver failure risk");
-        advice.push("💡 Hepatotoxic pattern – risk of fatal DILI");
-    }
-    
-    // PATTERN C: PROKINETIC CARDIOTOXICITY (Cisapride pattern)
-    // Pattern: GASTRO, MW 400-500, LogP 3.5-4.5, affinity >8.5, PSA <100
-    if (trackName === "GASTRO" && MW > 400 && MW < 500 && logP > 3.5 && logP < 4.5 && Math.abs(affinity) > 8.5 && PSA < 100) {
-        hardReject = true;
-        gates.push("⛔ CARDIOTOX: Arrhythmia risk");
-        advice.push("💡 Prokinetic-like pattern – fatal cardiac events");
-    }
-    
-    // PATTERN D: GI ISCHEMIA (Alosetron pattern)
-    // Pattern: GASTRO, MW 290-310, PSA <70, affinity >8.0
-    if (trackName === "GASTRO" && MW > 290 && MW < 310 && PSA < 70 && Math.abs(affinity) > 8.0) {
-        hardReject = true;
-        gates.push("⛔ GASTROTOX: Ischemic colitis risk");
-        advice.push("💡 5-HT₃ antagonist pattern – fatal gastrointestinal events");
-    }
-    
-    // PATTERN E: CYTOKINE STORM (TGN1412 pattern)
-    // Pattern: IMMUNO, MW 450-500, PSA 150-180, affinity >11.0
-    if (trackName === "IMMUNO" && MW > 450 && MW < 500 && PSA > 150 && PSA < 180 && Math.abs(affinity) > 11.0) {
-        hardReject = true;
-        gates.push("⛔ IMMUNOTOX: Cytokine storm risk");
-        advice.push("💡 High potency immunomodulator – catastrophic immune activation");
-    }
-    
-    // PATTERN F: ANORECTIC CARDIOTOXICITY (Fen-Phen / Sibutramine pattern)
-    // Pattern: METABOLIC, MW 200-300, PSA <40, LogP >3.0, affinity >8.0
-    if (trackName === "METABOLIC" && MW > 200 && MW < 300 && PSA < 40 && logP > 3.0 && Math.abs(affinity) > 8.0) {
-        hardReject = true;
-        gates.push("⛔ CARDIOTOX: Withdrawn anorectic pattern");
-        advice.push("💡 High potency, low PSA – heart valve damage risk");
-    }
-    
-    // PATTERN G: CARCINOGENIC (Lorcaserin pattern)
-    // Pattern: METABOLIC, MW 190-200, PSA <30, LogP 2.5-3.0, affinity >8.0
-    if (trackName === "METABOLIC" && MW > 190 && MW < 200 && PSA < 30 && logP > 2.5 && logP < 3.0 && Math.abs(affinity) > 8.0) {
-        hardReject = true;
-        gates.push("⛔ CARCINOGENIC: Cancer risk pattern");
-        advice.push("💡 Low MW, very low PSA – associated with cancer risk");
-    }
-    
-    // PATTERN H: FLUOROQUINOLONE QT PROLONGATION (Grepafloxacin pattern)
-    // Pattern: ANTI-INFECTIVE, MW 350-370, LogP 1.5-2.0, PSA 70-75, affinity >8.0
-    if (trackName === "ANTI-INFECTIVE" && MW > 350 && MW < 370 && logP > 1.5 && logP < 2.0 && PSA > 70 && PSA < 75 && Math.abs(affinity) > 8.0) {
-        hardReject = true;
-        gates.push("⛔ CARDIOTOX: QT prolongation (fluoroquinolone pattern)");
-        advice.push("💡 Fluoroquinolone – risk of fatal arrhythmia");
-    }
-
-    // PATTERN I: ANTIHISTAMINE QT PROLONGATION (Astemizole/Terfenadine pattern)
-    // Pattern: CARDIOVASCULAR, MW 450-480, LogP >5.0, PSA <50, affinity >8.5
-    if (trackName === "CARDIOVASCULAR" && MW > 450 && MW < 480 && logP > 5.0 && PSA < 50 && Math.abs(affinity) > 8.5) {
-        hardReject = true;
-        gates.push("⛔ CARDIOTOX: QT prolongation (antihistamine pattern)");
-        advice.push("💡 High LogP, low PSA antihistamine – withdrawn for fatal arrhythmia");
-    }
-    
-    // PATTERN J: CALCIUM CHANNEL INTERACTIONS (Mibefradil pattern)
-    // Pattern: CARDIOVASCULAR, MW 490-500, LogP 4.0-4.5, PSA <60, affinity >9.5
-    if (trackName === "CARDIOVASCULAR" && MW > 490 && MW < 500 && logP > 4.0 && logP < 4.5 && PSA < 60 && Math.abs(affinity) > 9.5) {
-        hardReject = true;
-        gates.push("⛔ DRUG INTERACTIONS: Fatal CYP interactions");
-        advice.push("💡 High potency calcium channel blocker – withdrawn");
-    }
-    
-    // PATTERN K: CANNABINOID PSYCHIATRIC (Rimonabant pattern)
-    // Pattern: NEUROMODULATOR, MW 450-470, LogP >5.5, PSA <35, affinity >9.5
-    if (trackName === "NEUROMODULATOR" && MW > 450 && MW < 470 && logP > 5.5 && PSA < 35 && Math.abs(affinity) > 9.5) {
-        hardReject = true;
-        gates.push("⛔ PSYCHIATRIC: Suicide risk pattern");
-        advice.push("💡 High LogP, very low PSA cannabinoid antagonist – withdrawn");
-    }
-
-    // PATTERN L: WITHDRAWN COX-2 INHIBITORS (Rofecoxib/Valdecoxib pattern)
-    // Pattern: INFLAMMATION, MW 300-370, LogP 3.0-4.0, PSA <70, affinity >8.0
-    if (trackName === "INFLAMMATION" && MW > 300 && MW < 370 && logP > 3.0 && logP < 4.0 && PSA < 70 && Math.abs(affinity) > 8.0) {
-        hardReject = true;
-        gates.push("⛔ CARDIOTOX: Withdrawn COX-2 inhibitor");
-        advice.push("💡 COX-2 inhibitor pattern – withdrawn for CV mortality");
-    }
-    
-    // PATTERN M: Vioxx fallback (GENERIC track)
-    if (trackName === "GENERIC" && MW > 310 && MW < 320 && logP > 3.5 && logP < 3.6 && PSA > 70 && PSA < 75 && Math.abs(affinity) > 8.5) {
-        hardReject = true;
-        gates.push("⛔ CARDIOTOX: Withdrawn COX-2 inhibitor");
-        advice.push("💡 COX-2 inhibitor – withdrawn for CV mortality");
-    }
-    
-    // PATTERN N: WITHDRAWN NSAIDs (Sulindac, Salsalate, Piroxicam, Nabumetone, Etodolac, Diclofenac, Meloxicam, Colchicine)
-    // Pattern: INFLAMMATION, various MW ranges, moderate LogP, moderate affinity
-    if (trackName === "INFLAMMATION" && MW > 220 && MW < 400 && logP > 1.0 && logP < 5.0 && PSA > 40 && PSA < 120 && Math.abs(affinity) > 6.5 && Math.abs(affinity) < 8.0) {
-        // Exclude Celecoxib (approved) - PSA >60 is protective
-        if (PSA < 60 || MW < 370 || MW > 390) {
+        if (logP > 3.8 && MW > 400 && PSA < 70) {
+            riskMultiplier *= 0.3;
+            gates.push("⛔ METABOLIC: CYP/DILI Cluster Risk");
+            advice.push("💡 Strategy: Increase PSA (>80) to improve metabolic clearance.");
             hardReject = true;
-            gates.push("⛔ SAFETY: Restricted/withdrawn NSAID pattern");
-            advice.push("💡 NSAID with safety concerns – restricted or withdrawn in many markets");
         }
     }
 
-    // ===== RESCUE PATTERNS (Approved drug patterns) =====
-    
-    // CNS drugs: low PSA allowed
-    if ((trackName === "CNS_NEURO" || trackName === "CNS_HIGH") && PSA < 75 && Math.abs(affinity) > 7.0 && !hardReject) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates.push("✔ CNS: Low PSA expected for brain penetration");
-        advice.push("ℹ️ Manage via dose titration");
-    }
-    
-    // Beta-blockers pattern
-    if (trackName === "CARDIOVASCULAR" && MW > 250 && MW < 300 && logP > 1.0 && logP < 2.5 && PSA > 50 && PSA < 70 && Math.abs(affinity) > 7.0 && !hardReject) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates.push("✔ Beta-blocker pattern: approved");
-        advice.push("ℹ️ Atenolol/Metoprolol-like – clinically safe");
-    }
-    
-    // Approved statins pattern (except withdrawn cerivastatin)
-    if (trackName === "MUSCULOSKELETAL" && logP > 3.5 && Math.abs(affinity) > 8.0 && !hardReject && !(MW > 450 && MW < 470)) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates.push("⚠️ STATIN: Monitor muscle symptoms");
-        advice.push("ℹ️ Statin – clinically acceptable with monitoring");
-    }
-    
-    // Atypical antipsychotics pattern
-    if (trackName === "IMMUNO" && MW > 300 && MW < 450 && logP > 3.5 && logP < 4.5 && PSA < 60 && Math.abs(affinity) > 7.0 && !hardReject) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates.push("✔ Atypical antipsychotic: approved");
-        advice.push("ℹ️ Clozapine/Olanzapine-like – acceptable with monitoring");
-    }
-    
-    // SSRIs pattern
-    if ((trackName === "IMMUNO" || trackName === "CNS_NEURO") && MW > 300 && MW < 350 && logP > 3.0 && logP < 4.5 && PSA < 60 && Math.abs(affinity) > 7.0 && !hardReject) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates.push("✔ SSRI pattern: approved antidepressant");
-        advice.push("ℹ️ Fluoxetine/Sertraline-like – clinically safe");
-    }
-    
-    // Ibuprofen-like NSAID pattern
-    if (trackName === "GENERIC" && MW > 200 && MW < 210 && logP > 3.8 && logP < 4.0 && PSA < 40 && Math.abs(affinity) > 7.0 && !hardReject) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates.push("✔ NSAID pattern: approved");
-        advice.push("ℹ️ Ibuprofen-like – widely approved");
-    }
-    
-    // Ciprofloxacin-like fluoroquinolone pattern
-    if (trackName === "ANTI-INFECTIVE" && MW > 300 && MW < 350 && logP > 0 && logP < 0.5 && PSA > 70 && PSA < 80 && Math.abs(affinity) > 8.0 && !hardReject) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates.push("✔ Fluoroquinolone: approved");
-        advice.push("ℹ️ Ciprofloxacin-like – acceptable");
-    }
-    
-    // Maraviroc-like HIV entry inhibitor pattern
-    if (trackName === "ANTI-INFECTIVE" && MW > 500 && MW < 520 && logP > 2.5 && logP < 2.6 && PSA > 70 && PSA < 80 && Math.abs(affinity) > 9.5 && !hardReject) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates.push("✔ HIV entry inhibitor: approved");
-        advice.push("ℹ️ Maraviroc-like – clinically safe");
-    }
-    
-    // Fruquintinib-like kinase inhibitor pattern
-    if (trackName === "ONCOLOGY" && MW > 390 && MW < 400 && logP > 2.5 && logP < 3.0 && PSA > 70 && PSA < 80 && Math.abs(affinity) > 9.0 && !hardReject) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates.push("✔ Kinase inhibitor: approved oncology drug");
-        advice.push("ℹ️ Fruquintinib-like – acceptable safety in oncology");
-    }
-    
-    // COX-2 inhibitor approval pattern (Celecoxib-like – high PSA protective)
-    if (trackName === "INFLAMMATION" && MW > 370 && MW < 400 && logP > 3.0 && logP < 4.0 && PSA > 60 && PSA < 80 && Math.abs(affinity) > 8.0 && !hardReject) {
-        hardReject = false;
-        riskMultiplier = 1.0;
-        gates = gates.filter(g => !g.includes("hERG violation"));
-        gates.push("✔ COX-2 inhibitor: approved pattern");
-        advice.push("ℹ️ High PSA protective – approved despite CV warning");
-        hergViolation = false;
+    if (Math.abs(affinity) > 9.0 && PSA > 100) {
+        riskMultiplier *= 1.2;
+        gates.push("✔ TOX: High PSA Polar Shield Active");
+        advice.push("💡 Insight: High PSA offsets toxicity risk of high potency.");
     }
 
-    // High PSA offset for high potency drugs
-    if (Math.abs(affinity) > 9.0 && PSA > 100 && !hardReject) {
-        riskMultiplier *= 1.2;
-        gates.push("✔ High PSA Polar Shield Active");
-        advice.push("💡 High PSA offsets high potency toxicity");
+    let hERG = 4 + 0.7*logP + 0.015*MW;
+    if(hERG > track.hERG) {
+        gates.push("⛔ CRITICAL: hERG violation");
+        hardReject = true; successProb = 0;
     }
-    
-    // Apply hERG violation only if not overridden
-    if (hergViolation && !hardReject) {
-        hardReject = true;
-    }
-    
+
     return { multiplier: Math.max(0.01, riskMultiplier), gates: gates, advice: advice, prob: Math.max(2, successProb), hardReject: hardReject };
 }
 
@@ -520,33 +254,59 @@ function runEngine(manualDisplayName) {
     if (affinityVal === "" || mwVal === "" || logPVal === "" || psaVal === "") return;
 
     let affinity = parseFloat(affinityVal), mw = parseFloat(mwVal), logP = parseFloat(logPVal), psa = parseFloat(psaVal);
-    
     let calcBio = Math.min(100, Math.max(20, 50 + (-affinity * 3) - (logP * 2))).toFixed(1);
     let metStabVal = Math.min(100, Math.max(20, 70 - (logP * 3) + (mw / 15))).toFixed(1);
     let synthSteps = Math.floor((mw / 100) + Math.abs(logP));
-    let hergVal = (4 + (0.7 * logP) + (0.015 * mw)).toFixed(1);
-    let diliVal = (logP > 4.5 || mw > 600) ? "HIGH" : "LOW";
-    let amesVal = (mw > 1000 || logP > 6.0) ? "POS" : "NEG";
-    let lipinskiStatus = (mw > 500 && logP > 5) ? "FAILED" : "PASSED";
 
     document.getElementById('bio').value = calcBio + "%";
     document.getElementById('metStab').value = metStabVal + "%";
     document.getElementById('steps').value = synthSteps;
+    
+    let hergVal = (4 + (0.7 * logP) + (0.015 * mw)).toFixed(1);
+    let diliVal = (logP > 4.5 || mw > 600) ? "HIGH" : "LOW";
+    let amesVal = (mw > 1000 || logP > 6.0) ? "POS" : "NEG";
+    
     document.getElementById('pred-herg').innerText = hergVal + "%";
     document.getElementById('pred-dili').innerText = diliVal;
     document.getElementById('pred-ames').innerText = amesVal;
+    
+    let lipinskiStatus = (mw > 500 && logP > 5) ? "FAILED" : "PASSED";
     document.getElementById('pred-lipinski').innerText = lipinskiStatus;
 
     let analysis = universalFailureGates(currentDropdownValue, affinity, logP, mw, psa);
     let finalScore = ((Math.abs(affinity) * 6.2) + (parseFloat(calcBio) * 0.14)) * analysis.multiplier;
     
+    // అనంత్, ఇక్కడ v2.1 కి సంబంధించిన కీలకమైన Safety Override ని యాడ్ చేశాను:
+    if (diliVal === "HIGH" || amesVal === "POS") {
+        finalScore *= 0.7; // స్కోర్ ని 30% తగ్గించు
+        analysis.gates.push("⚠️ WARNING: Pre-clinical Safety Signal (DILI/Ames)");
+        analysis.advice.push("💡 Strategy: High risk detected. Validation required before R&D.");
+    }
+
     if (analysis.hardReject) finalScore = 0.0;
 
     let rank = "C", color = "#f85149", status = "REJECTED";
-    if (analysis.hardReject) { rank = "F"; color = "#f85149"; status = "REJECTED (SAFETY)"; } 
-    else if (finalScore >= 62) { rank = "A+"; color = "#2ea44f"; status = "R&D READY (ELITE)"; } 
-    else if (finalScore >= 45) { rank = "A"; color = "#2ea44f"; status = "CLINICAL READY"; } 
-    else if (finalScore >= 32) { rank = "B"; color = "#f2cc60"; status = "OPTIMIZE"; }
+    if (analysis.hardReject) { 
+        rank = "F"; color = "#f85149"; status = "REJECTED (SAFETY)"; 
+    } 
+    else if (finalScore >= 62) { 
+        rank = "A+"; color = "#2ea44f"; status = "R&D READY (ELITE)"; 
+        
+        // Safety Override: ఒకవేళ DILI/Ames పాజిటివ్ అయితే A+ రాకుండా అడ్డుకోవడం
+        if (diliVal === "HIGH" || amesVal === "POS") {
+            rank = "A"; color = "#f2cc60"; status = "PROCEED WITH CAUTION";
+        }
+    } 
+    else if (finalScore >= 45) { 
+        rank = "A"; color = (analysis.gates.length > 0) ? "#f2cc60" : "#2ea44f"; 
+        status = (analysis.gates.length > 0) ? "PROCEED WITH CAUTION" : "CLINICAL READY"; 
+    } 
+    else if (finalScore >= 32) { 
+        rank = "B"; color = "#f2cc60"; status = "OPTIMIZE"; 
+    }
+
+    const violations = analysis.gates.join(" | ") || "✔ GATES CLEAR";
+    const brainAdvice = analysis.advice.join(" | ") || "Lead analyzed.";
 
     document.getElementById('logic-log').innerHTML = analysis.gates.map(g => `<div class='insight-item' style='color:${g.includes("✔") ? "#2ea44f" : "#eab308"}'>${g}</div>`).join('') || "<div style='color:#2ea44f'>✔ GATES CLEAR</div>";
     document.getElementById('brain-reasoning').innerHTML = analysis.advice.map(a => `<div class='mb-1' style='color:#3fb950'>${a}</div>`).join('') || "Lead analyzed.";
@@ -558,8 +318,26 @@ function runEngine(manualDisplayName) {
     document.getElementById('approvalStatus').innerText = status;
     document.getElementById('approvalStatus').style.color = color;
 
-    fullHistoryData.push({ Track: displayName, Affinity: affinity, LogP: logP, MW: mw, PSA: psa, Final_Score: finalScore.toFixed(1), Rank: rank });
-    let row = `<tr><td style='color:#e6edf3'>${displayName}</td><td style='color:#e6edf3'>${affinity}</td><td style='color:#e6edf3'>${logP}</td><td style='color:#e6edf3'>${mw}</td><td style='color:#e6edf3'>${psa}</td><td style='color:#e6edf3'>${finalScore.toFixed(1)}</td><td style='color:${color}'>${rank}</td></tr>`;
+    fullHistoryData.push({ 
+        Track: displayName, 
+        Affinity: affinity, 
+        LogP: logP, 
+        MW: mw, 
+        PSA: psa, 
+        Bioavailability: calcBio + "%",
+        Metabolic_Stability: metStabVal + "%",
+        Synthesis_Steps: synthSteps,
+        hERG_Block: hergVal + "%",
+        DILI_Risk: diliVal,
+        Ames_Test: amesVal,
+        Lipinski: lipinskiStatus,
+        Sieve_Violations: violations,
+        Brain_Reasoning: brainAdvice,
+        Final_Score: finalScore.toFixed(1), 
+        Rank: rank 
+    });
+
+    let row = `<tr><td>${displayName}</td><td>${affinity}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${finalScore.toFixed(1)}</td><td style='color:${color}'>${rank}</td></tr>`;
     document.getElementById('history-log-body').innerHTML = row + document.getElementById('history-log-body').innerHTML;
 }
 
@@ -570,13 +348,11 @@ function runBatchScan() {
     const reader = new FileReader();
     reader.onload = function(e) {
         const rows = e.target.result.split("\n");
-        fullHistoryData = [];
-        document.getElementById('history-log-body').innerHTML = "";
         for (let i = 1; i < rows.length; i++) {
             const cols = rows[i].split(",");
             if (cols.length < 5) continue;
             let leadName = cols[0].trim();
-            let trackFromFile = cols[1].trim().toUpperCase();
+            let trackFromFile = cols[1].trim().toUpperCase(); 
             let fullDisplayName = leadName + " [" + trackFromFile + "]";
             document.getElementById('targetType').value = targetTracks[trackFromFile] ? trackFromFile : "GENERIC";
             document.getElementById('affinity').value = parseFloat(cols[2]);
@@ -585,7 +361,7 @@ function runBatchScan() {
             document.getElementById('psa').value = parseFloat(cols[5]);
             runEngine(fullDisplayName);
         }
-        document.getElementById('batchStatus').innerText = "Batch Complete (" + fullHistoryData.length + " compounds)";
+        document.getElementById('batchStatus').innerText = "Batch Complete";
     };
     reader.readAsText(file);
 }
@@ -594,10 +370,19 @@ function exportBatchReport() {
     if(fullHistoryData.length === 0) return;
     const headers = Object.keys(fullHistoryData[0]);
     let csvContent = headers.join(",") + "\n";
-    fullHistoryData.forEach(item => { csvContent += headers.map(h => `"${item[h]}"`).join(",") + "\n"; });
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    fullHistoryData.forEach(item => {
+        let row = headers.map(header => {
+            let val = item[header] === null ? "" : item[header].toString();
+            return `"${val.replace(/"/g, '""')}"`;
+        }).join(",");
+        csvContent += row + "\n";
+    });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = `GROW-WIN_Pharma_Report.csv`; a.click();
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `GROW-WIN_Pharma_Full_Report_v2.1.csv`;
+    a.click();
 }
 </script>
 </body>
