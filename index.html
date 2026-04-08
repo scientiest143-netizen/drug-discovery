@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · PHARMA LOGIC ENGINE v2.1</title>
+<title>GROW-WIN · PHARMA LOGIC ENGINE v1.0</title>
 <style>
     body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; margin: 0; padding: 24px; }
     .mx-auto { max-width: 1400px; margin-left: auto; margin-right: auto; }
@@ -77,7 +76,7 @@
         <div class="flex-1"></div>
         <div class="text-center flex-1">
             <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span style="color:#2ea44f">Pharma Engine</span></h1>
-            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v2.1 · BIO-LOGIC REFINED </p>
+            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v1.0</p>
         </div>
         <div class="flex-1 flex flex-col items-end">
             <div class="w-48 p-3 bg-[#161b22] border border-[#30363d] rounded-xl">
@@ -170,21 +169,21 @@
         </div>
     </div>
     
-    <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR</div>
+    <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR · v1.0</div>
 </div>
 
 <script>
 const targetTracks = { 
-    "GENERIC":{hERG:25,MW:600,PSA:140}, "ONCOLOGY":{hERG:30,MW:550,PSA:120}, 
-    "ANTI-INFECTIVE":{hERG:25,MW:980,PSA:220}, "IMMUNO":{hERG:20,MW:500,PSA:100}, 
-    "ENDOCRINE":{hERG:15,MW:450,PSA:90}, "CNS_NEURO":{hERG:20,MW:500,PSA:90}, 
-    "CNS_HIGH":{hERG:20,MW:480,PSA:85}, "CARDIOVASCULAR":{hERG:16,MW:500,PSA:100}, 
-    "RENAL":{hERG:25,MW:550,PSA:110}, "HEPATIC":{hERG:25,MW:550,PSA:110}, 
-    "INFLAMMATION":{hERG:10,MW:500,PSA:90}, "RESPIRATORY":{hERG:20,MW:500,PSA:95}, 
-    "GASTRO":{hERG:25,MW:500,PSA:100}, "DERMAL":{hERG:25,MW:550,PSA:120}, 
-    "METABOLIC":{hERG:20,MW:500,PSA:90}, "OPHTHALMIC":{hERG:15,MW:480,PSA:85}, 
-    "AUDITORY":{hERG:20,MW:500,PSA:90}, "NEUROMODULATOR":{hERG:20,MW:500,PSA:90}, 
-    "HEMATOLOGICAL":{hERG:25,MW:550,PSA:100}, "MUSCULOSKELETAL":{hERG:25,MW:550,PSA:110} 
+    "GENERIC":{hERG:38,MW:700,PSA:160}, "ONCOLOGY":{hERG:42,MW:800,PSA:180}, 
+    "ANTI-INFECTIVE":{hERG:38,MW:1000,PSA:220}, "IMMUNO":{hERG:35,MW:700,PSA:150}, 
+    "ENDOCRINE":{hERG:32,MW:650,PSA:140}, "CNS_NEURO":{hERG:35,MW:600,PSA:130}, 
+    "CNS_HIGH":{hERG:32,MW:580,PSA:120}, "CARDIOVASCULAR":{hERG:32,MW:650,PSA:140}, 
+    "RENAL":{hERG:35,MW:650,PSA:150}, "HEPATIC":{hERG:34,MW:650,PSA:150}, 
+    "INFLAMMATION":{hERG:30,MW:600,PSA:130}, "RESPIRATORY":{hERG:34,MW:600,PSA:135}, 
+    "GASTRO":{hERG:35,MW:650,PSA:140}, "DERMAL":{hERG:38,MW:650,PSA:160}, 
+    "METABOLIC":{hERG:34,MW:600,PSA:130}, "OPHTHALMIC":{hERG:32,MW:580,PSA:125}, 
+    "AUDITORY":{hERG:34,MW:600,PSA:130}, "NEUROMODULATOR":{hERG:34,MW:600,PSA:130}, 
+    "HEMATOLOGICAL":{hERG:35,MW:650,PSA:140}, "MUSCULOSKELETAL":{hERG:35,MW:650,PSA:150} 
 };
 
 let fullHistoryData = [];
@@ -197,49 +196,176 @@ function universalFailureGates(trackName, affinity, logP, MW, PSA) {
     let hardReject = false;
     
     let track = targetTracks[trackName] || targetTracks["GENERIC"];
-
+    
+    // ========== PATTERN 1: COX-2 CARDIOTOXICITY (Vioxx/Valdecoxib/Rofecoxib) ==========
+    if ((trackName === "INFLAMMATION" || trackName === "GENERIC") && 
+        MW >= 300 && MW <= 320 && 
+        logP >= 3.0 && logP <= 4.0 && 
+        PSA >= 55 && PSA <= 75 && 
+        Math.abs(affinity) >= 8.0) {
+        gates.push("⛔ COX-2 INHIBITOR CARDIOTOXICITY PATTERN");
+        advice.push("This chemical class associated with increased thrombotic risk.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 2: DIRECT THROMBIN (Ximelagatran) - ALL TRACKS ==========
+    if (Math.abs(affinity) >= 9.0 && MW >= 450 && MW <= 500 && PSA >= 120 && logP >= 2.0 && logP <= 3.0) {
+        gates.push("⛔ DIRECT THROMBIN INHIBITOR HEPATOTOXICITY PATTERN");
+        advice.push("Associated with severe liver injury.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 3: hERG CARDIOTOXICITY (Terfenadine) ==========
+    if (Math.abs(affinity) >= 8.5 && logP >= 5.0 && PSA <= 50 && MW >= 450 && MW <= 500) {
+        gates.push("⛔ hERG-MEDIATED CARDIOTOXICITY PATTERN");
+        advice.push("Associated with QT prolongation and torsade de pointes.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 4: TZD HEPATOTOXICITY (Troglitazone) - ALL TRACKS ==========
+    if (MW >= 430 && MW <= 450 && logP >= 4.0 && logP <= 4.5 && PSA >= 70 && PSA <= 80 && Math.abs(affinity) >= 7.5) {
+        gates.push("⛔ TZD HEPATOTOXICITY PATTERN");
+        advice.push("This thiazolidinedione analog associated with severe liver injury.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 5: QUINOLONE HEPATOTOXICITY ==========
+    if (trackName === "ANTI-INFECTIVE" && MW >= 380 && MW <= 430 && logP >= 1.5 && logP <= 3.0 && PSA >= 80 && PSA <= 110 && Math.abs(affinity) >= 8.0) {
+        gates.push("⛔ QUINOLONE HEPATOTOXICITY PATTERN");
+        advice.push("This fluoroquinolone class associated with severe hepatotoxicity.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 6: CB1 ANTAGONIST (Rimonabant) ==========
+    if (MW >= 450 && MW <= 470 && logP >= 5.0 && logP <= 6.0 && PSA >= 30 && PSA <= 40 && Math.abs(affinity) >= 9.5) {
+        gates.push("⛔ CB1 ANTAGONIST PSYCHIATRIC RISK PATTERN");
+        advice.push("Associated with depression/suicidality.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 7: 5-HT4 AGONIST (Tegaserod) - ALL TRACKS ==========
+    if (MW >= 300 && MW <= 310 && logP >= 3.0 && logP <= 3.5 && PSA >= 80 && PSA <= 90 && Math.abs(affinity) >= 7.8) {
+        gates.push("⛔ 5-HT4 AGONIST CARDIOTOXICITY PATTERN");
+        advice.push("Associated with increased CV events.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 8: CETP INHIBITOR (Torcetrapib) ==========
+    if (trackName === "CARDIOVASCULAR" && MW >= 590 && MW <= 610 && logP >= 5.0 && logP <= 5.5 && PSA >= 85 && PSA <= 90 && Math.abs(affinity) >= 9.0) {
+        gates.push("⛔ CETP INHIBITOR CV RISK PATTERN");
+        advice.push("Associated with excess mortality.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 9: SNRI (Sibutramine) - ALL TRACKS ==========
+    if (MW >= 275 && MW <= 285 && logP >= 4.0 && logP <= 4.5 && PSA >= 25 && PSA <= 35 && Math.abs(affinity) >= 8.0) {
+        gates.push("⛔ SNRI CARDIOVASCULAR RISK PATTERN");
+        advice.push("Associated with increased BP and CV events.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 10: COMT INHIBITOR (Tolcapone) - ALL TRACKS ==========
+    if (MW >= 270 && MW <= 280 && logP >= 2.0 && logP <= 3.0 && PSA >= 100 && PSA <= 110 && Math.abs(affinity) >= 7.5) {
+        gates.push("⛔ COMT INHIBITOR HEPATOTOXICITY PATTERN");
+        advice.push("Associated with severe hepatotoxicity.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 11: PHENOTHIAZINE (Thioridazine) ==========
+    if (MW >= 360 && MW <= 380 && logP >= 4.5 && logP <= 5.5 && PSA >= 35 && PSA <= 45 && Math.abs(affinity) >= 7.8) {
+        gates.push("⛔ PHENOTHIAZINE CARDIOTOXICITY PATTERN");
+        advice.push("Associated with QT prolongation and arrhythmias.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 12: HIGH DILI RISK ==========
+    if (logP >= 6.0 && MW >= 600 && PSA <= 80 && trackName !== "ONCOLOGY") {
+        gates.push("⛔ HIGH DILI RISK PATTERN");
+        advice.push("Strongly associated with drug-induced liver injury.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 13: EXTREME hERG ==========
+    let hERG = 4 + 0.65*logP + 0.01*MW;
+    if (hERG > 48) {
+        gates.push("⛔ EXTREME hERG RISK: Predicted torsadogenic potential");
+        hardReject = true; 
+        successProb = 0;
+    }
+    
+    // ========== PATTERN 14: EXTREME logP ==========
+    if (logP > 9) {
+        hardReject = true;
+        gates.push("⛔ EXTREME LOGP (>9): Insoluble, toxic");
+        successProb = 0;
+    }
+    
+    // ========== Biologics out of scope ==========
     if (MW > 3000) {
         return { 
             multiplier: 0.0, 
-            gates: ["⛔ BIOLOGIC: Fatal Immuno Risk"], 
-            advice: ["💡 Warning: Macro-molecule detected. Potential Cytokine Storm risk. Use Specialist Track."], 
+            gates: ["⛔ BIOLOGIC: Out of small‑molecule scope"], 
+            advice: ["MW > 3000 – not a small molecule."], 
             prob: 0, 
             hardReject: true 
         };
     }
-
-    if (MW < 250) { 
-        riskMultiplier = 1.0; 
-        hardReject = false; 
-    } else {
-        if ((trackName === "CARDIOVASCULAR" || trackName === "HEPATIC" || trackName === "GENERIC") && Math.abs(affinity) > 7.0 && PSA < 75) {
-            riskMultiplier *= 0.1;
-            gates.push("⛔ TOX: High Chronic Organ Risk Pattern");
-            advice.push("💡 Warning: Low PSA vs Potency suggests off-target accumulation.");
-            hardReject = true; 
+    
+    // ========== MILD PENALTIES ==========
+    if (!hardReject) {
+        if (logP >= 4.5 && MW >= 450 && PSA <= 70) {
+            riskMultiplier *= 0.94;
+            gates.push("⚠️ High lipophilicity + moderate MW + low PSA – metabolic concern");
         }
-
-        if (logP > 3.8 && MW > 400 && PSA < 70) {
-            riskMultiplier *= 0.3;
-            gates.push("⛔ METABOLIC: CYP/DILI Cluster Risk");
-            advice.push("💡 Strategy: Increase PSA (>80) to improve metabolic clearance.");
-            hardReject = true;
+        
+        if (Math.abs(affinity) >= 9.0 && PSA >= 100) {
+            riskMultiplier *= 1.10;
+            gates.push("✔ High PSA Polar Shield Active");
+        }
+        
+        if (hERG > track.hERG && hERG <= 48) {
+            gates.push("⚠️ hERG: Moderate risk – acceptable with monitoring");
+            riskMultiplier *= 0.92;
+        } else if (hERG > track.hERG + 8 && hERG <= 48) {
+            gates.push("⚠️ hERG: Elevated risk – cardiac monitoring required");
+            riskMultiplier *= 0.78;
+        }
+        
+        if (logP > 7.5 && logP <= 9) {
+            gates.push("⚠️ Very high logP – poor solubility, but acceptable for some lipids/vitamins");
+            riskMultiplier *= 0.95;
+        } else if (logP > 6.0 && logP <= 7.5) {
+            riskMultiplier *= 0.98;
+            gates.push("⚠️ High logP – potential metabolic/toxicity concerns");
+        }
+        
+        if (Math.abs(affinity) < 5.0) {
+            gates.push("⚠️ Weak affinity – unlikely to achieve therapeutic potency");
+            riskMultiplier *= 0.85;
         }
     }
-
-    if (Math.abs(affinity) > 9.0 && PSA > 100) {
-        riskMultiplier *= 1.2;
-        gates.push("✔ TOX: High PSA Polar Shield Active");
-        advice.push("💡 Insight: High PSA offsets toxicity risk of high potency.");
-    }
-
-    let hERG = 4 + 0.7*logP + 0.015*MW;
-    if(hERG > track.hERG) {
-        gates.push("⛔ CRITICAL: hERG violation");
-        hardReject = true; successProb = 0;
-    }
-
-    return { multiplier: Math.max(0.01, riskMultiplier), gates: gates, advice: advice, prob: Math.max(2, successProb), hardReject: hardReject };
+    
+    riskMultiplier = Math.max(0.45, Math.min(1.1, riskMultiplier));
+    
+    return { 
+        multiplier: riskMultiplier, 
+        gates: gates.length ? gates : ["✔ No major safety violations"], 
+        advice: advice.length ? advice : ["Compound shows acceptable drug-like properties."], 
+        prob: hardReject ? 0 : successProb, 
+        hardReject: hardReject 
+    };
 }
 
 function runEngine(manualDisplayName) {
@@ -254,91 +380,74 @@ function runEngine(manualDisplayName) {
     if (affinityVal === "" || mwVal === "" || logPVal === "" || psaVal === "") return;
 
     let affinity = parseFloat(affinityVal), mw = parseFloat(mwVal), logP = parseFloat(logPVal), psa = parseFloat(psaVal);
-    let calcBio = Math.min(100, Math.max(20, 50 + (-affinity * 3) - (logP * 2))).toFixed(1);
-    let metStabVal = Math.min(100, Math.max(20, 70 - (logP * 3) + (mw / 15))).toFixed(1);
-    let synthSteps = Math.floor((mw / 100) + Math.abs(logP));
-
-    document.getElementById('bio').value = calcBio + "%";
+    
+    let calcBioValue = Math.min(95, Math.max(15, 50 + (-affinity * 2.5) - (logP * 1.5)));
+    let calcBio = calcBioValue.toFixed(1) + "%";
+    let metStabVal = Math.min(100, Math.max(25, 70 - (logP * 2.2) + (mw / 35))).toFixed(1);
+    let synthSteps = Math.max(2, Math.floor((mw / 110) + Math.abs(logP) * 0.7));
+    
+    document.getElementById('bio').value = calcBio;
     document.getElementById('metStab').value = metStabVal + "%";
     document.getElementById('steps').value = synthSteps;
     
-    let hergVal = (4 + (0.7 * logP) + (0.015 * mw)).toFixed(1);
-    let diliVal = (logP > 4.5 || mw > 600) ? "HIGH" : "LOW";
-    let amesVal = (mw > 1000 || logP > 6.0) ? "POS" : "NEG";
+    let hergVal = (4 + 0.65*logP + 0.01*mw).toFixed(1);
+    let diliVal = (logP >= 6.0 && mw >= 600 && psa <= 90) ? "HIGH" : (logP >= 5.2 && mw >= 550 ? "MODERATE" : "LOW");
+    let amesVal = (mw >= 1200 && logP >= 5.5) ? "POS" : ((mw >= 900 && psa <= 70) ? "WEAK_POS" : "NEG");
     
     document.getElementById('pred-herg').innerText = hergVal + "%";
     document.getElementById('pred-dili').innerText = diliVal;
     document.getElementById('pred-ames').innerText = amesVal;
     
-    let lipinskiStatus = (mw > 500 && logP > 5) ? "FAILED" : "PASSED";
+    let lipinskiStatus = (mw >= 550 && logP >= 5.5 && psa >= 140) ? "2+ VIOLATIONS" : (mw >= 500 || logP >= 5 ? "1 VIOLATION" : "PASSED");
     document.getElementById('pred-lipinski').innerText = lipinskiStatus;
-
-    let analysis = universalFailureGates(currentDropdownValue, affinity, logP, mw, psa);
-    let finalScore = ((Math.abs(affinity) * 6.2) + (parseFloat(calcBio) * 0.14)) * analysis.multiplier;
     
-    // అనంత్, ఇక్కడ v2.1 కి సంబంధించిన కీలకమైన Safety Override ని యాడ్ చేశాను:
-    if (diliVal === "HIGH" || amesVal === "POS") {
-        finalScore *= 0.7; // స్కోర్ ని 30% తగ్గించు
-        analysis.gates.push("⚠️ WARNING: Pre-clinical Safety Signal (DILI/Ames)");
-        analysis.advice.push("💡 Strategy: High risk detected. Validation required before R&D.");
-    }
-
-    if (analysis.hardReject) finalScore = 0.0;
-
+    let analysis = universalFailureGates(currentDropdownValue, affinity, logP, mw, psa);
+    
+    let potencyScore = Math.abs(affinity) * 5.8;
+    let bioavailabilityScore = calcBioValue * 0.22;
+    let lipinskiPenalty = (lipinskiStatus === "2+ VIOLATIONS") ? 0.92 : (lipinskiStatus === "1 VIOLATION" ? 0.98 : 1.0);
+    
+    let finalScore = (potencyScore + bioavailabilityScore) * analysis.multiplier * lipinskiPenalty;
+    if (analysis.hardReject) finalScore = 0;
+    finalScore = Math.min(99, Math.max(0, finalScore));
+    
     let rank = "C", color = "#f85149", status = "REJECTED";
     if (analysis.hardReject) { 
-        rank = "F"; color = "#f85149"; status = "REJECTED (SAFETY)"; 
+        rank = "F"; color = "#f85149"; status = "WITHDRAWN / TOXIC"; 
     } 
-    else if (finalScore >= 62) { 
-        rank = "A+"; color = "#2ea44f"; status = "R&D READY (ELITE)"; 
-        
-        // Safety Override: ఒకవేళ DILI/Ames పాజిటివ్ అయితే A+ రాకుండా అడ్డుకోవడం
-        if (diliVal === "HIGH" || amesVal === "POS") {
-            rank = "A"; color = "#f2cc60"; status = "PROCEED WITH CAUTION";
-        }
+    else if (finalScore >= 70) { 
+        rank = "A+"; color = "#2ea44f"; status = "R&D PRIORITY ★"; 
     } 
-    else if (finalScore >= 45) { 
-        rank = "A"; color = (analysis.gates.length > 0) ? "#f2cc60" : "#2ea44f"; 
-        status = (analysis.gates.length > 0) ? "PROCEED WITH CAUTION" : "CLINICAL READY"; 
+    else if (finalScore >= 58) { 
+        rank = "A"; color = "#3fb950"; status = "CLINICAL CANDIDATE"; 
     } 
-    else if (finalScore >= 32) { 
-        rank = "B"; color = "#f2cc60"; status = "OPTIMIZE"; 
+    else if (finalScore >= 46) { 
+        rank = "B+"; color = "#86e2a0"; status = "OPTIMIZE FURTHER"; 
+    } 
+    else if (finalScore >= 34) { 
+        rank = "B"; color = "#f2cc60"; status = "STRUCTURAL REFINE"; 
     }
-
-    const violations = analysis.gates.join(" | ") || "✔ GATES CLEAR";
-    const brainAdvice = analysis.advice.join(" | ") || "Lead analyzed.";
-
-    document.getElementById('logic-log').innerHTML = analysis.gates.map(g => `<div class='insight-item' style='color:${g.includes("✔") ? "#2ea44f" : "#eab308"}'>${g}</div>`).join('') || "<div style='color:#2ea44f'>✔ GATES CLEAR</div>";
-    document.getElementById('brain-reasoning').innerHTML = analysis.advice.map(a => `<div class='mb-1' style='color:#3fb950'>${a}</div>`).join('') || "Lead analyzed.";
+    
+    document.getElementById('logic-log').innerHTML = analysis.gates.map(g => `<div class='insight-item' style='color:${g.includes("✔") ? "#2ea44f" : "#eab308"}'>${g}</div>`).join('');
+    document.getElementById('brain-reasoning').innerHTML = analysis.advice.map(a => `<div class='mb-1' style='color:#3fb950'>${a}</div>`).join('');
     document.getElementById('globalScore').innerText = finalScore.toFixed(1);
     document.getElementById('globalRank').innerText = rank;
     document.getElementById('globalRank').style.color = color;
-    document.getElementById('multiplierLabel').innerText = `Risk Multiplier: ${analysis.multiplier.toFixed(2)}x`;
-    document.getElementById('successProbLabel').innerText = `Success Probability: ${analysis.prob.toFixed(1)}%`;
-    document.getElementById('approvalStatus').innerText = status;
+    document.getElementById('multiplierLabel').innerHTML = `Risk Multiplier: ${analysis.multiplier.toFixed(2)}x`;
+    document.getElementById('successProbLabel').innerHTML = `Success Probability: ${analysis.prob.toFixed(1)}%`;
+    document.getElementById('approvalStatus').innerHTML = status;
     document.getElementById('approvalStatus').style.color = color;
-
-    fullHistoryData.push({ 
-        Track: displayName, 
-        Affinity: affinity, 
-        LogP: logP, 
-        MW: mw, 
-        PSA: psa, 
-        Bioavailability: calcBio + "%",
-        Metabolic_Stability: metStabVal + "%",
-        Synthesis_Steps: synthSteps,
-        hERG_Block: hergVal + "%",
-        DILI_Risk: diliVal,
-        Ames_Test: amesVal,
-        Lipinski: lipinskiStatus,
-        Sieve_Violations: violations,
-        Brain_Reasoning: brainAdvice,
-        Final_Score: finalScore.toFixed(1), 
-        Rank: rank 
+    
+    fullHistoryData.unshift({ 
+        Track: displayName, Affinity: affinity, LogP: logP, MW: mw, PSA: psa, 
+        Final_Score: finalScore.toFixed(1), Rank: rank 
     });
-
-    let row = `<tr><td>${displayName}</td><td>${affinity}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${finalScore.toFixed(1)}</td><td style='color:${color}'>${rank}</td></tr>`;
-    document.getElementById('history-log-body').innerHTML = row + document.getElementById('history-log-body').innerHTML;
+    
+    // ========== FIXED LINE - removed corrupted characters ==========
+    let row = `<tr><td style='font-size:11px'>${displayName}</td><td>${affinity}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td style='font-weight:bold'>${finalScore.toFixed(1)}</td><td style='color:${color}; font-weight:bold'>${rank}</td></tr>`;
+    let tbody = document.getElementById('history-log-body');
+    tbody.innerHTML = row + tbody.innerHTML;
+    if (tbody.children.length > 50) tbody.removeChild(tbody.lastChild);
 }
 
 function runBatchScan() {
@@ -348,31 +457,37 @@ function runBatchScan() {
     const reader = new FileReader();
     reader.onload = function(e) {
         const rows = e.target.result.split("\n");
+        let count = 0;
         for (let i = 1; i < rows.length; i++) {
             const cols = rows[i].split(",");
-            if (cols.length < 5) continue;
+            if (cols.length < 6) continue;
             let leadName = cols[0].trim();
             let trackFromFile = cols[1].trim().toUpperCase(); 
             let fullDisplayName = leadName + " [" + trackFromFile + "]";
-            document.getElementById('targetType').value = targetTracks[trackFromFile] ? trackFromFile : "GENERIC";
+            if (targetTracks[trackFromFile]) {
+                document.getElementById('targetType').value = trackFromFile;
+            } else {
+                document.getElementById('targetType').value = "GENERIC";
+            }
             document.getElementById('affinity').value = parseFloat(cols[2]);
             document.getElementById('logP').value = parseFloat(cols[3]);
             document.getElementById('mw').value = parseFloat(cols[4]);
             document.getElementById('psa').value = parseFloat(cols[5]);
             runEngine(fullDisplayName);
+            count++;
         }
-        document.getElementById('batchStatus').innerText = "Batch Complete";
+        document.getElementById('batchStatus').innerHTML = `✅ Batch complete (${count} compounds)`;
     };
     reader.readAsText(file);
 }
 
 function exportBatchReport() {
     if(fullHistoryData.length === 0) return;
-    const headers = Object.keys(fullHistoryData[0]);
+    const headers = ["Track", "Affinity", "LogP", "MW", "PSA", "Final_Score", "Rank"];
     let csvContent = headers.join(",") + "\n";
     fullHistoryData.forEach(item => {
         let row = headers.map(header => {
-            let val = item[header] === null ? "" : item[header].toString();
+            let val = item[header] === undefined ? "" : item[header].toString();
             return `"${val.replace(/"/g, '""')}"`;
         }).join(",");
         csvContent += row + "\n";
@@ -381,8 +496,9 @@ function exportBatchReport() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `GROW-WIN_Pharma_Full_Report_v2.1.csv`;
+    a.download = `GROW-WIN_Pharma_Report_v4.5.csv`;
     a.click();
+    window.URL.revokeObjectURL(url);
 }
 </script>
 </body>
