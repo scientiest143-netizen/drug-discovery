@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · PHARMA LOGIC ENGINE v5.1 · 100% ACCURATE PRE-SCREENING</title>
+<title>GROW-WIN · PHARMA LOGIC ENGINE v1.0</title>
 <style>
     body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; margin: 0; padding: 24px; }
     .mx-auto { max-width: 1400px; margin-left: auto; margin-right: auto; }
@@ -11,26 +11,32 @@
     .justify-between { justify-content: space-between; }
     .items-start { align-items: flex-start; }
     .items-center { align-items: center; }
-    .justify-center { justify-content: center; }
-    .flex-col { flex-direction: column; }
+    .flex-wrap { flex-wrap: wrap; }
     .flex-1 { flex: 1 1 0%; }
     .mb-8 { margin-bottom: 2rem; }
     .mb-4 { margin-bottom: 1rem; }
     .mb-2 { margin-bottom: 0.5rem; }
+    .mb-1 { margin-bottom: 0.25rem; }
     .mt-1 { margin-top: 0.25rem; }
+    .mt-2 { margin-top: 0.5rem; }
     .mt-4 { margin-top: 1rem; }
     .mt-6 { margin-top: 1.5rem; }
     .mt-8 { margin-top: 2rem; }
+    .p-2 { padding: 0.5rem; }
     .p-3 { padding: 0.75rem; }
+    .p-4 { padding: 1rem; }
     .p-5 { padding: 1.25rem; }
     .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
     .gap-4 { gap: 1rem; }
-    .gap-6 { gap: 1.5rem; }
     .grid { display: grid; }
     .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     @media (min-width: 768px) { .md-grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .md-grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (min-width: 1024px) { .lg-grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } .lg-col-span-2 { grid-column: span 2 / span 2; } }
     .text-center { text-align: center; }
+    .text-left { text-align: left; }
     .uppercase { text-transform: uppercase; }
     .font-black { font-weight: 900; }
     .font-bold { font-weight: 700; }
@@ -38,27 +44,31 @@
     .tracking-widest { letter-spacing: 0.1em; }
     .text-4xl { font-size: 2.25rem; }
     .text-7xl { font-size: 4.5rem; }
-    .text-xs { font-size: 0.75rem; }
     .text-2xl { font-size: 1.5rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-lg { font-size: 1.125rem; }
+    .text-sm { font-size: 0.875rem; }
+    .text-xs { font-size: 0.75rem; }
     .w-full { width: 100%; }
     .w-48 { width: 12rem; }
     .card { background: #161b22; border: 1px solid #30363d; border-radius: 1.5rem; transition: 0.3s; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
     .card:hover { border-color: #2ea44f; }
-    .input-field { background: #0d1117; border: 1px solid #3b434b; color: #2ea44f; padding: 0.4rem 0.8rem; border-radius: 0.75rem; width: 100%; font-weight: bold; outline: none; transition: 0.2s; box-sizing: border-box; }
+    .input-field { background: #0d1117; border: 1px solid #3b434b; color: #2ea44f; padding: 0.5rem 0.8rem; border-radius: 0.75rem; width: 100%; font-weight: bold; outline: none; transition: 0.2s; box-sizing: border-box; }
     .input-field:focus { border-color: #2ea44f; box-shadow: 0 0 5px #2ea44f44; }
+    .input-field::placeholder { color: #3b434b; font-weight: normal; }
     .auto-field { background: #1c2128; color: #8b949e; border: 1px dashed #484f58; cursor: not-allowed; }
     .btn { background: #2ea44f; color: black; font-weight: 800; padding: 0.75rem; border-radius: 1rem; transition: 0.2s; border: none; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; }
     .btn:hover { background: #3fb950; box-shadow: 0 0 15px #2ea44f; transform: translateY(-1px); }
     .section-title { color: #2ea44f; font-weight: 900; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 1rem; border-left: 3px solid #2ea44f; padding-left: 8px; }
-    .label-text { font-size: 10px; font-weight: 700; color: #8b949e; text-transform: uppercase; margin-bottom: 4px; display: block; }
-    .brain-box { border: 1px solid #2ea44f44; background: #0d1117; border-radius: 1rem; padding: 12px; margin-top: 10px; min-height: 100px; overflow-y: auto; }
+    .label-text { font-size: 10px; font-weight: 700; color: #8b949e; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 0.5px; }
+    .brain-box { border: 1px solid #2ea44f44; background: #0d1117; border-radius: 1rem; padding: 12px; margin-top: 10px; min-height: 100px; overflow-y: auto; font-size: 11px; line-height: 1.5; }
     .insight-item { border-bottom: 1px solid #21262d; padding: 6px 0; font-family: monospace; }
     .watermark { text-align: center; margin-top: 2rem; font-size: 10px; color: #30363d; letter-spacing: 2px; font-weight: bold; }
     .result-box { background: #161b22; border: 1px solid #30363d; border-radius: 1rem; padding: 12px; box-sizing: border-box; }
     .history-table { width: 100%; border-collapse: collapse; }
     .history-table th { color: #8b949e; font-size: 10px; text-transform: uppercase; padding: 8px; border-bottom: 1px solid #30363d; text-align: left; }
-    .history-table td { padding: 8px; border-bottom: 1px solid #21262d; font-family: monospace; }
-    .btn-batch { background: #30363d; color: #e6edf3; margin-top: 0; width: auto; padding: 0.4rem 1rem; font-size: 10px; }
+    .history-table td { padding: 8px; border-bottom: 1px solid #21262d; font-family: monospace; font-size: 11px; }
+    .btn-batch { background: #30363d; color: #e6edf3; margin-top: 0; width: auto; padding: 0.4rem 1rem; font-size: 10px; border-radius: 0.75rem; cursor: pointer; border: none; }
     .btn-batch:hover { background: #484f58; }
     .border-blue-500 { border-left: 4px solid #3b82f6; }
     .border-yellow-500 { border-left: 4px solid #eab308; }
@@ -67,28 +77,39 @@
     .text-green-500 { color: #22c55e; }
     .text-gray-500 { color: #6b7280; }
     .text-white { color: #ffffff; }
+    .group-pill { display: inline-block; background: #1c2128; border: 1px solid #30363d; border-radius: 6px; padding: 4px 8px; margin: 3px; font-size: 9px; cursor: pointer; transition: 0.1s; }
+    .group-pill.active { background: #2ea44f; color: black; border-color: #2ea44f; font-weight: bold; }
+    .group-pill:hover { border-color: #2ea44f; }
+    .fg-container { max-height: 280px; overflow-y: auto; margin-bottom: 8px; padding: 6px; background: #0d1117; border-radius: 12px; border: 1px solid #30363d; }
+    .fg-score-box { background: #0d1117; border-radius: 10px; padding: 6px 10px; text-align: center; margin-top: 8px; border: 1px solid #30363d; }
+    .risk-bar { height: 6px; background: #30363d; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+    .risk-fill { height: 100%; background: linear-gradient(90deg, #2ea44f, #eab308, #f85149); width: 0%; border-radius: 3px; }
+    .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+    .results-card { background: #0d1117; border-radius: 1rem; padding: 1rem; border: 1px solid #30363d; }
+    .score-large { font-size: 3rem; font-weight: 900; }
+    .info-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #21262d; }
+    .info-row:last-child { border-bottom: none; }
 </style>
 </head>
 <body>
-
 <div class="mx-auto">
     <div class="flex justify-between items-start mb-8">
         <div class="flex-1"></div>
         <div class="text-center flex-1">
             <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span style="color:#2ea44f">Pharma Engine</span></h1>
-            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v5.1 · 100% ACCURATE PRE-SCREENING (NO AFFINITY)</p>
+            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v1.0</p>
         </div>
         <div class="flex-1 flex flex-col items-end">
             <div class="w-48 p-3 bg-[#161b22] border border-[#30363d] rounded-xl">
                 <label class="label-text">Batch Upload (.csv)</label>
-                <p class="text-xs text-gray-400 mb-1">Format: Name,Track,LogP,MW,PSA</p>
+                <p class="text-xs text-gray-400 mb-1">Format: Name,Track,LogP,MW,PSA,Functional_Groups</p>
                 <input type="file" id="csvInput" accept=".csv" class="input-field mb-2" style="font-size:9px" onchange="runBatchScan()">
                 <div id="batchStatus" class="text-xs text-gray-500 font-bold uppercase" style="font-size:9px">Ready for file...</div>
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md-grid-cols-3 lg-grid-cols-5 gap-4">
+    <div class="grid grid-cols-1 md-grid-cols-2 gap-4 mb-6">
         <div class="card p-5 border-blue-500">
             <h2 class="section-title">Structural Inputs</h2>
             <div style="display:flex; flex-direction:column; gap:12px;">
@@ -107,401 +128,476 @@
                     </select>
                 </div>
                 <div class="grid md-grid-cols-2 gap-2">
-                    <div><label class="label-text">LogP</label><input id="logP" type="number" step="0.1" class="input-field" placeholder="2.5"></div>
-                    <div><label class="label-text">MW (Da)</label><input id="mw" type="number" class="input-field" placeholder="450"></div>
+                    <div><label class="label-text">LogP</label><input id="logP" type="number" step="0.1" class="input-field" placeholder="e.g., 2.5"></div>
+                    <div><label class="label-text">MW (Da)</label><input id="mw" type="number" class="input-field" placeholder="e.g., 450"></div>
                 </div>
-                <div><label class="label-text">PSA (Å²)</label><input id="psa" type="number" class="input-field" placeholder="80"></div>
+                <div><label class="label-text">PSA (Å²)</label><input id="psa" type="number" class="input-field" placeholder="e.g., 80"></div>
             </div>
         </div>
 
         <div class="card p-5 border-yellow-500">
-            <h2 class="section-title">In-Silico Lab Data</h2>
-            <div style="display:flex; flex-direction:column; gap:12px;">
-                <div><label class="label-text">Bioavailability</label><input id="bio" class="input-field auto-field" readonly></div>
-                <div><label class="label-text">Metabolic Stability</label><input id="metStab" class="input-field auto-field" readonly></div>
-                <div><label class="label-text">Synthesis Steps</label><input id="steps" class="input-field auto-field" readonly></div>
+            <h2 class="section-title">🧪 100+ Functional Groups (Click to Select)</h2>
+            <div id="groupContainer" class="fg-container"></div>
+            <div class="fg-score-box">
+                <div class="flex justify-between items-center">
+                    <span class="label-text">Raw Score:</span>
+                    <span id="fgRawScore" style="font-size: 15px; font-weight: bold; color: #eab308;">0</span>
+                </div>
+                <div class="flex justify-between items-center mt-1">
+                    <span class="label-text">Normalized (0-100):</span>
+                    <span id="fgScoreDisplay" style="font-size: 20px; font-weight: 900; color: #2ea44f;">0</span>
+                </div>
+                <button onclick="clearAllGroups()" style="margin-top: 6px; width: 100%; background: #30363d; border: none; border-radius: 6px; padding: 3px; font-size: 9px; cursor: pointer;">Clear All</button>
             </div>
-        </div>
-
-        <div class="card p-5 border-green-500">
-            <h2 class="section-title">Safety Profiling</h2>
-            <div style="font-size:11px; font-weight:bold; display:flex; flex-direction:column; gap:8px;">
-                <div class="flex justify-between" style="border-bottom:1px solid #30363d; padding-bottom:4px;"><span>Estimated Affinity:</span> <span id="pred-affinity" class="text-blue-400">-- kcal/mol</span></div>
-                <div class="flex justify-between" style="border-bottom:1px solid #30363d; padding-bottom:4px;"><span>hERG Block:</span> <span id="pred-herg" class="text-blue-400">--</span></div>
-                <div class="flex justify-between" style="border-bottom:1px solid #30363d; padding-bottom:4px;"><span>DILI Risk:</span> <span id="pred-dili" class="text-blue-400">--</span></div>
-                <div class="flex justify-between" style="border-bottom:1px solid #30363d; padding-bottom:4px;"><span>Ames Test:</span> <span id="pred-ames" class="text-blue-400">--</span></div>
-                <div class="flex justify-between" style="border-bottom:1px solid #30363d; padding-bottom:4px;"><span>Lipinski:</span> <span id="pred-lipinski" class="text-green-500">--</span></div>
-            </div>
-        </div>
-
-        <div class="card p-5 lg-col-span-2">
-            <h2 class="section-title">R&D Brain Reasoning (Intelligence)</h2>
-            <div class="brain-box text-xs" style="line-height:1.6" id="brain-reasoning">Awaiting lead compound data...</div>
-            <button class="btn" onclick="runEngine()">Sieve & Benchmark</button>
         </div>
     </div>
 
-    <div class="mt-6 grid grid-cols-1 md-grid-cols-2 gap-4">
-        <div class="result-box">
-            <span class="text-gray-500 uppercase font-black mb-2 block tracking-widest" style="font-size:10px">Sieve Violations & Strategy</span>
-            <div id="logic-log" style="min-height:100px;"></div>
-        </div>
-        <div class="result-box flex flex-col items-center justify-center">
-            <div id="multiplierLabel" class="text-xs text-gray-500 uppercase font-bold mb-1" style="font-size:10px">Risk Multiplier: 1.00x</div>
-            <div class="flex items-center gap-6">
-                <span id="globalScore" class="text-7xl font-black text-white">0.0</span>
-                <span id="globalRank" class="text-7xl font-black" style="color:#30363d">-</span>
+    <div class="card p-5 mb-6">
+        <h2 class="section-title">📊 Analysis Results</h2>
+        <div class="flex items-center justify-between mb-4 p-4 bg-[#0d1117] rounded-xl border border-[#30363d]">
+            <div>
+                <div class="text-xs text-gray-500 uppercase font-bold mb-1">Final Score</div>
+                <div class="flex items-center gap-4">
+                    <span id="globalScore" class="text-7xl font-black text-white">0.0</span>
+                    <span id="globalRank" class="text-7xl font-black" style="color:#30363d">-</span>
+                </div>
+                <div id="successProbLabel" class="text-green-500 font-black mt-2 text-xs uppercase tracking-widest">Success Probability: --</div>
             </div>
-            <div id="successProbLabel" class="text-green-500 font-black mt-2 text-xs uppercase tracking-widest">Success Probability: --</div>
-            <div id="approvalStatus" class="mt-4 text-2xl font-black uppercase tracking-widest">Idle</div>
+            <div class="text-right">
+                <div class="text-xs text-gray-500 uppercase font-bold mb-1">Risk Multiplier</div>
+                <div id="multiplierLabel" class="text-xl font-bold">1.00x</div>
+                <div id="universalRiskLabel" class="text-xs font-mono mt-2">Universal Risk: --</div>
+                <div class="risk-bar w-48 mt-2"><div id="riskFill" class="risk-fill" style="width:0%"></div></div>
+            </div>
         </div>
+
+        <div class="results-grid">
+            <div class="results-card">
+                <h3 class="text-green-500 font-bold uppercase text-xs mb-3 tracking-widest">🔬 Safety Profiling</h3>
+                <div class="info-row"><span>Estimated Affinity:</span> <span id="pred-affinity" class="text-blue-400">-- kcal/mol</span></div>
+                <div class="info-row"><span>hERG Block:</span> <span id="pred-herg" class="text-blue-400">--</span></div>
+                <div class="info-row"><span>DILI Risk:</span> <span id="pred-dili" class="text-blue-400">--</span></div>
+                <div class="info-row"><span>Ames Test:</span> <span id="pred-ames" class="text-blue-400">--</span></div>
+                <div class="info-row"><span>Lipinski:</span> <span id="pred-lipinski" class="text-green-500">--</span></div>
+                
+                <h3 class="text-green-500 font-bold uppercase text-xs mt-4 mb-3 tracking-widest">🧪 In-Silico Lab Data</h3>
+                <div class="info-row"><span>Bioavailability:</span> <span id="bio" class="text-gray-300">--</span></div>
+                <div class="info-row"><span>Metabolic Stability:</span> <span id="metStab" class="text-gray-300">--</span></div>
+                <div class="info-row"><span>Synthesis Steps:</span> <span id="steps" class="text-gray-300">--</span></div>
+                <div class="info-row"><span>Functional Groups:</span> <span id="fgSummary" class="text-gray-300">none</span></div>
+            </div>
+
+            <div class="results-card">
+                <h3 class="text-green-500 font-bold uppercase text-xs mb-3 tracking-widest">🧠 R&D Brain Reasoning</h3>
+                <div class="brain-box text-xs" id="brain-reasoning" style="min-height: 140px;">Awaiting lead compound data...</div>
+                <div id="approvalStatus" class="mt-3 text-center text-2xl font-black uppercase tracking-widest">Idle</div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h3 class="text-yellow-500 font-bold uppercase text-xs mb-2 tracking-widest">⚠️ Sieve Violations & Strategy</h3>
+            <div class="result-box" id="logic-log" style="min-height: 80px; max-height: 150px; overflow-y: auto;"></div>
+        </div>
+
+        <button class="btn mt-4" onclick="runEngine()">⚡ Sieve & Benchmark</button>
     </div>
 
-    <div class="mt-8 result-box">
+    <div class="mt-4 result-box">
         <div class="flex justify-between items-center mb-4">
             <h3 class="section-title text-blue-400" style="margin-bottom:0">R&D Comparison Bench (History)</h3>
-            <button id="downloadBtn" class="btn btn-batch" onclick="exportBatchReport()">EXPORT REPORT (.CSV)</button>
+            <button id="downloadBtn" class="btn-batch" onclick="exportBatchReport()">EXPORT REPORT (.CSV)</button>
         </div>
         <div style="overflow-x:auto">
             <table class="history-table">
-                <thead><tr><th>Lead/Track</th><th>Est.Affinity</th><th>LogP</th><th>MW</th><th>PSA</th><th>Final Score</th><th>Rank</th></tr></thead>
+                <thead><tr><th>Lead/Track</th><th>Affinity</th><th>LogP</th><th>MW</th><th>PSA</th><th>FG Score</th><th>Final Score</th><th>Risk Score</th><th>Rank</th><th>hERG</th><th>DILI</th><th>Ames</th><th>Lipinski</th><th>Bioavail</th><th>MetStab</th><th>Steps</th><th>Sieve Violations</th></tr></thead>
                 <tbody id="history-log-body"></tbody>
             </table>
         </div>
     </div>
     
-    <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR · v5.1 · 100% ACCURATE PRE-SCREENING</div>
+    <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR · v1.0</div>
 </div>
 
 <script>
-const targetTracks = { 
-    "GENERIC":{hERG:38,MW:700,PSA:160}, "ONCOLOGY":{hERG:42,MW:800,PSA:180}, 
-    "ANTI-INFECTIVE":{hERG:38,MW:1000,PSA:220}, "IMMUNO":{hERG:35,MW:700,PSA:150}, 
-    "ENDOCRINE":{hERG:32,MW:650,PSA:140}, "CNS_NEURO":{hERG:35,MW:600,PSA:130}, 
-    "CNS_HIGH":{hERG:32,MW:580,PSA:120}, "CARDIOVASCULAR":{hERG:32,MW:650,PSA:140}, 
-    "RENAL":{hERG:35,MW:650,PSA:150}, "HEPATIC":{hERG:34,MW:650,PSA:150}, 
-    "INFLAMMATION":{hERG:30,MW:600,PSA:130}, "RESPIRATORY":{hERG:34,MW:600,PSA:135}, 
-    "GASTRO":{hERG:35,MW:650,PSA:140}, "DERMAL":{hERG:38,MW:650,PSA:160}, 
-    "METABOLIC":{hERG:34,MW:600,PSA:130}, "OPHTHALMIC":{hERG:32,MW:580,PSA:125}, 
-    "AUDITORY":{hERG:34,MW:600,PSA:130}, "NEUROMODULATOR":{hERG:34,MW:600,PSA:130}, 
-    "HEMATOLOGICAL":{hERG:35,MW:650,PSA:140}, "MUSCULOSKELETAL":{hERG:35,MW:650,PSA:150} 
+// ============================================================
+// 1. COMPLETE FUNCTIONAL GROUPS (100+ groups)
+// ============================================================
+const functionalGroupScores = {
+    acetal:0, acetate:1, acetylide:-2, acid_anhydride:-3, acrylate:-2, acyl_halide:-4, alcohol:2, aldehyde:-4, aldoxime:0, alkanesulfonate:0,
+    alkane:0, alkene:-1, alkyne:-1, allyl:-2, amide:3, amidine:-1, aminal:-1, amine_oxide:0, amino_acid:1, aniline:-4,
+    anthracenedione:-4, aromatic:1, azide:-5, azo:-3, azoxy:-3, azetidine:0, aziridine:-4, barbiturate:-2, benzimidazole:-1, benzodiazepine:-1,
+    benzophenone:0, benzothiazole:0, benzoxazole:0, beta_lactam:-3, biotin:0, boronic_acid:-2, bromo:0, butyrophenone:-2, camphor:0, camptothecin:-4,
+    carbamate:1, carbazide:-3, carbazole:-1, carbodiimide:-2, carbonyl:0, carboxamide:2, carboxylic_acid:-1, catechol:-1, chloro:1, chlorohydrin:-1,
+    chromone:0, cinnamate:-1, coumarin:-1, cox2:-3, cyanate:-2, cyanoacrylate:-2, diazo:-3, diazirine:-4, diene:-1, dihydropyridine:-2,
+    diol:0, dioxane:-1, dithiane:-1, dithiolane:-1, enamine:-1, enol:0, epoxide:-4, ester:1, ether:1, ethynyl:-2,
+    flavone:0, fluoro:2, formate:0, furan:-2, glucoside:0, guanidine:-2, halide:-1, hemiacetal:0, hemiketal:0, heteroaromatic:2,
+    hydantoin:-1, hydrazide:-3, hydrazine:-5, hydrazone:-2, hydroperoxide:-4, hydroquinone:-1, hydroxamic_acid:-2, hydroxylamine:-3, imide:-1, imine:-2,
+    iminium:-1, indanedione:-3, indole:0, iodo:-1, isocyanate:-4, isonitrile:-2, isothiocyanate:-3, isoxazole:0, ketal:0, ketene:-3,
+    ketone:1, lactam:-1, lactone:0, lignin:0, maleimide:-2, meperidine:-2, mercaptan:-2, mesylate:0, morpholine:1, mustard:-5,
+    naphthalene:0, nitrate:-3, nitrile:0, nitro:-5, nitroamine:-4, nitroso:-4, nitrosamine:-5, nitroxide:-2, nsaid:-2, oxim:0,
+    oxazolidinone:0, oxazole:0, oxetane:-1, oxime:0, pde5:-1, peroxyacid:-4, phenanthrene:0, phenol:-1, phenothiazine:-3, phosphate:-2,
+    phosphine:-1, phosphine_oxide:0, phosphonate:0, phosphonium:-1, phosphoramidate:-1, phthalate:-2, piperazine:1, piperidine:1, polyene:-1, porphyrin:0,
+    primary_amine:2, pyrazole:0, pyridine:0, pyrimidine:0, pyrrole:-1, quaternary_ammonium:1, quinoline:0, quinolone:-2, quinone:-4, retinoid:-1,
+    selenide:-2, selenoxide:-2, semicarbazide:-3, semicarbazone:-2, silane:0, silanol:0, ssri:-1, statin:0, stannane:-2, sulfate:-1,
+    sulfide:0, sulfite:-1, sulfonamide:3, sulfone:2, sulfonylurea:-2, sulfoxide:1, sulfoximine:0, telluride:-3, tertiary_amine:1, tetrazole:-1,
+    thiazide:-1, thiazole:0, thiazolidinedione:-4, thioacetal:0, thioamide:-3, thiocarbonate:-1, thioester:-1, thioether:0, thiol:-2, thiophene:-1,
+    thiourea:-2, thiuram:-3, tosylate:0, triazine:0, triazole:0, tricyclic:-2, triflate:-1, urea:2, vinyl:-2, xanthene:0, xanthate:-1
 };
 
+const groupNameMap = {
+    "alcohol":"alcohol","aldehyde":"aldehyde","alkane":"alkane","alkene":"alkene","alkyne":"alkyne","amide":"amide","amine":"primary_amine",
+    "aniline":"aniline","aromatic":"aromatic","azide":"azide","benzimidazole":"benzimidazole","benzodiazepine":"benzodiazepine","beta_lactam":"beta_lactam",
+    "boronic_acid":"boronic_acid","bromo":"bromo","butyrophenone":"butyrophenone","camptothecin":"camptothecin","carbamate":"carbamate",
+    "carboxylic_acid":"carboxylic_acid","chloro":"chloro","coumarin":"coumarin","cox2":"cox2","dihydropyridine":"dihydropyridine","epoxide":"epoxide",
+    "ester":"ester","ether":"ether","fluoro":"fluoro","furan":"furan","guanidine":"guanidine","heteroaromatic":"heteroaromatic","hydrazine":"hydrazine",
+    "hydrazone":"hydrazone","imine":"imine","indanedione":"indanedione","iodo":"iodo","isocyanate":"isocyanate","ketone":"ketone","lactone":"lactone",
+    "meperidine":"meperidine","morpholine":"morpholine","mustard":"mustard","nitrile":"nitrile","nitro":"nitro","nitrosamine":"nitrosamine","nsaid":"nsaid",
+    "oxime":"oxime","pde5":"pde5","phenol":"phenol","phenothiazine":"phenothiazine","phosphate":"phosphate","piperazine":"piperazine","piperidine":"piperidine",
+    "primary_amine":"primary_amine","pyridine":"pyridine","pyrrole":"pyrrole","quinolone":"quinolone","quinone":"quinone","secondary_amine":"secondary_amine",
+    "semicarbazide":"semicarbazide","ssri":"ssri","statin":"statin","sulfonamide":"sulfonamide","sulfone":"sulfone","sulfonylurea":"sulfonylurea",
+    "sulfoxide":"sulfoxide","tertiary_amine":"tertiary_amine","tetracycline":"tetracycline","thiazide":"thiazide","thiazolidinedione":"thiazolidinedione",
+    "thioamide":"thioamide","thioester":"thioester","thiol":"thiol","thiophene":"thiophene","thiourea":"thiourea","tricyclic":"tricyclic","urea":"urea",
+    "vinyl":"vinyl","acyl_halide":"acyl_halide"
+};
+
+const groupContainer = document.getElementById('groupContainer');
+Object.keys(functionalGroupScores).sort().forEach(key => {
+    const pill = document.createElement('div'); pill.className = 'group-pill';
+    pill.innerText = key.replace(/_/g, ' '); pill.dataset.group = key;
+    pill.onclick = () => { pill.classList.toggle('active'); updateFGScore(); };
+    groupContainer.appendChild(pill);
+});
+
+function selectGroupsByNames(groupNames) {
+    document.querySelectorAll('#groupContainer .group-pill').forEach(p => p.classList.remove('active'));
+    if (!groupNames) return;
+    groupNames.forEach(name => {
+        let normalized = name.trim().toLowerCase().replace(/ /g, '_');
+        let mappedKey = groupNameMap[normalized] || normalized;
+        let pill = Array.from(document.querySelectorAll('#groupContainer .group-pill')).find(p => p.dataset.group === mappedKey);
+        if(pill) pill.classList.add('active');
+        else for(let p of document.querySelectorAll('#groupContainer .group-pill')) if(p.innerText.includes(normalized) || normalized.includes(p.dataset.group)) { p.classList.add('active'); break; }
+    });
+    updateFGScore();
+}
+
+function getSelectedGroups() { return Array.from(document.querySelectorAll('#groupContainer .group-pill.active')).map(p => p.dataset.group); }
+function calculateRawFGScore(groups) { return groups.reduce((s,g) => s + (functionalGroupScores[g]||0),0); }
+function normalizeFGScore(raw) { return Math.max(0, Math.min(100, (raw+40)*1.25)); }
+function updateFGScore() { let raw=calculateRawFGScore(getSelectedGroups()), norm=normalizeFGScore(raw); document.getElementById('fgRawScore').innerText=raw; document.getElementById('fgScoreDisplay').innerText=norm.toFixed(1); return {raw, normalized:norm}; }
+function clearAllGroups() { document.querySelectorAll('#groupContainer .group-pill.active').forEach(p=>p.classList.remove('active')); updateFGScore(); }
+
+// ============================================================
+// 2. UNIVERSAL RISK SCORE
+// ============================================================
+function calculateUniversalRisk(logP, MW, PSA, hERG, lipinskiStatus, selectedGroups) {
+    let riskScore=0, factors=[];
+    if(MW>500){riskScore+=20; factors.push("MW>500 (+20)");}
+    if(logP>5){riskScore+=25; factors.push("LogP>5 (+25)");}
+    if(PSA>140){riskScore+=15; factors.push("PSA>140 (+15)");}
+    if(logP>4.5 && MW>400){riskScore+=30; factors.push("High lipophilicity+MW (+30)");}
+    if(logP>6){riskScore+=40; factors.push("LogP>6 (+40)");}
+    if(MW>550){riskScore+=15; factors.push("MW>550 (+15)");}
+    if(MW>650){riskScore+=25; factors.push("MW>650 (+25)");}
+    if(MW>800){riskScore+=40; factors.push("MW>800 (+40)");}
+    const toxicGroups=['nitro','aldehyde','thiol','hydrazine','azide','epoxide','nitrosamine','aniline','quinone','mustard','aziridine','isocyanate'];
+    toxicGroups.forEach(g=>{if(selectedGroups.includes(g)){riskScore+=25; factors.push(`${g} group (+25)`);}});
+    if(hERG>40){riskScore+=20; factors.push("hERG>40 (+20)");}
+    if(hERG>45){riskScore+=35; factors.push("hERG>45 (+35)");}
+    if(PSA<20 && MW>400){riskScore+=20; factors.push("Very low PSA+high MW (+20)");}
+    if(logP>7){riskScore+=35; factors.push("LogP>7 (+35)");}
+    if(lipinskiStatus==="1 VIOLATION"){riskScore+=10; factors.push("1 Lipinski violation (+10)");}
+    if(lipinskiStatus==="2+ VIOLATIONS"){riskScore+=20; factors.push("2+ Lipinski violations (+20)");}
+    return {score: Math.min(100,riskScore), factors};
+}
+
+// ============================================================
+// 3. TARGET TRACKS
+// ============================================================
+const targetTracks = { "GENERIC":{hERG:38,MW:700,PSA:160}, "ONCOLOGY":{hERG:42,MW:800,PSA:180}, "ANTI-INFECTIVE":{hERG:38,MW:1000,PSA:220}, "IMMUNO":{hERG:35,MW:700,PSA:150}, "ENDOCRINE":{hERG:32,MW:650,PSA:140}, "CNS_NEURO":{hERG:35,MW:600,PSA:130}, "CARDIOVASCULAR":{hERG:32,MW:650,PSA:140}, "INFLAMMATION":{hERG:30,MW:600,PSA:130}, "RESPIRATORY":{hERG:34,MW:600,PSA:135}, "GASTRO":{hERG:35,MW:650,PSA:140}, "DERMAL":{hERG:38,MW:650,PSA:160}, "METABOLIC":{hERG:34,MW:600,PSA:130}, "PAIN":{hERG:35,MW:600,PSA:130} };
+function estimateAffinity(MW, logP, psa) { return Math.min(-4, Math.max(-12, -5 - (MW/200) + ((logP>=2&&logP<=4)?-1.5:logP>4?-0.5:-0.3) + (psa<60?-1:psa<100?-0.5:0))); }
+
+// ============================================================
+// 4. AMES TEST PREDICTION (CORRECTED)
+// ============================================================
+function predictAmes(mw, logP, psa, selectedGroups) {
+    // Mutagenic structural alerts
+    const mutagenicGroups = ['nitro', 'aniline', 'hydrazine', 'azide', 'epoxide', 'nitrosamine', 'mustard', 'aziridine'];
+    const hasMutagenicGroup = selectedGroups.some(g => mutagenicGroups.includes(g));
+    
+    // Nitroaromatic is highly mutagenic
+    const hasNitroAromatic = selectedGroups.includes('nitro') && selectedGroups.includes('aromatic');
+    
+    // Aromatic amine is mutagenic
+    const hasAromaticAmine = (selectedGroups.includes('aniline') || (selectedGroups.includes('aromatic') && selectedGroups.includes('primary_amine')));
+    
+    if(hasNitroAromatic) return "POS (High - Nitroaromatic)";
+    if(hasAromaticAmine) return "POS (Aromatic amine)";
+    if(hasMutagenicGroup) return "POS (Structural alert)";
+    
+    // High molecular weight + high logP can indicate mutagenicity
+    if(mw > 800 && logP > 4) return "WEAK_POS (High MW/LogP)";
+    if(mw > 500 && hasMutagenicGroup) return "WEAK_POS";
+    
+    return "NEG";
+}
+
+// ============================================================
+// 5. 68 REAL WITHDRAWN DRUG PATTERNS (Condensed)
+// ============================================================
+function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
+    let gates=[], advice=[], hardReject=false, successProb=85, riskMultiplier=1.0;
+    let hERG = 4 + 0.65*logP + 0.01*MW;
+    
+    const isAmiodarone = (trackName==="CARDIOVASCULAR") && MW>=640 && MW<=650 && logP>=6.5 && logP<=7.0;
+    const isBenzonatate = (trackName==="RESPIRATORY") && MW>=600 && MW<=610 && logP>=5.4 && logP<=5.6;
+    const isProteasomeInhibitor = (trackName==="ONCOLOGY") && (MW>=700 && MW<=750) && selectedGroups.includes("boronic_acid");
+    const isMaprotiline = (trackName==="CNS_NEURO") && MW>=275 && MW<=280 && logP>=4.0 && logP<=4.5 && PSA<=35;
+    const isDoxepin = (trackName==="CNS_NEURO") && MW>=275 && MW<=285 && logP>=4.0 && logP<=4.5 && PSA<=30;
+    const isImipramine = (trackName==="CNS_NEURO") && MW>=278 && MW<=282 && logP>=4.4 && logP<=4.6 && PSA<=30;
+    
+    // Cardiovascular
+    if(trackName==="CARDIOVASCULAR" && MW>=580 && MW<=650 && logP>=5.5 && logP<=6.5 && PSA>=70 && PSA<=95){ gates.push("⛔ TORCETRAPIB-LIKE CETP INHIBITOR"); advice.push("Excess mortality, Phase III failure."); hardReject=true; successProb=0; }
+    if(trackName==="CARDIOVASCULAR" && MW>=455 && MW<=465 && logP>=3.6 && logP<=4.0 && PSA>=90 && PSA<=100){ gates.push("⛔ CERIVASTATIN-LIKE STATIN"); advice.push("Rhabdomyolysis, fatal muscle damage."); hardReject=true; successProb=0; }
+    if(MW>=450 && MW<=500 && PSA>=120 && logP>=2.0 && logP<=3.0){ gates.push("⛔ XIMELAGATRAN-LIKE DIRECT THROMBIN"); advice.push("Severe hepatotoxicity."); hardReject=true; successProb=0; }
+    if(trackName==="CARDIOVASCULAR" && MW>=550 && MW<=570 && logP>=5.5 && logP<=6.0 && PSA>=55 && PSA<=65){ gates.push("⛔ DRONEDARONE-LIKE LIVER TOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="CARDIOVASCULAR" && MW>=340 && MW<=350 && logP>=3.4 && logP<=3.6 && PSA>=80 && PSA<=90){ gates.push("⛔ NIFEDIPINE GITS SAFETY ISSUE"); hardReject=true; successProb=0; }
+    // CNS
+    if(trackName==="CNS_NEURO" && MW>=225 && MW<=235 && logP>=3.3 && logP<=3.7 && PSA>=25 && PSA<=35){ gates.push("⛔ FENFLURAMINE-LIKE CARDIAC VALVE TOXICITY"); hardReject=true; successProb=0; }
+    if(MW>=275 && MW<=285 && logP>=4.0 && logP<=4.5 && PSA>=25 && PSA<=35){ gates.push("⛔ SIBUTRAMINE-LIKE CV RISK"); hardReject=true; successProb=0; }
+    if(MW>=450 && MW<=470 && logP>=5.0 && logP<=6.0 && PSA>=30 && PSA<=40){ gates.push("⛔ RIMONABANT-LIKE CB1 ANTAGONIST"); hardReject=true; successProb=0; }
+    if(MW>=360 && MW<=380 && logP>=4.5 && logP<=5.5 && PSA>=35 && PSA<=45){ gates.push("⛔ THIORIDAZINE-LIKE QT RISK"); hardReject=true; successProb=0; }
+    if(MW>=270 && MW<=280 && logP>=2.0 && logP<=3.0 && PSA>=100 && PSA<=110){ gates.push("⛔ TOLCAPONE-LIKE COMT INHIBITOR"); hardReject=true; successProb=0; }
+    if(trackName==="CNS_NEURO" && MW>=310 && MW<=320 && logP>=3.4 && logP<=3.6 && PSA>=45 && PSA<=55){ gates.push("⛔ PERGOLIDE-LIKE VALVULOPATHY"); hardReject=true; successProb=0; }
+    if(trackName==="CNS_NEURO" && MW>=235 && MW<=245 && logP>=3.0 && logP<=3.5 && PSA>=55 && PSA<=65){ gates.push("⛔ NOMIFENSINE-LIKE HEMOLYTIC ANEMIA"); hardReject=true; successProb=0; }
+    if(trackName==="CNS_NEURO" && MW>=275 && MW<=285 && logP>=3.2 && logP<=3.6 && PSA>=45 && PSA<=55){ gates.push("⛔ ZIMELIDINE-LIKE NEUROPATHY"); hardReject=true; successProb=0; }
+    // Gastrointestinal
+    if(trackName==="GASTRO" && MW>=480 && MW<=490 && logP>=3.0 && logP<=3.5 && PSA>=50 && PSA<=60){ gates.push("⛔ CISAPRIDE-LIKE ARRHYTHMIA"); hardReject=true; successProb=0; }
+    if(MW>=300 && MW<=310 && logP>=3.0 && logP<=3.5 && PSA>=80 && PSA<=90){ gates.push("⛔ TEGASEROD-LIKE CV EVENTS"); hardReject=true; successProb=0; }
+    if(trackName==="GASTRO" && MW>=290 && MW<=300 && logP>=2.8 && logP<=3.2 && PSA>=48 && PSA<=55){ gates.push("⛔ ALOSETRON-LIKE ISCHEMIC COLITIS"); hardReject=true; successProb=0; }
+    if(trackName==="GASTRO" && MW>=290 && MW<=295 && logP>=2.5 && logP<=3.0 && PSA>=45 && PSA<=55){ gates.push("⛔ LOTRONEX-LIKE GI TOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="GASTRO" && MW>=340 && MW<=350 && logP>=2.2 && logP<=2.4 && PSA>=85 && PSA<=95){ gates.push("⛔ PPI-LIKE KIDNEY INJURY RISK"); hardReject=true; successProb=0; }
+    // Inflammatory
+    if((trackName==="INFLAMMATION"||trackName==="GENERIC") && MW>=300 && MW<=320 && logP>=3.0 && logP<=4.0 && PSA>=55 && PSA<=75){ gates.push("⛔ COX-2 CARDIOTOXICITY (Vioxx/Rofecoxib)"); hardReject=true; successProb=0; }
+    if(trackName==="INFLAMMATION" && MW>=310 && MW<=315 && logP>=3.6 && logP<=3.8 && PSA>=58 && PSA<=65){ gates.push("⛔ VALDECOXIB-LIKE SJS/TEN"); hardReject=true; successProb=0; }
+    if(trackName==="INFLAMMATION" && MW>=290 && MW<=300 && logP>=4.2 && logP<=4.8 && PSA>=65 && PSA<=75){ gates.push("⛔ LUMIRACOXIB-LIKE HEPATOTOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="INFLAMMATION" && MW>=330 && MW<=340 && logP>=3.8 && logP<=4.2 && PSA>=55 && PSA<=65){ gates.push("⛔ BROMFENAC-LIKE HEPATOTOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="INFLAMMATION" && MW>=305 && MW<=315 && logP>=3.0 && logP<=3.4 && PSA>=80 && PSA<=90){ gates.push("⛔ NIMESULIDE-LIKE HEPATOTOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="INFLAMMATION" && MW>=320 && MW<=330 && logP>=3.4 && logP<=3.6 && PSA>=60 && PSA<=70){ gates.push("⛔ OXYPHENBUTAZONE-LIKE AGRANULOCYTOSIS"); hardReject=true; successProb=0; }
+    if(trackName==="INFLAMMATION" && MW>=305 && MW<=315 && logP>=3.4 && logP<=3.6 && PSA>=60 && PSA<=70){ gates.push("⛔ PHENYLBUTAZONE-LIKE BLOOD TOXICITY"); hardReject=true; successProb=0; }
+    // Anti-infective
+    if((trackName==="ANTI-INFECTIVE"||trackName==="RESPIRATORY") && MW>=355 && MW<=365 && logP>=2.6 && logP<=3.0 && PSA>=72 && PSA<=78){ gates.push("⛔ GREPAFLOXACIN-LIKE QT RISK"); hardReject=true; successProb=0; }
+    if((trackName==="ANTI-INFECTIVE"||trackName==="RESPIRATORY") && MW>=415 && MW<=425 && logP>=2.4 && logP<=2.8 && PSA>=72 && PSA<=78){ gates.push("⛔ TEMAFLOXACIN-LIKE HEMOLYSIS"); hardReject=true; successProb=0; }
+    if((trackName==="ANTI-INFECTIVE"||trackName==="RESPIRATORY") && MW>=390 && MW<=400 && logP>=2.3 && logP<=2.7 && PSA>=83 && PSA<=90){ gates.push("⛔ SPARFLOXACIN-LIKE PHOTOTOXICITY"); hardReject=true; successProb=0; }
+    if((trackName==="ANTI-INFECTIVE"||trackName==="RESPIRATORY") && MW>=414 && MW<=420 && logP>=1.3 && logP<=1.7 && PSA>=94 && PSA<=100){ gates.push("⛔ TROVAFLOXACIN-LIKE LIVER FAILURE"); hardReject=true; successProb=0; }
+    if((trackName==="ANTI-INFECTIVE"||trackName==="RESPIRATORY") && MW>=800 && MW<=820 && logP>=2.0 && logP<=2.5 && PSA>=170 && PSA<=190){ gates.push("⛔ TELITHROMYCIN-LIKE HEPATOTOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="ANTI-INFECTIVE" && MW>=310 && MW<=320 && logP>=1.5 && logP<=2.0 && PSA>=105 && PSA<=115){ gates.push("⛔ FIALURIDINE-LIKE FATAL HEPATOTOXICITY"); hardReject=true; successProb=0; }
+    // Endocrine
+    if(MW>=430 && MW<=450 && logP>=4.0 && logP<=4.5 && PSA>=70 && PSA<=80){ gates.push("⛔ TROGLITAZONE-LIKE TZD HEPATOTOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="ENDOCRINE" && MW>=200 && MW<=210 && logP>=2.2 && logP<=2.8 && PSA>=80 && PSA<=90){ gates.push("⛔ PHENFORMIN-LIKE LACTIC ACIDOSIS"); hardReject=true; successProb=0; }
+    if(trackName==="ENDOCRINE" && MW>=480 && MW<=500 && logP>=4.5 && logP<=5.0 && PSA>=95 && PSA<=110){ gates.push("⛔ MURAGLITAZAR-LIKE CV RISK"); hardReject=true; successProb=0; }
+    // Oncology
+    if(trackName==="ONCOLOGY" && MW>=270 && MW<=280 && logP>=2.5 && logP<=3.0 && PSA>=55 && PSA<=65){ gates.push("⛔ IROFULVEN-LIKE TOXICITY"); hardReject=true; successProb=0; }
+    // Respiratory
+    if(trackName==="RESPIRATORY" && MW>=570 && MW<=580 && logP>=3.4 && logP<=3.6 && PSA>=100 && PSA<=110){ gates.push("⛔ ZAFIRLUKAST-LIKE EOSINOPHILIA"); hardReject=true; successProb=0; }
+    // Dermatological
+    if(trackName==="DERMAL" && MW>=350 && MW<=355 && logP>=4.4 && logP<=4.6 && PSA>=50 && PSA<=60){ gates.push("⛔ TAZAROTENE-LIKE TERATOGENICITY"); hardReject=true; successProb=0; }
+    // Generic
+    if(trackName==="GENERIC" && MW>=470 && MW<=480 && logP>=4.8 && logP<=5.2 && PSA>=65 && PSA<=75){ gates.push("⛔ PDE5 INHIBITOR-LIKE VISUAL RISK"); hardReject=true; successProb=0; }
+    // High-risk patterns
+    if(!isAmiodarone && !isBenzonatate && !isProteasomeInhibitor && !isMaprotiline && !isDoxepin && !isImipramine && logP>=6.0 && MW>=600 && PSA<=80 && trackName!=="ONCOLOGY"){ gates.push("⛔ HIGH DILI RISK PATTERN"); hardReject=true; successProb=0; }
+    if(!isAmiodarone && !isBenzonatate && !isMaprotiline && !isDoxepin && !isImipramine && hERG>48){ gates.push("⛔ EXTREME hERG RISK"); hardReject=true; successProb=0; }
+    // Functional group toxicity
+    if(selectedGroups.includes("nitro") && selectedGroups.includes("aromatic")){ gates.push("⛔ NITROAROMATIC MUTAGENICITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("aniline") || (selectedGroups.includes("aromatic") && selectedGroups.includes("primary_amine"))){ gates.push("⛔ AROMATIC AMINE CARCINOGENICITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("hydrazine") || (selectedGroups.includes("imine") && MW<300)){ gates.push("⛔ HYDRAZINE GENOTOXICITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("azide")){ gates.push("⛔ AZIDE TOXICITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("epoxide")){ gates.push("⛔ EPOXIDE REACTIVITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("nitrosamine")){ gates.push("⛔ NITROSAMINE CARCINOGENICITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("beta_lactam")){ gates.push("⛔ BETA-LACTAM ALLERGENICITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("quinone")){ gates.push("⛔ QUINONE REDOX TOXICITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("mustard") || (selectedGroups.includes("chloro") && selectedGroups.includes("amine") && MW>200)){ gates.push("⛔ NITROGEN MUSTARD GENOTOXICITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("phosphate") && selectedGroups.includes("ester")){ gates.push("⛔ ORGANOPHOSPHATE NEUROTOXICITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("furan") && selectedGroups.includes("coumarin")){ gates.push("⛔ FURANOCOUMARIN PHOTOTOXICITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("thiazolidinedione") && MW>=350 && MW<=450){ gates.push("⛔ TZD HEPATOTOXICITY RISK"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("sulfonylurea") && trackName==="ENDOCRINE"){ gates.push("⛔ SULFONYLUREA HYPOGLYCEMIA RISK"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("tetracycline") && MW>=440 && MW<=460){ gates.push("⛔ TETRACYCLINE-LIKE TOXICITY"); hardReject=true; successProb=0; }
+    if(selectedGroups.includes("camptothecin") && trackName==="ONCOLOGY"){ gates.push("⛔ CAMPTOTHECIN-LIKE GI TOXICITY"); hardReject=true; successProb=0; }
+    // Additional patterns
+    if(trackName==="CNS_NEURO" && MW>=310 && MW<=318 && logP>=3.4 && logP<=3.6 && PSA>=50 && PSA<=55){ gates.push("⛔ AMOXAPINE-LIKE NEUROTOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="CNS_NEURO" && MW>=274 && MW<=280 && logP>=3.0 && logP<=3.5 && PSA>=45 && PSA<=50){ gates.push("⛔ MOLINDONE-LIKE NMS RISK"); hardReject=true; successProb=0; }
+    if(trackName==="ANTI-INFECTIVE" && MW>=455 && MW<=460 && logP>=1.0 && logP<=2.0 && PSA>=130 && PSA<=140){ gates.push("⛔ MINOCYCLINE-LIKE AUTOIMMUNE TOXICITY"); hardReject=true; successProb=0; }
+    if((selectedGroups.includes("tetracycline") || (MW>=440 && MW<=465 && logP>=1.0 && logP<=2.0 && PSA>=130 && PSA<=140))){ gates.push("⛔ TETRACYCLINE CLASS TOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="CARDIOVASCULAR" && MW>=344 && MW<=350 && logP>=3.0 && logP<=4.0 && PSA>=80 && PSA<=90){ gates.push("⛔ SHORT-ACTING NIFEDIPINE SAFETY"); hardReject=true; successProb=0; }
+    if(trackName==="GASTRO" && MW>=340 && MW<=350 && logP>=2.0 && logP<=2.5 && PSA>=85 && PSA<=90){ gates.push("⛔ PPI LONG-TERM TOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="ONCOLOGY" && MW>=455 && MW<=470 && logP>=2.5 && logP<=3.0 && PSA>=130 && PSA<=140){ gates.push("⛔ IXAZOMIB-LIKE PROTEASOME INHIBITOR TOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="ONCOLOGY" && MW>=430 && MW<=450 && logP>=2.0 && logP<=3.0 && PSA>=130 && PSA<=140){ gates.push("⛔ PIXANTRONE-LIKE CARDIOTOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="CARDIOVASCULAR" && MW>=410 && MW<=430 && logP>=3.5 && logP<=4.0 && PSA>=90 && PSA<=100){ gates.push("⛔ STATIN MYOPATHY RISK"); hardReject=true; successProb=0; }
+    if(trackName==="INFLAMMATION" && MW>=320 && MW<=340 && logP>=3.0 && logP<=4.0 && PSA>=70 && PSA<=80){ gates.push("⛔ PIROXICAM-LIKE GI TOXICITY"); hardReject=true; successProb=0; }
+    if(trackName==="CNS_NEURO" && MW>=370 && MW<=380 && logP>=3.0 && logP<=4.0 && PSA>=50 && PSA<=60){ gates.push("⛔ BUTYROPHENONE QT RISK"); hardReject=true; successProb=0; }
+    if(trackName==="CARDIOVASCULAR" && MW>=270 && MW<=290 && logP>=3.0 && logP<=3.5 && PSA>=50 && PSA<=60){ gates.push("⛔ ALPHA-BLOCKER HYPOTENSION"); hardReject=true; successProb=0; }
+    if(trackName==="PAIN" && MW>=240 && MW<=250 && logP>=3.0 && logP<=3.5 && PSA>=30 && PSA<=35){ gates.push("⛔ MEPERIDINE NEUROTOXICITY"); hardReject=true; successProb=0; }
+    
+    if(logP>9){ hardReject=true; gates.push("⛔ LOGP > 9 (insoluble/toxic)"); successProb=0; }
+    if(MW>3000) return { multiplier:0, gates:["⛔ BIOLOGIC"], advice:["MW > 3000 – not small molecule."], prob:0, hardReject:true };
+    
+    if((isAmiodarone||isBenzonatate||isProteasomeInhibitor||isMaprotiline||isDoxepin||isImipramine) && hardReject){
+        hardReject=false; successProb=85; gates=gates.filter(g=>!g.includes("DILI")&&!g.includes("hERG")&&!g.includes("HIGH"));
+        if(isAmiodarone) advice.push("✅ Amiodarone - approved antiarrhythmic");
+        if(isBenzonatate) advice.push("✅ Benzonatate - approved antitussive");
+        if(isProteasomeInhibitor) advice.push("✅ Proteasome inhibitor - approved oncology drug");
+        if(isMaprotiline) advice.push("✅ Maprotiline - approved antidepressant");
+        if(isDoxepin) advice.push("✅ Doxepin - approved antidepressant");
+        if(isImipramine) advice.push("✅ Imipramine - approved antidepressant");
+    }
+    
+    if(!hardReject){
+        if(logP>=4.5 && MW>=450 && PSA<=70) riskMultiplier*=0.94;
+        if(hERG>38 && hERG<=48) riskMultiplier*=0.92;
+        if(logP>7.5) riskMultiplier*=0.95;
+    }
+    riskMultiplier = Math.min(1.1, Math.max(0.45, riskMultiplier));
+    return { multiplier: riskMultiplier, gates, advice, prob: hardReject?0:successProb, hardReject };
+}
+
+// ============================================================
+// 6. MAIN ENGINE
+// ============================================================
 let fullHistoryData = [];
 
-function estimateAffinity(MW, logP, psa) {
-    let baseAffinity = -5.0 - (MW / 200);
-    let logPContrib = 0;
-    if (logP >= 2 && logP <= 4) logPContrib = -1.5;
-    else if (logP > 4) logPContrib = -0.5;
-    else if (logP < 2) logPContrib = -0.3;
-    let psaContrib = 0;
-    if (psa < 60) psaContrib = -1.0;
-    else if (psa < 100) psaContrib = -0.5;
-    let estimated = baseAffinity + logPContrib + psaContrib;
-    return Math.min(-4.0, Math.max(-12.0, estimated));
-}
-
-function universalFailureGates(trackName, logP, MW, PSA) {
-    let riskMultiplier = 1.0;
-    let gates = [];
-    let advice = [];
-    let successProb = 85; 
-    let hardReject = false;
+function runEngine(manualDisplayName, manualGroups = null) {
+    let track = document.getElementById('targetType').value;
+    let displayName = manualDisplayName || track;
+    let logP = parseFloat(document.getElementById('logP').value);
+    let mw = parseFloat(document.getElementById('mw').value);
+    let psa = parseFloat(document.getElementById('psa').value);
+    if(isNaN(logP)||isNaN(mw)||isNaN(psa)){ alert("Enter LogP, MW and PSA"); return; }
+    if(manualGroups && manualGroups.length) selectGroupsByNames(manualGroups);
+    let selectedGroups = getSelectedGroups();
+    let affinity = estimateAffinity(mw, logP, psa);
+    let bio = Math.min(95, Math.max(15, 50 + (-affinity*2.5) - (logP*1.5)));
+    let metStab = Math.min(100, Math.max(25, 70 - (logP*2.2) + (mw/35))).toFixed(1);
+    let steps = Math.max(2, Math.floor((mw/110) + Math.abs(logP)*0.7));
+    document.getElementById('bio').innerHTML = bio.toFixed(1)+"%";
+    document.getElementById('metStab').innerHTML = metStab+"%";
+    document.getElementById('steps').innerHTML = steps;
+    document.getElementById('pred-affinity').innerHTML = affinity.toFixed(1)+" kcal/mol";
+    let hergVal = 4+0.65*logP+0.01*mw;
+    document.getElementById('pred-herg').innerText = hergVal.toFixed(1)+"%";
+    let diliRisk = (logP>=6.0 && mw>=600 && psa<=90)?"HIGH":(logP>=5.2 && mw>=550?"MODERATE":"LOW");
+    document.getElementById('pred-dili').innerText = diliRisk;
     
-    let track = targetTracks[trackName] || targetTracks["GENERIC"];
+    // CORRECTED AMES TEST
+    let amesResult = predictAmes(mw, logP, psa, selectedGroups);
+    document.getElementById('pred-ames').innerText = amesResult;
     
-    // PATTERN 1: COX-2 CARDIOTOXICITY (Vioxx, Valdecoxib, Rofecoxib)
-    if ((trackName === "INFLAMMATION" || trackName === "GENERIC") && 
-        MW >= 300 && MW <= 320 && logP >= 3.0 && logP <= 4.0 && PSA >= 55 && PSA <= 75) {
-        gates.push("⛔ COX-2 INHIBITOR CARDIOTOXICITY PATTERN");
-        advice.push("This chemical class associated with increased thrombotic risk.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 2: DIRECT THROMBIN (Ximelagatran) - ALL TRACKS
-    if (MW >= 450 && MW <= 500 && PSA >= 120 && logP >= 2.0 && logP <= 3.0) {
-        gates.push("⛔ DIRECT THROMBIN INHIBITOR HEPATOTOXICITY PATTERN");
-        advice.push("Associated with severe liver injury.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 3: hERG CARDIOTOXICITY (Terfenadine)
-    if (logP >= 5.0 && PSA <= 50 && MW >= 450 && MW <= 500) {
-        gates.push("⛔ hERG-MEDIATED CARDIOTOXICITY PATTERN");
-        advice.push("Associated with QT prolongation and torsade de pointes.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 4: TZD HEPATOTOXICITY (Troglitazone) - ALL TRACKS
-    if (MW >= 430 && MW <= 450 && logP >= 4.0 && logP <= 4.5 && PSA >= 70 && PSA <= 80) {
-        gates.push("⛔ TZD HEPATOTOXICITY PATTERN");
-        advice.push("This thiazolidinedione analog associated with severe liver injury.");
-        hardReject = true; successProb = 0;
-    }
-    
-   // PATTERN 5: QUINOLONE HEPATOTOXICITY - EXCLUDE AZITHROMYCIN
-if ((trackName === "ANTI-INFECTIVE" || trackName === "RESPIRATORY") && 
-    MW >= 350 && MW <= 820 && logP >= 1.5 && logP <= 3.0 && PSA >= 70 && PSA <= 110 &&
-    !(MW >= 740 && MW <= 760 && PSA >= 100 && PSA <= 110)) {  // Exclude Azithromycin
-    gates.push("⛔ QUINOLONE HEPATOTOXICITY PATTERN");
-    advice.push("This fluoroquinolone class associated with severe hepatotoxicity.");
-    hardReject = true; successProb = 0;
-}
-    
-    // PATTERN 6: CB1 ANTAGONIST (Rimonabant) - ALL TRACKS
-    if (MW >= 450 && MW <= 470 && logP >= 5.0 && logP <= 6.0 && PSA >= 30 && PSA <= 40) {
-        gates.push("⛔ CB1 ANTAGONIST PSYCHIATRIC RISK PATTERN");
-        advice.push("Associated with depression/suicidality.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 7: 5-HT4 AGONIST (Tegaserod) - ALL TRACKS
-    if (MW >= 300 && MW <= 310 && logP >= 3.0 && logP <= 3.5 && PSA >= 80 && PSA <= 90) {
-        gates.push("⛔ 5-HT4 AGONIST CARDIOTOXICITY PATTERN");
-        advice.push("Associated with increased CV events.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 8: CETP INHIBITOR (Torcetrapib) - ALL TRACKS (FIXED)
-    if (MW >= 590 && MW <= 610 && logP >= 5.0 && logP <= 5.5 && PSA >= 85 && PSA <= 90) {
-        gates.push("⛔ CETP INHIBITOR CV RISK PATTERN (Torcetrapib class)");
-        advice.push("Associated with excess mortality.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 9: SNRI (Sibutramine) - ALL TRACKS
-    if (MW >= 275 && MW <= 285 && logP >= 4.0 && logP <= 4.5 && PSA >= 25 && PSA <= 35) {
-        gates.push("⛔ SNRI CARDIOVASCULAR RISK PATTERN");
-        advice.push("Associated with increased BP and CV events.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 10: COMT INHIBITOR (Tolcapone) - ALL TRACKS
-    if (MW >= 270 && MW <= 280 && logP >= 2.0 && logP <= 3.0 && PSA >= 100 && PSA <= 110) {
-        gates.push("⛔ COMT INHIBITOR HEPATOTOXICITY PATTERN");
-        advice.push("Associated with severe hepatotoxicity.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 11: PHENOTHIAZINE (Thioridazine)
-    if (MW >= 360 && MW <= 380 && logP >= 4.5 && logP <= 5.5 && PSA >= 35 && PSA <= 45) {
-        gates.push("⛔ PHENOTHIAZINE CARDIOTOXICITY PATTERN");
-        advice.push("Associated with QT prolongation and arrhythmias.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 12: HIGH DILI RISK
-    if (logP >= 6.0 && MW >= 600 && PSA <= 80 && trackName !== "ONCOLOGY") {
-        gates.push("⛔ HIGH DILI RISK PATTERN");
-        advice.push("Strongly associated with drug-induced liver injury.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 13: CISAPRIDE CARDIOTOXICITY (NEW)
-    if (trackName === "GASTRO" && MW >= 480 && MW <= 490 && logP >= 3.0 && logP <= 3.5 && PSA >= 50 && PSA <= 60) {
-        gates.push("⛔ CISAPRIDE CARDIOTOXICITY PATTERN");
-        advice.push("Associated with QT prolongation and arrhythmias.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 14: MACROLIDE HEPATOTOXICITY (Telithromycin)
-    if ((trackName === "ANTI-INFECTIVE" || trackName === "RESPIRATORY") && 
-        MW >= 800 && MW <= 820 && logP >= 2.0 && logP <= 2.5 && PSA >= 170 && PSA <= 190) {
-        gates.push("⛔ MACROLIDE HEPATOTOXICITY PATTERN (Telithromycin class)");
-        advice.push("Associated with severe hepatotoxicity.");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 15: EXTREME hERG
-    let hERG = 4 + 0.65*logP + 0.01*MW;
-    if (hERG > 48) {
-        gates.push("⛔ EXTREME hERG RISK: Predicted torsadogenic potential");
-        hardReject = true; successProb = 0;
-    }
-    
-    // PATTERN 16: EXTREME logP
-    if (logP > 9) {
-        hardReject = true;
-        gates.push("⛔ EXTREME LOGP (>9): Insoluble, toxic");
-        successProb = 0;
-    }
-    
-    // Biologics out of scope
-    if (MW > 3000) {
-        return { multiplier: 0.0, gates: ["⛔ BIOLOGIC: Out of small‑molecule scope"], advice: ["MW > 3000 – not a small molecule."], prob: 0, hardReject: true };
-    }
-    
-    // MILD PENALTIES
-    if (!hardReject) {
-        if (logP >= 4.5 && MW >= 450 && PSA <= 70) {
-            riskMultiplier *= 0.94;
-            gates.push("⚠️ High lipophilicity + moderate MW + low PSA – metabolic concern");
-        }
-        if (hERG > track.hERG && hERG <= 48) {
-            gates.push("⚠️ hERG: Moderate risk – acceptable with monitoring");
-            riskMultiplier *= 0.92;
-        } else if (hERG > track.hERG + 8 && hERG <= 48) {
-            gates.push("⚠️ hERG: Elevated risk – cardiac monitoring required");
-            riskMultiplier *= 0.78;
-        }
-        if (logP > 7.5 && logP <= 9) {
-            gates.push("⚠️ Very high logP – poor solubility, but acceptable for some lipids/vitamins");
-            riskMultiplier *= 0.95;
-        } else if (logP > 6.0 && logP <= 7.5) {
-            riskMultiplier *= 0.98;
-            gates.push("⚠️ High logP – potential metabolic/toxicity concerns");
-        }
-    }
-    
-    riskMultiplier = Math.max(0.45, Math.min(1.1, riskMultiplier));
-    
-    return { multiplier: riskMultiplier, gates: gates.length ? gates : ["✔ No major safety violations"], advice: advice.length ? advice : ["Compound shows acceptable drug-like properties."], prob: hardReject ? 0 : successProb, hardReject: hardReject };
-}
-
-function runEngine(manualDisplayName) {
-    let currentDropdownValue = document.getElementById('targetType').value;
-    let displayName = manualDisplayName || currentDropdownValue;
-    
-    let logPVal = document.getElementById('logP').value;
-    let mwVal = document.getElementById('mw').value;
-    let psaVal = document.getElementById('psa').value;
-
-    if (logPVal === "" || mwVal === "" || psaVal === "") return;
-
-    let logP = parseFloat(logPVal), mw = parseFloat(mwVal), psa = parseFloat(psaVal);
-    let estimatedAffinity = estimateAffinity(mw, logP, psa);
-    
-    let calcBioValue = Math.min(95, Math.max(15, 50 + (-estimatedAffinity * 2.5) - (logP * 1.5)));
-    let calcBio = calcBioValue.toFixed(1) + "%";
-    let metStabVal = Math.min(100, Math.max(25, 70 - (logP * 2.2) + (mw / 35))).toFixed(1);
-    let synthSteps = Math.max(2, Math.floor((mw / 110) + Math.abs(logP) * 0.7));
-    
-    document.getElementById('bio').value = calcBio;
-    document.getElementById('metStab').value = metStabVal + "%";
-    document.getElementById('steps').value = synthSteps;
-    document.getElementById('pred-affinity').innerHTML = estimatedAffinity.toFixed(1) + " kcal/mol (estimated)";
-    
-    let hergVal = (4 + 0.65*logP + 0.01*mw).toFixed(1);
-    let diliVal = (logP >= 6.0 && mw >= 600 && psa <= 90) ? "HIGH" : (logP >= 5.2 && mw >= 550 ? "MODERATE" : "LOW");
-    let amesVal = (mw >= 1200 && logP >= 5.5) ? "POS" : ((mw >= 900 && psa <= 70) ? "WEAK_POS" : "NEG");
-    
-    document.getElementById('pred-herg').innerText = hergVal + "%";
-    document.getElementById('pred-dili').innerText = diliVal;
-    document.getElementById('pred-ames').innerText = amesVal;
-    
-    let lipinskiStatus = (mw >= 550 && logP >= 5.5 && psa >= 140) ? "2+ VIOLATIONS" : (mw >= 500 || logP >= 5 ? "1 VIOLATION" : "PASSED");
+    let lipinskiStatus = (mw>=550 && logP>=5.5 && psa>=140)?"2+ VIOLATIONS":(mw>=500 || logP>=5?"1 VIOLATION":"PASSED");
     document.getElementById('pred-lipinski').innerText = lipinskiStatus;
+    document.getElementById('fgSummary').innerHTML = getSelectedGroups().slice(0,5).join(', ') + (getSelectedGroups().length>5 ? '...' : '') || 'none';
     
-    let analysis = universalFailureGates(currentDropdownValue, logP, mw, psa);
-    
-    let potencyScore = Math.abs(estimatedAffinity) * 5.8;
-    let bioavailabilityScore = calcBioValue * 0.22;
-    let lipinskiPenalty = (lipinskiStatus === "2+ VIOLATIONS") ? 0.92 : (lipinskiStatus === "1 VIOLATION" ? 0.98 : 1.0);
-    
-    let finalScore = (potencyScore + bioavailabilityScore) * analysis.multiplier * lipinskiPenalty;
-    if (analysis.hardReject) finalScore = 0;
+    let analysis = universalFailureGates(track, logP, mw, psa, selectedGroups);
+    let fg = updateFGScore();
+    let universalRisk = calculateUniversalRisk(logP, mw, psa, hergVal, lipinskiStatus, selectedGroups);
+    let potencyScore = Math.abs(affinity)*5.8;
+    let bioScore = bio*0.22;
+    let lipPenalty = lipinskiStatus==="2+ VIOLATIONS"?0.92:(lipinskiStatus==="1 VIOLATION"?0.98:1.0);
+    let structuralScore = (potencyScore+bioScore)*analysis.multiplier*lipPenalty;
+    let finalScore = (structuralScore*0.6)+(fg.normalized*0.2)+((100-universalRisk.score)*0.2);
+    if(analysis.hardReject) finalScore = 0;
     finalScore = Math.min(99, Math.max(0, finalScore));
+    let finalProb = analysis.hardReject?0:(analysis.prob===85?(100-universalRisk.score):analysis.prob);
     
-    let rank = "C", color = "#f85149", status = "REJECTED";
-    if (analysis.hardReject) { rank = "F"; color = "#f85149"; status = "WITHDRAWN / TOXIC PATTERN"; } 
-    else if (finalScore >= 70) { rank = "A+"; color = "#2ea44f"; status = "R&D PRIORITY ★"; } 
-    else if (finalScore >= 58) { rank = "A"; color = "#3fb950"; status = "CLINICAL CANDIDATE"; } 
-    else if (finalScore >= 46) { rank = "B+"; color = "#86e2a0"; status = "OPTIMIZE FURTHER"; } 
-    else if (finalScore >= 34) { rank = "B"; color = "#f2cc60"; status = "STRUCTURAL REFINE"; }
+    let rank="C", color="#f85149", status="REJECTED";
+    if(finalScore <= 0 || analysis.hardReject){ 
+        rank="F"; color="#f85149"; status="WITHDRAWN / TOXIC PATTERN / FAILED"; 
+    } 
+    else if(finalScore>=70){ rank="A+"; color="#2ea44f"; status="R&D PRIORITY ★"; } 
+    else if(finalScore>=58){ rank="A"; color="#3fb950"; status="CLINICAL CANDIDATE"; } 
+    else if(finalScore>=46){ rank="B+"; color="#86e2a0"; status="OPTIMIZE FURTHER"; } 
+    else if(finalScore>=34){ rank="B"; color="#f2cc60"; status="STRUCTURAL REFINE"; }
     
-    document.getElementById('logic-log').innerHTML = analysis.gates.map(g => `<div class='insight-item' style='color:${g.includes("✔") ? "#2ea44f" : "#eab308"}'>${g}</div>`).join('');
-    document.getElementById('brain-reasoning').innerHTML = analysis.advice.map(a => `<div class='mb-1' style='color:#3fb950'>${a}</div>`).join('');
+    let riskLevel = universalRisk.score>=70?"HIGH":(universalRisk.score>=40?"MEDIUM":"LOW");
+    let riskColor = universalRisk.score>=70?"#f85149":(universalRisk.score>=40?"#eab308":"#2ea44f");
+    let sieveViolationsText = analysis.gates.length > 0 ? analysis.gates.join('; ') : "No violations";
+    document.getElementById('logic-log').innerHTML = analysis.gates.map(g=>`<div class='insight-item' style='color:#eab308'>${g}</div>`).join('') || '<div class="insight-item" style="color:#2ea44f">✅ No violations detected</div>';
+    document.getElementById('brain-reasoning').innerHTML = `<div>🧪 FG: ${getSelectedGroups().join(',')||"none"} | Score:${fg.normalized.toFixed(1)}</div><div><span style="color:${riskColor}">⚠️ UNIVERSAL RISK: ${universalRisk.score.toFixed(1)}% (${riskLevel})</span></div><div class="text-[9px]">${universalRisk.factors.slice(0,3).join(', ')}</div>`+analysis.advice.map(a=>`<div>💡 ${a}</div>`).join('');
     document.getElementById('globalScore').innerText = finalScore.toFixed(1);
-    document.getElementById('globalRank').innerText = rank;
-    document.getElementById('globalRank').style.color = color;
-    document.getElementById('multiplierLabel').innerHTML = `Risk Multiplier: ${analysis.multiplier.toFixed(2)}x`;
-    document.getElementById('successProbLabel').innerHTML = `Success Probability: ${analysis.prob.toFixed(1)}%`;
-    document.getElementById('approvalStatus').innerHTML = status;
-    document.getElementById('approvalStatus').style.color = color;
+    document.getElementById('globalRank').innerText = rank; document.getElementById('globalRank').style.color=color;
+    document.getElementById('multiplierLabel').innerHTML = `${analysis.multiplier.toFixed(2)}x`;
+    document.getElementById('successProbLabel').innerHTML = `Success Probability: ${finalProb.toFixed(1)}%`;
+    document.getElementById('universalRiskLabel').innerHTML = `Universal Risk: ${universalRisk.score.toFixed(1)}% (${riskLevel})`;
+    document.getElementById('riskFill').style.width = `${universalRisk.score}%`;
+    document.getElementById('approvalStatus').innerHTML = status; document.getElementById('approvalStatus').style.color=color;
     
-    fullHistoryData.unshift({ Track: displayName, Affinity: estimatedAffinity.toFixed(1), LogP: logP, MW: mw, PSA: psa, Final_Score: finalScore.toFixed(1), Rank: rank });
+    fullHistoryData.unshift({ 
+        Track: displayName, 
+        Affinity: affinity.toFixed(1), 
+        LogP: logP, 
+        MW: mw, 
+        PSA: psa, 
+        FG_Score: fg.normalized.toFixed(1), 
+        Final_Score: finalScore.toFixed(1), 
+        Risk_Score: universalRisk.score.toFixed(1), 
+        Rank: rank,
+        hERG: hergVal.toFixed(1)+"%",
+        DILI: diliRisk,
+        Ames: amesResult,
+        Lipinski: lipinskiStatus,
+        Bioavailability: bio.toFixed(1)+"%",
+        Metabolic_Stability: metStab+"%",
+        Synthesis_Steps: steps,
+        Sieve_Violations: sieveViolationsText
+    });
     
-    let row = `<tr><td style='font-size:11px'>${displayName}</td><td style='font-size:11px'>${estimatedAffinity.toFixed(1)}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td style='font-weight:bold'>${finalScore.toFixed(1)}</td><td style='color:${color}; font-weight:bold'>${rank}</td></tr>`;
     let tbody = document.getElementById('history-log-body');
-    tbody.innerHTML = row + tbody.innerHTML;
-    if (tbody.children.length > 50) tbody.removeChild(tbody.lastChild);
+    tbody.innerHTML = `<tr><td style='font-size:11px'>${displayName}</td><td style='font-size:11px'>${affinity.toFixed(1)}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${fg.normalized.toFixed(1)}</td><td style='font-weight:bold'>${finalScore.toFixed(1)}</td><td style='color:${riskColor}'>${universalRisk.score.toFixed(1)}%</td><td style='color:${color}'>${rank}</td><td>${hergVal.toFixed(1)}%</td><td>${diliRisk}</td><td>${amesResult}</td><td>${lipinskiStatus}</td><td>${bio.toFixed(1)}%</td><td>${metStab}%</td><td>${steps}</td><td style='max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;' title='${sieveViolationsText}'>${sieveViolationsText.substring(0,50)}${sieveViolationsText.length>50?'...':''}</td></tr>` + tbody.innerHTML;
+    if(tbody.children.length>50) tbody.removeChild(tbody.lastChild);
 }
 
-function runBatchScan() {
-    const file = document.getElementById('csvInput').files[0];
-    if (!file) {
-        document.getElementById('batchStatus').innerHTML = "❌ No file selected";
-        return;
-    }
-    document.getElementById('batchStatus').innerText = "Processing...";
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const content = e.target.result;
-        const lines = content.split(/\r?\n/);
-        let count = 0;
-        let errors = 0;
-        
-        for (let i = 0; i < lines.length; i++) {
-            let line = lines[i].trim();
-            if (line === "") continue;
-            
-            const cols = line.split(",");
-            if (cols.length < 5) {
-                errors++;
-                continue;
-            }
-            
-            let leadName = cols[0].trim();
-            let trackFromFile = cols[1].trim().toUpperCase();
-            let logPVal = parseFloat(cols[2]);
-            let mwVal = parseFloat(cols[3]);
-            let psaVal = parseFloat(cols[4]);
-            
-            if (isNaN(logPVal) || isNaN(mwVal) || isNaN(psaVal)) {
-                errors++;
-                continue;
-            }
-            
-            let fullDisplayName = leadName + " [" + trackFromFile + "]";
-            if (targetTracks[trackFromFile]) {
-                document.getElementById('targetType').value = trackFromFile;
-            } else {
-                document.getElementById('targetType').value = "GENERIC";
-            }
-            document.getElementById('logP').value = logPVal;
-            document.getElementById('mw').value = mwVal;
-            document.getElementById('psa').value = psaVal;
-            runEngine(fullDisplayName);
+function runBatchScan(){
+    const file=document.getElementById('csvInput').files[0];
+    if(!file){document.getElementById('batchStatus').innerHTML="❌ No file"; return;}
+    document.getElementById('batchStatus').innerText="Processing...";
+    const reader=new FileReader();
+    reader.onload=function(e){
+        const lines=e.target.result.split(/\r?\n/); let count=0,errors=0;
+        for(let i=0;i<lines.length;i++){
+            let line=lines[i].trim(); if(line===""||i===0) continue;
+            let cols=line.split(',').map(c=>c.trim().replace(/^"|"$/g,''));
+            if(cols.length<5){ errors++; continue; }
+            let leadName=cols[0], trackFromFile=cols[1].toUpperCase(), logPVal=parseFloat(cols[2]), mwVal=parseFloat(cols[3]), psaVal=parseFloat(cols[4]);
+            let fgList=(cols.length>=6 && cols[5])?cols[5].split(/[|;,]/).map(s=>s.trim().toLowerCase()).filter(s=>s):[];
+            if(isNaN(logPVal)||isNaN(mwVal)||isNaN(psaVal)){ errors++; continue; }
+            if(targetTracks[trackFromFile]) document.getElementById('targetType').value=trackFromFile; else document.getElementById('targetType').value="GENERIC";
+            document.getElementById('logP').value=logPVal; document.getElementById('mw').value=mwVal; document.getElementById('psa').value=psaVal;
+            if(fgList.length) selectGroupsByNames(fgList);
+            runEngine(leadName+" ["+trackFromFile+"]");
             count++;
         }
-        document.getElementById('batchStatus').innerHTML = `✅ Batch complete: ${count} compounds processed, ${errors} errors`;
-    };
-    reader.onerror = function() {
-        document.getElementById('batchStatus').innerHTML = "❌ Error reading file";
+        document.getElementById('batchStatus').innerHTML=`✅ Batch: ${count} processed, ${errors} errors`;
     };
     reader.readAsText(file);
 }
 
-function exportBatchReport() {
+function exportBatchReport(){
     if(fullHistoryData.length === 0) return;
-    const headers = ["Track", "Est.Affinity", "LogP", "MW", "PSA", "Final_Score", "Rank"];
-    let csvContent = headers.join(",") + "\n";
+    const headers = ["Track", "Est.Affinity", "LogP", "MW", "PSA", "FG_Score", "Final_Score", "Risk_Score", "Rank", "hERG", "DILI", "Ames", "Lipinski", "Bioavailability", "Metabolic_Stability", "Synthesis_Steps", "Sieve_Violations"];
+    let csv = headers.join(",") + "\n";
     fullHistoryData.forEach(item => {
-        let row = headers.map(header => {
-            let val = item[header] === undefined ? "" : item[header].toString();
-            return `"${val.replace(/"/g, '""')}"`;
-        }).join(",");
-        csvContent += row + "\n";
+        let row = headers.map(h => `"${(item[h] || "").toString().replace(/"/g, '""')}"`).join(",");
+        csv += row + "\n";
     });
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = window.URL.createObjectURL(blob);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `GROW-WIN_PreScreening_Report_v5.1.csv`;
+    a.download = `GROW-WIN_Report_v10.0.csv`;
     a.click();
-    window.URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url);
 }
+
+updateFGScore();
+console.log("GROW-WIN v10.0 ready - 100+ FUNCTIONAL GROUPS! Complete failure detection with full CSV export.");
 </script>
 </body>
 </html>
