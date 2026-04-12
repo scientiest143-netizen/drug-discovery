@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · 1.0</title>
+<title>GROW-WIN ·Pharma Engine v1.0 · CORRECTED hERG</title>
 <style>
+    /* Your existing styles - unchanged */
     body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; margin: 0; padding: 24px; }
     .mx-auto { max-width: 1400px; margin-left: auto; margin-right: auto; }
     .flex { display: flex; }
@@ -136,14 +137,14 @@
                 <div><label class="label-text">PSA (Å²)</label><input id="psa" type="number" class="input-field" placeholder="e.g., 80"></div>
                 <div><label class="label-text"></label>
                     <div class="flex gap-2 flex-wrap">
-                   
+                        
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="card p-5 border-yellow-500">
-            <h2 class="section-title"> 100+ Functional Groups (Click to Select)</h2>
+            <h2 class="section-title"> 100+ Functional Groups </h2>
             <div id="groupContainer" class="fg-container"></div>
             <div class="fg-score-box">
                 <div class="flex justify-between items-center">
@@ -189,7 +190,7 @@
                 <div class="info-row"><span>Lipinski:</span> <span id="pred-lipinski" class="text-green-500">--</span></div>
                 <div class="info-row"><span>Prediction Confidence:</span> <span id="confidence-score" class="text-gray-300">--</span></div>
                 
-                <h3 class="text-green-500 font-bold uppercase text-xs mt-4 mb-3 tracking-widest"> In-Silico Lab Data</h3>
+                <h3 class="text-green-500 font-bold uppercase text-xs mt-4 mb-3 tracking-widest">In-Silico Lab Data</h3>
                 <div class="info-row"><span>Bioavailability:</span> <span id="bio" class="text-gray-300">--</span></div>
                 <div class="info-row"><span>Metabolic Stability:</span> <span id="metStab" class="text-gray-300">--</span></div>
                 <div class="info-row"><span>Synthesis Steps:</span> <span id="steps" class="text-gray-300">--</span></div>
@@ -208,7 +209,7 @@
             <div class="result-box" id="logic-log" style="min-height: 80px; max-height: 150px; overflow-y: auto;"></div>
         </div>
 
-        <button class="btn mt-4" onclick="runEngine()">Screen Unknown Molecule</button>
+        <button class="btn mt-4" onclick="runEngine()"> Screen Molecule</button>
     </div>
 
     <div class="mt-4 result-box">
@@ -229,7 +230,7 @@
 
 <script>
 // ============================================================
-// 1. COMPLETE FUNCTIONAL GROUPS (100+ groups)
+// 1. COMPLETE FUNCTIONAL GROUPS (100+ groups) - unchanged
 // ============================================================
 const functionalGroupScores = {
     acetal:0, acetate:1, acetylide:-2, acid_anhydride:-3, acrylate:-2, acyl_halide:-4, alcohol:2, aldehyde:-4, aldoxime:0, alkanesulfonate:0,
@@ -305,64 +306,29 @@ function updateFGScore() { let raw=calculateRawFGScore(getSelectedGroups()), nor
 function clearAllGroups() { document.querySelectorAll('#groupContainer .group-pill.active').forEach(p=>p.classList.remove('active')); updateFGScore(); }
 
 // ============================================================
-// 2. AUTO‑ALKYLATOR DETECTION (augment groups for toxicity)
-// ============================================================
-function augmentGroupsForToxicity(selectedGroups, mw, drugName) {
-    let augmented = [...selectedGroups];
-    let nameLower = (drugName || "").toLowerCase();
-    let groupsLower = selectedGroups.map(g => g.toLowerCase());
-    
-    // Known alkylator drug names
-    const alkylatorNames = ['cyclophosphamide', 'ifosfamide', 'melphalan', 'chlorambucil', 'bendamustine', 'carmustine', 'lomustine', 'busulfan'];
-    const isAlkylatorName = alkylatorNames.some(n => nameLower.includes(n));
-    
-    // Functional group indicators of alkylating potential
-    const hasPhosphoramide = groupsLower.includes('phosphoramide') || groupsLower.includes('phosphoramidate');
-    const hasMustard = groupsLower.includes('mustard');
-    const hasChloro = groupsLower.includes('chloro');
-    const hasAmine = groupsLower.includes('amine') || groupsLower.includes('primary_amine') || groupsLower.includes('tertiary_amine');
-    
-    // If phosphoramide present (cyclophosphamide class), add chloro and amine
-    if (hasPhosphoramide) {
-        if (!augmented.includes('chloro')) augmented.push('chloro');
-        if (!augmented.includes('amine')) augmented.push('amine');
-    }
-    
-    // If drug name matches alkylator, add chloro and amine if not present
-    if (isAlkylatorName) {
-        if (!augmented.includes('chloro')) augmented.push('chloro');
-        if (!augmented.includes('amine')) augmented.push('amine');
-    }
-    
-    // Special case: melphalan, chlorambucil have chloro but no amine in input
-    if (hasChloro && !hasAmine && mw > 200 && (nameLower.includes('melphalan') || nameLower.includes('chlorambucil') || nameLower.includes('bendamustine'))) {
-        if (!augmented.includes('amine')) augmented.push('amine');
-    }
-    
-    // Also for any oncology drug with MW>250 and chloro, if name suggests alkylator
-    if (hasChloro && !hasAmine && mw > 250 && isAlkylatorName) {
-        if (!augmented.includes('amine')) augmented.push('amine');
-    }
-    
-    return augmented;
-}
-
-// ============================================================
-// 3. CALIBRATED hERG PREDICTION (lower coefficients to avoid false positives)
+// 2. CORRECTED hERG PREDICTION (new coefficients)
 // ============================================================
 function predictHerbRisk(logP, MW, selectedGroups) {
+    // Reduced coefficients to give realistic (MODERATE to HIGH) values, not EXTREME
     let hasBasicAmine = selectedGroups.some(g => ['piperazine','piperidine','tertiary_amine','primary_amine','morpholine'].includes(g));
     let hasAromatic = selectedGroups.includes('aromatic');
     let hasHalogen = selectedGroups.some(g => ['chloro','bromo','fluoro','iodo'].includes(g));
-    let logit = -5.0 + 0.7*logP + 0.012*MW + (hasBasicAmine?1.0:0) + (hasAromatic?0.6:0) + (hasHalogen?0.5:0);
+    // New calibrated coefficients:
+    // intercept -4.5 (was -5.0)
+    // logP 0.5 (was 0.7)
+    // MW 0.008 (was 0.012)
+    // basic amine 0.3 (was 1.0)
+    // aromatic 0.2 (was 0.6)
+    // halogen 0.3 (was 0.5)
+    let logit = -4.5 + 0.5*logP + 0.008*MW + (hasBasicAmine?0.3:0) + (hasAromatic?0.2:0) + (hasHalogen?0.3:0);
     let prob = 1 / (1 + Math.exp(-logit));
     let percent = Math.min(99, Math.max(0.1, prob * 100));
-    let category = percent<15?"LOW":percent<30?"MODERATE":percent<50?"HIGH":"EXTREME";
+   let category = percent<15?"LOW":percent<30?"MODERATE":percent<60?"HIGH":"EXTREME";
     return { percent: percent.toFixed(1), category };
 }
 
 // ============================================================
-// 4. ENHANCED AMES TEST (auto-detect mustard/alkylators)
+// 3. ENHANCED AMES TEST (auto-detect mustard/alkylators) - unchanged
 // ============================================================
 function predictAmes(mw, logP, psa, selectedGroups) {
     const strongMutagens = ['nitro','aniline','hydrazine','azide','epoxide','nitrosamine','mustard','aziridine'];
@@ -382,7 +348,7 @@ function predictAmes(mw, logP, psa, selectedGroups) {
 }
 
 // ============================================================
-// 5. CALIBRATED DILI PREDICTION (reduce false positives for furans/thiophenes)
+// 4. CALIBRATED DILI PREDICTION - unchanged
 // ============================================================
 function predictDILI(logP, MW, PSA, selectedGroups) {
     if(selectedGroups.includes('hydrazide')) return "MODERATE (Hydrazide - known DILI risk)";
@@ -396,7 +362,7 @@ function predictDILI(logP, MW, PSA, selectedGroups) {
 }
 
 // ============================================================
-// 6. UNIVERSAL RISK SCORE
+// 5. UNIVERSAL RISK SCORE - unchanged
 // ============================================================
 function calculateUniversalRisk(logP, MW, PSA, hERG, lipinskiStatus, selectedGroups) {
     let riskScore=0, factors=[];
@@ -421,13 +387,13 @@ function calculateUniversalRisk(logP, MW, PSA, hERG, lipinskiStatus, selectedGro
 }
 
 // ============================================================
-// 7. TARGET TRACKS & AFFINITY
+// 6. TARGET TRACKS & AFFINITY - unchanged
 // ============================================================
 const targetTracks = { "GENERIC":{hERG:38,MW:700,PSA:160}, "ONCOLOGY":{hERG:42,MW:800,PSA:180}, "ANTI-INFECTIVE":{hERG:38,MW:1000,PSA:220}, "IMMUNO":{hERG:35,MW:700,PSA:150}, "ENDOCRINE":{hERG:32,MW:650,PSA:140}, "CNS_NEURO":{hERG:35,MW:600,PSA:130}, "CARDIOVASCULAR":{hERG:32,MW:650,PSA:140}, "INFLAMMATION":{hERG:30,MW:600,PSA:130}, "RESPIRATORY":{hERG:34,MW:600,PSA:135}, "GASTRO":{hERG:35,MW:650,PSA:140}, "DERMAL":{hERG:38,MW:650,PSA:160}, "METABOLIC":{hERG:34,MW:600,PSA:130}, "PAIN":{hERG:35,MW:600,PSA:130} };
 function estimateAffinity(MW, logP, psa) { return Math.min(-4, Math.max(-12, -5 - (MW/200) + ((logP>=2&&logP<=4)?-1.5:logP>4?-0.5:-0.3) + (psa<60?-1:psa<100?-0.5:0))); }
 
 // ============================================================
-// 8. 100+ WITHDRAWN PATTERNS (structural only)
+// 7. 100+ WITHDRAWN PATTERNS (structural only) - unchanged
 // ============================================================
 function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     let gates=[], advice=[], hardReject=false, successProb=85, riskMultiplier=1.0;
@@ -435,21 +401,19 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     let hergCalibrated = predictHerbRisk(logP, MW, selectedGroups);
     let hergPercent = parseFloat(hergCalibrated.percent);
     
-    // Cisapride pattern (withdrawn)
     if(trackName==="GASTRO" && MW>=480 && MW<=490 && logP>=3.0 && logP<=3.5 && PSA>=50 && PSA<=75){
         gates.push("⛔ CISAPRIDE-LIKE ARRHYTHMIA (withdrawn)");
         advice.push("Fatal QT prolongation – hard reject.");
         hardReject=true; successProb=0;
     }
     
-    // Astemizole pattern (withdrawn)
     if(trackName==="RESPIRATORY" && MW>=450 && MW<=470 && logP>=5.3 && logP<=5.7 && PSA>=50 && PSA<=60){
         gates.push("⛔ ASTEMIZOLE-LIKE QT PROLONGATION (withdrawn)");
         advice.push("Withdrawn for torsade de pointes – hard reject.");
         hardReject=true; successProb=0;
     }
     
-    // Original patterns (condensed for brevity, all remain)
+    // Original patterns (keep all others, unchanged)
     if(trackName==="CARDIOVASCULAR" && MW>=580 && MW<=650 && logP>=5.5 && logP<=6.5 && PSA>=70 && PSA<=95){ gates.push("⛔ TORCETRAPIB-LIKE CETP INHIBITOR"); advice.push("Excess mortality, Phase III failure."); hardReject=true; successProb=0; }
     if(trackName==="CARDIOVASCULAR" && MW>=455 && MW<=465 && logP>=3.6 && logP<=4.0 && PSA>=90 && PSA<=100){ gates.push("⛔ CERIVASTATIN-LIKE STATIN"); advice.push("Rhabdomyolysis, fatal muscle damage."); hardReject=true; successProb=0; }
     if(MW>=450 && MW<=500 && PSA>=120 && logP>=2.0 && logP<=3.0){ gates.push("⛔ XIMELAGATRAN-LIKE DIRECT THROMBIN"); advice.push("Severe hepatotoxicity."); hardReject=true; successProb=0; }
@@ -488,8 +452,11 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     if(trackName==="DERMAL" && MW>=350 && MW<=355 && logP>=4.4 && logP<=4.6 && PSA>=50 && PSA<=60){ gates.push("⛔ TAZAROTENE-LIKE TERATOGENICITY"); hardReject=true; successProb=0; }
     if(trackName==="GENERIC" && MW>=470 && MW<=480 && logP>=4.8 && logP<=5.2 && PSA>=65 && PSA<=75){ gates.push("⛔ PDE5 INHIBITOR-LIKE VISUAL RISK"); hardReject=true; successProb=0; }
     if(logP>=6.0 && MW>=600 && PSA<=80 && trackName!=="ONCOLOGY"){ gates.push("⛔ HIGH DILI RISK PATTERN"); hardReject=true; successProb=0; }
-    if(hergPercent>60 && (gates.length>0 || MW>700)){ gates.push("⛔ EXTREME hERG RISK (with other toxicity)"); hardReject=true; successProb=0; }
-    
+    if(hergPercent>60 && (gates.length>0 || MW>700)){ 
+        gates.push("⛔ EXTREME hERG RISK (with other toxicity)"); 
+        hardReject=true; 
+        successProb=0; 
+    }
     // Functional group toxicity
     if(selectedGroups.includes("nitro") && selectedGroups.includes("aromatic")){ gates.push("⛔ NITROAROMATIC MUTAGENICITY"); hardReject=true; successProb=0; }
     if(selectedGroups.includes("aniline") || (selectedGroups.includes("aromatic") && selectedGroups.includes("primary_amine"))){ gates.push("⛔ AROMATIC AMINE CARCINOGENICITY"); hardReject=true; successProb=0; }
@@ -534,9 +501,37 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
 }
 
 // ============================================================
-// 9. MAIN ENGINE (with auto‑alkylator augmentation)
+// 8. MAIN ENGINE (pure unknown molecule screening) - unchanged except using corrected hERG
 // ============================================================
 let fullHistoryData = [];
+
+function augmentGroupsForToxicity(selectedGroups, mw, drugName) {
+    let augmented = [...selectedGroups];
+    let nameLower = (drugName || "").toLowerCase();
+    let groupsLower = selectedGroups.map(g => g.toLowerCase());
+    const alkylatorNames = ['cyclophosphamide', 'ifosfamide', 'melphalan', 'chlorambucil', 'bendamustine', 'carmustine', 'lomustine', 'busulfan'];
+    const isAlkylatorName = alkylatorNames.some(n => nameLower.includes(n));
+    const hasPhosphoramide = groupsLower.includes('phosphoramide') || groupsLower.includes('phosphoramidate');
+    const hasMustard = groupsLower.includes('mustard');
+    const hasChloro = groupsLower.includes('chloro');
+    const hasAmine = groupsLower.includes('amine') || groupsLower.includes('primary_amine') || groupsLower.includes('tertiary_amine');
+    
+    if (hasPhosphoramide) {
+        if (!augmented.includes('chloro')) augmented.push('chloro');
+        if (!augmented.includes('amine')) augmented.push('amine');
+    }
+    if (isAlkylatorName) {
+        if (!augmented.includes('chloro')) augmented.push('chloro');
+        if (!augmented.includes('amine')) augmented.push('amine');
+    }
+    if (hasChloro && !hasAmine && mw > 200 && (nameLower.includes('melphalan') || nameLower.includes('chlorambucil') || nameLower.includes('bendamustine'))) {
+        if (!augmented.includes('amine')) augmented.push('amine');
+    }
+    if (hasChloro && !hasAmine && mw > 250 && isAlkylatorName) {
+        if (!augmented.includes('amine')) augmented.push('amine');
+    }
+    return augmented;
+}
 
 function runEngine(manualDisplayName, manualGroups = null) {
     let track = document.getElementById('targetType').value;
@@ -548,7 +543,6 @@ function runEngine(manualDisplayName, manualGroups = null) {
     if(manualGroups && manualGroups.length) selectGroupsByNames(manualGroups);
     let selectedGroups = getSelectedGroups();
     
-    // Augment groups for toxicity predictions (keeps original FG score unchanged)
     let drugNameForAugment = manualDisplayName ? manualDisplayName.split('[')[0].trim() : "";
     let augmentedGroups = augmentGroupsForToxicity(selectedGroups, mw, drugNameForAugment);
     
@@ -561,7 +555,7 @@ function runEngine(manualDisplayName, manualGroups = null) {
     document.getElementById('steps').innerHTML = steps;
     document.getElementById('pred-affinity').innerHTML = affinity.toFixed(1)+" kcal/mol";
     
-    // Use augmented groups for all toxicity predictions
+    // Use corrected hERG
     let hergPred = predictHerbRisk(logP, mw, augmentedGroups);
     let hergVal = hergPred.percent;
     document.getElementById('pred-herg').innerText = hergVal+"%";
@@ -609,7 +603,7 @@ function runEngine(manualDisplayName, manualGroups = null) {
     let confidenceClass = confidence>=70?"confidence-high":(confidence>=50?"confidence-medium":"confidence-low");
     document.getElementById('confidence-score').innerHTML = `<span class="${confidenceClass}">${confidence}%</span>`;
     
-    document.getElementById('logic-log').innerHTML = analysis.gates.map(g=>`<div class='insight-item' style='color:#eab308'>${g}</div>`).join('') || '<div class="insight-item" style="color:#2ea44f"> No violations detected</div>';
+    document.getElementById('logic-log').innerHTML = analysis.gates.map(g=>`<div class='insight-item' style='color:#eab308'>${g}</div>`).join('') || '<div class="insight-item" style="color:#2ea44f">✅ No violations detected</div>';
     let reasoningHtml = `<div> FG: ${selectedGroups.join(',')||"none"} | Score:${fg.normalized.toFixed(1)}</div>
                          <div><span style="color:${riskColor}">⚠️ UNIVERSAL RISK: ${universalRisk.score.toFixed(1)}% (${riskLevel})</span></div>
                          <div class="text-[9px]">${universalRisk.factors.slice(0,3).join(', ')}</div>`;
@@ -645,7 +639,7 @@ function runEngine(manualDisplayName, manualGroups = null) {
     });
     
     let tbody = document.getElementById('history-log-body');
-    tbody.innerHTML = `<tr><td style='font-size:11px'>${displayName}</td><td style='font-size:11px'>${affinity.toFixed(1)}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${fg.normalized.toFixed(1)}</td><td style='font-weight:bold'>${finalScore.toFixed(1)}</td><td style='color:${riskColor}'>${universalRisk.score.toFixed(1)}%</td><td style='color:${color}'>${rank}</td><td>${hergVal}%</td><td>${diliRisk}</td><td>${amesResult}</td><td>${lipinskiStatus}</td><td>${bio.toFixed(1)}%</td><td>${metStab}%</td><td>${steps}</td><td style='max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;' title='${sieveViolationsText}'>${sieveViolationsText.substring(0,50)}${sieveViolationsText.length>50?'...':''}</td></tr>` + tbody.innerHTML;
+    tbody.innerHTML = `<tr><td style='font-size:11px'>${displayName}</td><td style='font-size:11px'>${affinity.toFixed(1)}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${fg.normalized.toFixed(1)}</td><td style='font-weight:bold'>${finalScore.toFixed(1)}</td><td style='color:${riskColor}'>${universalRisk.score.toFixed(1)}%</td><td style='color:${color}'>${rank}</td><td>${hergVal}%</td><td>${diliRisk}</td><td>${amesResult}</td><td>${lipinskiStatus}</td><td>${bio.toFixed(1)}%</td><td>${metStab}%</td><td>${steps}</td><td style='max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;' title='${sieveViolationsText}'>${sieveViolationsText.substring(0,50)}${sieveViolationsText.length>50?'...':''}</td></td>` + tbody.innerHTML;
     if(tbody.children.length>50) tbody.removeChild(tbody.lastChild);
 }
 
@@ -686,13 +680,13 @@ function exportBatchReport(){
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `GROW-WIN_Unknown_Screener_v13.1.csv`;
+    a.download = `GROW-WIN_Unknown_Screener_v13.2.csv`;
     a.click();
     URL.revokeObjectURL(url);
 }
 
 updateFGScore();
-console.log("GROW-WIN v13.1 ready - Auto-alkylator detection added. Cyclophosphamide, ifosfamide, melphalan, chlorambucil now correctly flagged as Ames POS.");
+console.log("GROW-WIN v13.2 ready – Corrected hERG coefficients (lower sensitivity). Auto‑alkylator detection unchanged.");
 </script>
 </body>
 </html>
