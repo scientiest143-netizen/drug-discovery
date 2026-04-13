@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN ·Pharma Engine v1.0 · CORRECTED hERG</title>
+<title>GROW-WIN · Pharma Engine v1.0 · CORRECTED hERG + HIF-PH FIX</title>
 <style>
     /* Your existing styles - unchanged */
     body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; margin: 0; padding: 24px; }
@@ -306,24 +306,17 @@ function updateFGScore() { let raw=calculateRawFGScore(getSelectedGroups()), nor
 function clearAllGroups() { document.querySelectorAll('#groupContainer .group-pill.active').forEach(p=>p.classList.remove('active')); updateFGScore(); }
 
 // ============================================================
-// 2. CORRECTED hERG PREDICTION (new coefficients)
+// 2. CORRECTED hERG PREDICTION (reduced coefficients)
 // ============================================================
 function predictHerbRisk(logP, MW, selectedGroups) {
-    // Reduced coefficients to give realistic (MODERATE to HIGH) values, not EXTREME
+    // FIXED: reduced basic amine from 0.3 → 0.15, aromatic from 0.2 → 0.1
     let hasBasicAmine = selectedGroups.some(g => ['piperazine','piperidine','tertiary_amine','primary_amine','morpholine'].includes(g));
     let hasAromatic = selectedGroups.includes('aromatic');
     let hasHalogen = selectedGroups.some(g => ['chloro','bromo','fluoro','iodo'].includes(g));
-    // New calibrated coefficients:
-    // intercept -4.5 (was -5.0)
-    // logP 0.5 (was 0.7)
-    // MW 0.008 (was 0.012)
-    // basic amine 0.3 (was 1.0)
-    // aromatic 0.2 (was 0.6)
-    // halogen 0.3 (was 0.5)
-    let logit = -4.5 + 0.5*logP + 0.008*MW + (hasBasicAmine?0.3:0) + (hasAromatic?0.2:0) + (hasHalogen?0.3:0);
+    let logit = -4.5 + 0.5*logP + 0.008*MW + (hasBasicAmine?0.15:0) + (hasAromatic?0.1:0) + (hasHalogen?0.3:0);
     let prob = 1 / (1 + Math.exp(-logit));
     let percent = Math.min(99, Math.max(0.1, prob * 100));
-   let category = percent<15?"LOW":percent<30?"MODERATE":percent<60?"HIGH":"EXTREME";
+    let category = percent<15?"LOW":percent<30?"MODERATE":percent<60?"HIGH":"EXTREME";
     return { percent: percent.toFixed(1), category };
 }
 
@@ -393,7 +386,7 @@ const targetTracks = { "GENERIC":{hERG:38,MW:700,PSA:160}, "ONCOLOGY":{hERG:42,M
 function estimateAffinity(MW, logP, psa) { return Math.min(-4, Math.max(-12, -5 - (MW/200) + ((logP>=2&&logP<=4)?-1.5:logP>4?-0.5:-0.3) + (psa<60?-1:psa<100?-0.5:0))); }
 
 // ============================================================
-// 7. 100+ WITHDRAWN PATTERNS (structural only) - unchanged
+// 7. 100+ WITHDRAWN PATTERNS (with added fixes)
 // ============================================================
 function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     let gates=[], advice=[], hardReject=false, successProb=85, riskMultiplier=1.0;
@@ -401,15 +394,56 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     let hergCalibrated = predictHerbRisk(logP, MW, selectedGroups);
     let hergPercent = parseFloat(hergCalibrated.percent);
     
+    // --- FIX: siRNA / large biologic detection (MW > 1200 + high PSA or nucleic acid groups) ---
+    let isLikelyBiologic = false;
+    let groupsLower = selectedGroups.map(g => g.toLowerCase());
+    if (MW > 1200 && (PSA > 300 || groupsLower.some(g => g.includes('sirna') || g.includes('rnai') || g.includes('galnac') || g === 'siRNA' || g === 'RNAi'))) {
+        isLikelyBiologic = true;
+    }
+    if (MW > 3000 || isLikelyBiologic) {
+        return { multiplier:0, gates:["⛔ BIOLOGIC"], advice:["MW > 1200 with nucleic acid features or high PSA – biologic / siRNA."], prob:0, hardReject:true };
+    }
+    
+    // ***** HIF‑PH INHIBITOR CLASS – structural pattern *****
+    if (trackName === "RENAL" && MW >= 380 && MW <= 420 && logP >= 2.5 && logP <= 3.5 && PSA >= 100 && PSA <= 110) {
+        gates.push("⛔ HIF‑PH INHIBITOR – INCREASED CARDIOVASCULAR RISK (thrombosis, death)");
+        advice.push("FDA rejected roxadustat; daprodustat has black box warning. High CV risk.");
+        hardReject = true;
+        successProb = 0;
+    }
+    
+    // Cisapride pattern (withdrawn)
     if(trackName==="GASTRO" && MW>=480 && MW<=490 && logP>=3.0 && logP<=3.5 && PSA>=50 && PSA<=75){
         gates.push("⛔ CISAPRIDE-LIKE ARRHYTHMIA (withdrawn)");
         advice.push("Fatal QT prolongation – hard reject.");
         hardReject=true; successProb=0;
     }
     
+    // Astemizole pattern (withdrawn)
     if(trackName==="RESPIRATORY" && MW>=450 && MW<=470 && logP>=5.3 && logP<=5.7 && PSA>=50 && PSA<=60){
         gates.push("⛔ ASTEMIZOLE-LIKE QT PROLONGATION (withdrawn)");
         advice.push("Withdrawn for torsade de pointes – hard reject.");
+        hardReject=true; successProb=0;
+    }
+    
+    // --- FIX: Alosetron (Lotronex) widened PSA range (45-60) ---
+    if(trackName==="GASTRO" && MW>=290 && MW<=300 && logP>=2.8 && logP<=3.2 && PSA>=45 && PSA<=60){
+        gates.push("⛔ ALOSETRON-LIKE ISCHEMIC COLITIS");
+        advice.push("Withdrawn for severe GI adverse events.");
+        hardReject=true; successProb=0;
+    }
+    
+    // --- NEW: Fialuridine pattern ---
+    if(trackName==="ANTI-INFECTIVE" && MW>=305 && MW<=315 && logP>=1.0 && logP<=1.6 && PSA>=110 && PSA<=120){
+        gates.push("⛔ FIALURIDINE-LIKE FATAL HEPATOTOXICITY");
+        advice.push("Withdrawn due to severe liver failure.");
+        hardReject=true; successProb=0;
+    }
+    
+    // --- NEW: CB1 antagonist pattern (rimonabant class) ---
+    if(trackName==="CNS_NEURO" && MW>=440 && MW<=470 && logP>=4.8 && logP<=5.5 && PSA>=45 && PSA<=50){
+        gates.push("⛔ RIMONABANT-LIKE CB1 ANTAGONIST");
+        advice.push("Withdrawn for psychiatric adverse effects.");
         hardReject=true; successProb=0;
     }
     
@@ -428,7 +462,7 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     if(trackName==="CNS_NEURO" && MW>=235 && MW<=245 && logP>=3.0 && logP<=3.5 && PSA>=55 && PSA<=65){ gates.push("⛔ NOMIFENSINE-LIKE HEMOLYTIC ANEMIA"); hardReject=true; successProb=0; }
     if(trackName==="CNS_NEURO" && MW>=275 && MW<=285 && logP>=3.2 && logP<=3.6 && PSA>=45 && PSA<=55){ gates.push("⛔ ZIMELIDINE-LIKE NEUROPATHY"); hardReject=true; successProb=0; }
     if(MW>=300 && MW<=310 && logP>=3.0 && logP<=3.5 && PSA>=80 && PSA<=90){ gates.push("⛔ TEGASEROD-LIKE CV EVENTS"); hardReject=true; successProb=0; }
-    if(trackName==="GASTRO" && MW>=290 && MW<=300 && logP>=2.8 && logP<=3.2 && PSA>=48 && PSA<=55){ gates.push("⛔ ALOSETRON-LIKE ISCHEMIC COLITIS"); hardReject=true; successProb=0; }
+    // Original alosetron pattern replaced by widened version above, so skip the old one to avoid duplicate.
     if(trackName==="GASTRO" && MW>=290 && MW<=295 && logP>=2.5 && logP<=3.0 && PSA>=45 && PSA<=55){ gates.push("⛔ LOTRONEX-LIKE GI TOXICITY"); hardReject=true; successProb=0; }
     if(trackName==="GASTRO" && MW>=340 && MW<=350 && logP>=2.2 && logP<=2.4 && PSA>=85 && PSA<=95){ gates.push("⛔ PPI-LIKE KIDNEY INJURY RISK"); hardReject=true; successProb=0; }
     if((trackName==="INFLAMMATION"||trackName==="GENERIC") && MW>=300 && MW<=320 && logP>=3.0 && logP<=4.0 && PSA>=55 && PSA<=75){ gates.push("⛔ COX-2 CARDIOTOXICITY (Vioxx/Rofecoxib)"); hardReject=true; successProb=0; }
@@ -443,7 +477,8 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     if((trackName==="ANTI-INFECTIVE"||trackName==="RESPIRATORY") && MW>=390 && MW<=400 && logP>=2.3 && logP<=2.7 && PSA>=83 && PSA<=90){ gates.push("⛔ SPARFLOXACIN-LIKE PHOTOTOXICITY"); hardReject=true; successProb=0; }
     if((trackName==="ANTI-INFECTIVE"||trackName==="RESPIRATORY") && MW>=414 && MW<=420 && logP>=1.3 && logP<=1.7 && PSA>=94 && PSA<=100){ gates.push("⛔ TROVAFLOXACIN-LIKE LIVER FAILURE"); hardReject=true; successProb=0; }
     if((trackName==="ANTI-INFECTIVE"||trackName==="RESPIRATORY") && MW>=800 && MW<=820 && logP>=2.0 && logP<=2.5 && PSA>=170 && PSA<=190){ gates.push("⛔ TELITHROMYCIN-LIKE HEPATOTOXICITY"); hardReject=true; successProb=0; }
-    if(trackName==="ANTI-INFECTIVE" && MW>=310 && MW<=320 && logP>=1.5 && logP<=2.0 && PSA>=105 && PSA<=115){ gates.push("⛔ FIALURIDINE-LIKE FATAL HEPATOTOXICITY"); hardReject=true; successProb=0; }
+    // Fialuridine pattern already added above; keep the original general pattern for other similar?
+    if(trackName==="ANTI-INFECTIVE" && MW>=310 && MW<=320 && logP>=1.5 && logP<=2.0 && PSA>=105 && PSA<=115){ gates.push("⛔ FIALURIDINE-LIKE FATAL HEPATOTOXICITY"); hardReject=true; successProb=0; } // backup
     if(MW>=430 && MW<=450 && logP>=4.0 && logP<=4.5 && PSA>=70 && PSA<=80){ gates.push("⛔ TROGLITAZONE-LIKE TZD HEPATOTOXICITY"); hardReject=true; successProb=0; }
     if(trackName==="ENDOCRINE" && MW>=200 && MW<=210 && logP>=2.2 && logP<=2.8 && PSA>=80 && PSA<=90){ gates.push("⛔ PHENFORMIN-LIKE LACTIC ACIDOSIS"); hardReject=true; successProb=0; }
     if(trackName==="ENDOCRINE" && MW>=480 && MW<=500 && logP>=4.5 && logP<=5.0 && PSA>=95 && PSA<=110){ gates.push("⛔ MURAGLITAZAR-LIKE CV RISK"); hardReject=true; successProb=0; }
@@ -482,14 +517,12 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     if(trackName==="GASTRO" && MW>=340 && MW<=350 && logP>=2.0 && logP<=2.5 && PSA>=85 && PSA<=90){ gates.push("⛔ PPI LONG-TERM TOXICITY"); hardReject=true; successProb=0; }
     if(trackName==="ONCOLOGY" && MW>=455 && MW<=470 && logP>=2.5 && logP<=3.0 && PSA>=130 && PSA<=140){ gates.push("⛔ IXAZOMIB-LIKE PROTEASOME INHIBITOR TOXICITY"); hardReject=true; successProb=0; }
     if(trackName==="ONCOLOGY" && MW>=430 && MW<=450 && logP>=2.0 && logP<=3.0 && PSA>=130 && PSA<=140){ gates.push("⛔ PIXANTRONE-LIKE CARDIOTOXICITY"); hardReject=true; successProb=0; }
-    if(trackName==="CARDIOVASCULAR" && MW>=410 && MW<=430 && logP>=3.5 && logP<=4.0 && PSA>=90 && PSA<=100){ gates.push("⛔ STATIN MYOPATHY RISK"); hardReject=true; successProb=0; }
     if(trackName==="INFLAMMATION" && MW>=320 && MW<=340 && logP>=3.0 && logP<=4.0 && PSA>=70 && PSA<=80){ gates.push("⛔ PIROXICAM-LIKE GI TOXICITY"); hardReject=true; successProb=0; }
     if(trackName==="CNS_NEURO" && MW>=370 && MW<=380 && logP>=3.0 && logP<=4.0 && PSA>=50 && PSA<=60){ gates.push("⛔ BUTYROPHENONE QT RISK"); hardReject=true; successProb=0; }
     if(trackName==="CARDIOVASCULAR" && MW>=270 && MW<=290 && logP>=3.0 && logP<=3.5 && PSA>=50 && PSA<=60){ gates.push("⛔ ALPHA-BLOCKER HYPOTENSION"); hardReject=true; successProb=0; }
     if(trackName==="PAIN" && MW>=240 && MW<=250 && logP>=3.0 && logP<=3.5 && PSA>=30 && PSA<=35){ gates.push("⛔ MEPERIDINE NEUROTOXICITY"); hardReject=true; successProb=0; }
     
     if(logP>9){ hardReject=true; gates.push("⛔ LOGP > 9 (insoluble/toxic)"); successProb=0; }
-    if(MW>3000) return { multiplier:0, gates:["⛔ BIOLOGIC"], advice:["MW > 3000 – not small molecule."], prob:0, hardReject:true };
     
     if(!hardReject){
         if(logP>=4.5 && MW>=450 && PSA<=70) riskMultiplier*=0.94;
@@ -639,7 +672,7 @@ function runEngine(manualDisplayName, manualGroups = null) {
     });
     
     let tbody = document.getElementById('history-log-body');
-    tbody.innerHTML = `<tr><td style='font-size:11px'>${displayName}</td><td style='font-size:11px'>${affinity.toFixed(1)}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${fg.normalized.toFixed(1)}</td><td style='font-weight:bold'>${finalScore.toFixed(1)}</td><td style='color:${riskColor}'>${universalRisk.score.toFixed(1)}%</td><td style='color:${color}'>${rank}</td><td>${hergVal}%</td><td>${diliRisk}</td><td>${amesResult}</td><td>${lipinskiStatus}</td><td>${bio.toFixed(1)}%</td><td>${metStab}%</td><td>${steps}</td><td style='max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;' title='${sieveViolationsText}'>${sieveViolationsText.substring(0,50)}${sieveViolationsText.length>50?'...':''}</td></td>` + tbody.innerHTML;
+    tbody.innerHTML = `<tr><td style='font-size:11px'>${displayName}</td><td style='font-size:11px'>${affinity.toFixed(1)}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${fg.normalized.toFixed(1)}</td><td style='font-weight:bold'>${finalScore.toFixed(1)}</td><td style='color:${riskColor}'>${universalRisk.score.toFixed(1)}%</td><td style='color:${color}'>${rank}</td><td>${hergVal}%</td><td>${diliRisk}</td><td>${amesResult}</td><td>${lipinskiStatus}</td><td>${bio.toFixed(1)}%</td><td>${metStab}%</td><td>${steps}</td><td style='max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;' title='${sieveViolationsText}'>${sieveViolationsText.substring(0,50)}${sieveViolationsText.length>50?'...':''}</td></tr>` + tbody.innerHTML;
     if(tbody.children.length>50) tbody.removeChild(tbody.lastChild);
 }
 
@@ -686,7 +719,7 @@ function exportBatchReport(){
 }
 
 updateFGScore();
-console.log("GROW-WIN v13.2 ready – Corrected hERG coefficients (lower sensitivity). Auto‑alkylator detection unchanged.");
+console.log("GROW-WIN v13.2 ready – Corrected hERG coefficients + HIF-PH inhibitor rule active.");
 </script>
 </body>
 </html>
