@@ -647,7 +647,23 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     if(trackName==="CNS_NEURO" && MW>=275 && MW<=285 && logP>=3.2 && logP<=3.6 && PSA>=45 && PSA<=55){ gates.push("⛔ ZIMELIDINE-LIKE NEUROPATHY"); hardReject=true; successProb=0; }
     if(trackName==="GASTRO" && MW>=290 && MW<=295 && logP>=2.5 && logP<=3.0 && PSA>=45 && PSA<=55){ gates.push("⛔ LOTRONEX-LIKE GI TOXICITY"); hardReject=true; successProb=0; }
     if(trackName==="GASTRO" && MW>=340 && MW<=350 && logP>=2.2 && logP<=2.4 && PSA>=85 && PSA<=95){ gates.push("⛔ PPI-LIKE KIDNEY INJURY RISK"); hardReject=true; successProb=0; }
-    if((trackName==="INFLAMMATION"||trackName==="GENERIC") && MW>=300 && MW<=320 && logP>=3.0 && logP<=4.0 && PSA>=55 && PSA<=75){ gates.push("⛔ COX-2 CARDIOTOXICITY (Vioxx/Rofecoxib)"); hardReject=true; successProb=0; }
+    
+    // ==================== FIXED COX-2 RULE ====================
+    // Now requires sulfonamide, sulfone, or (furan + aromatic) to trigger
+    const hasCox2Groups = selectedGroups.includes('sulfonamide') || 
+                          selectedGroups.includes('sulfone') ||
+                          (selectedGroups.includes('furan') && selectedGroups.includes('aromatic'));
+    if((trackName==="INFLAMMATION"||trackName==="GENERIC") && 
+       MW >= 280 && MW <= 340 && 
+       logP >= 1.8 && logP <= 4.5 && 
+       PSA >= 45 && PSA <= 85 &&
+       hasCox2Groups) {
+        gates.push("⛔ COX-2 CARDIOTOXICITY (Vioxx/Rofecoxib)"); 
+        hardReject = true; 
+        successProb = 0;
+    }
+    // ============================================================
+    
     if(trackName==="INFLAMMATION" && MW>=310 && MW<=315 && logP>=3.6 && logP<=3.8 && PSA>=58 && PSA<=65){ gates.push("⛔ VALDECOXIB-LIKE SJS/TEN"); hardReject=true; successProb=0; }
     if(trackName==="INFLAMMATION" && MW>=290 && MW<=300 && logP>=4.2 && logP<=4.8 && PSA>=65 && PSA<=75){ gates.push("⛔ LUMIRACOXIB-LIKE HEPATOTOXICITY"); hardReject=true; successProb=0; }
     if(trackName==="INFLAMMATION" && MW>=330 && MW<=340 && logP>=3.8 && logP<=4.2 && PSA>=55 && PSA<=65){ gates.push("⛔ BROMFENAC-LIKE HEPATOTOXICITY"); hardReject=true; successProb=0; }
