@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · Pharma Engine v1.0</title>
+<title>GROW-WIN · Pharma Engine v1.0 · Full ADMET</title>
 <style>
     /* Your existing styles - unchanged */
     body { background: #0a0c10; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; margin: 0; padding: 24px; }
@@ -100,7 +100,7 @@
         <div class="flex-1"></div>
         <div class="text-center flex-1">
             <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span style="color:#2ea44f">Pharma Engine</span></h1>
-            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v1.0</p>
+            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v1.0 · Full ADMET</p>
         </div>
         <div class="flex-1 flex flex-col items-end">
             <div class="w-48 p-3 bg-[#161b22] border border-[#30363d] rounded-xl">
@@ -183,6 +183,14 @@
                 <div class="info-row"><span>DILI Risk:</span> <span id="pred-dili" class="text-blue-400">--</span></div>
                 <div class="info-row"><span>Ames Test:</span> <span id="pred-ames" class="text-blue-400">--</span></div>
                 <div class="info-row"><span>Lipinski:</span> <span id="pred-lipinski" class="text-green-500">--</span></div>
+                <!-- New ADMET rows -->
+                <div class="info-row"><span>LogS (solubility):</span> <span id="pred-logs" class="text-gray-300">--</span></div>
+                <div class="info-row"><span>Caco‑2 Permeability:</span> <span id="pred-caco2" class="text-gray-300">--</span></div>
+                <div class="info-row"><span>BBB Penetration:</span> <span id="pred-bbb" class="text-gray-300">--</span></div>
+                <div class="info-row"><span>Plasma Protein Binding:</span> <span id="pred-ppb" class="text-gray-300">--</span></div>
+                <div class="info-row"><span>Renal Clearance:</span> <span id="pred-renal" class="text-gray-300">--</span></div>
+                <div class="info-row"><span>P‑gp Substrate:</span> <span id="pred-pgp" class="text-gray-300">--</span></div>
+                <div class="info-row"><span>CYP3A4 Induction:</span> <span id="pred-cypind" class="text-gray-300">--</span></div>
                 <div class="info-row"><span>Prediction Confidence:</span> <span id="confidence-score" class="text-gray-300">--</span></div>
                 
                 <h3 class="text-green-500 font-bold uppercase text-xs mt-4 mb-3 tracking-widest">In-Silico Lab Data</h3>
@@ -214,14 +222,14 @@
         </div>
         <div style="overflow-x:auto">
             <table class="history-table">
-                <thead><tr><th>Entry/Track</th><th>Affinity</th><th>LogP</th><th>MW</th><th>PSA</th><th>FG Score</th><th>Final Score</th><th>Risk Score</th><th>Rank</th><th>hERG</th><th>DILI</th><th>Ames</th><th>Lipinski</th><th>Bioavail</th><th>MetStab</th><th>Steps</th><th>Sieve Violations</th></tr></thead>
+                <thead><tr><th>Entry/Track</th><th>Affinity</th><th>LogP</th><th>MW</th><th>PSA</th><th>FG Score</th><th>Final Score</th><th>Risk Score</th><th>Rank</th><th>hERG</th><th>DILI</th><th>Ames</th><th>Lipinski</th><th>LogS</th><th>Caco2</th><th>BBB</th><th>PPB</th><th>Pgp</th><th>Bioavail</th><th>MetStab</th><th>Steps</th><th>Sieve Violations</th></tr></thead>
                 <tbody id="history-log-body"></tbody>
             </table>
         </div>
     </div>
     
     <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR </div>
-    <div class="disclaimer">⚠️ DISCLAIMER: This engine detects known structural alerts (hERG, DILI, Ames, CYP inhibition, phospholipidosis, 5‑HT2B agonism) but cannot predict new toxicophores, dose‑dependent toxicity, or metabolic activation beyond static substructures. Always confirm with experimental assays.</div>
+    <div class="disclaimer">⚠️ DISCLAIMER: This engine detects known structural alerts (hERG, DILI, Ames, CYP inhibition, phospholipidosis, 5‑HT2B agonism) plus rule‑based ADMET predictions (LogS, Caco‑2, BBB, PPB, renal clearance, P‑gp, CYP induction). It cannot predict new toxicophores, dose‑dependent toxicity, or metabolic activation beyond static substructures. Always confirm with experimental assays.</div>
 </div>
 
 <script>
@@ -461,7 +469,7 @@ function detectDILIAlerts(selectedGroups, mw, logP, psa) {
 }
 
 // ============================================================
-// 5. NEW: CYP INHIBITION RULES (CYP2C9, CYP2D6, CYP3A4)
+// 5. CYP INHIBITION RULES (CYP2C9, CYP2D6, CYP3A4)
 // ============================================================
 function detectCYPInhibition(selectedGroups, mw, logP) {
     let alerts = [];
@@ -472,28 +480,22 @@ function detectCYPInhibition(selectedGroups, mw, logP) {
     const hasAzole = selectedGroups.some(g => ['imidazole','triazole','pyrazole'].includes(g));
     const hasMacrolide = selectedGroups.includes('macrolide') || (mw > 700 && selectedGroups.includes('lactone') && selectedGroups.includes('amine'));
     
-    // CYP2C9: sulfonamides, phenytoin-like, certain carboxylic acids
     if (hasSulfonamide && hasAromatic) alerts.push("CYP2C9 inhibition risk: sulfonamide + aromatic");
     if (hasCarboxylicAcid && hasAromatic && mw > 200 && logP > 2) alerts.push("CYP2C9 inhibition risk: aromatic carboxylic acid (e.g., NSAIDs)");
     if (selectedGroups.includes('hydantoin')) alerts.push("CYP2C9 inhibition risk: hydantoin (phenytoin-like)");
-    
-    // CYP2D6: basic amines with aromatic rings
     if (hasBasicAmine && hasAromatic && mw > 200) alerts.push("CYP2D6 inhibition risk: basic amine + aromatic (classic CYP2D6 ligand)");
     if (selectedGroups.includes('quinidine') || (selectedGroups.includes('quinoline') && hasBasicAmine))
         alerts.push("CYP2D6 inhibition risk: quinidine-like motif");
-    
-    // CYP3A4: azoles, macrolides, certain aromatics
     if (hasAzole && hasAromatic && mw > 250) alerts.push("CYP3A4 inhibition risk: azole antifungal motif");
     if (hasMacrolide) alerts.push("CYP3A4 inhibition risk: macrolide antibiotic pattern");
     if (selectedGroups.includes('benzodiazepine') || selectedGroups.includes('dihydropyridine'))
         alerts.push("CYP3A4 inhibition risk: benzodiazepine or dihydropyridine");
     if (hasAromatic && logP > 4 && mw > 400) alerts.push("CYP3A4 inhibition risk: high logP aromatic compound");
-    
     return alerts;
 }
 
 // ============================================================
-// 6. NEW: PHOSPHOLIPIDOSIS ALERT (cationic amphiphilic drugs)
+// 6. PHOSPHOLIPIDOSIS ALERT
 // ============================================================
 function detectPhospholipidosis(selectedGroups, logP, mw) {
     const hasBasicAmine = selectedGroups.some(g => ['piperazine','piperidine','tertiary_amine','primary_amine','morpholine'].includes(g));
@@ -504,12 +506,11 @@ function detectPhospholipidosis(selectedGroups, logP, mw) {
 }
 
 // ============================================================
-// 7. NEW: 5-HT2B AGONISM ALERT
+// 7. 5-HT2B AGONISM ALERT
 // ============================================================
 function detectSerotoninAgonism(selectedGroups) {
     const hasBasicAmine = selectedGroups.some(g => ['piperazine','piperidine','tertiary_amine','primary_amine','morpholine'].includes(g));
     const hasIndole = selectedGroups.includes('indole');
-    // Phenethylamine pattern: primary amine + aromatic ring + two-carbon spacer (simplified)
     const hasPhenethylamine = selectedGroups.includes('primary_amine') && selectedGroups.includes('aromatic') && !selectedGroups.includes('carboxylic_acid');
     if (hasBasicAmine && (hasIndole || hasPhenethylamine)) {
         return ["⚠️ 5‑HT2B agonism risk: basic amine + indole/phenethylamine (valvulopathy concern)"];
@@ -549,14 +550,69 @@ const targetTracks = { "GENERIC":{hERG:38,MW:700,PSA:160}, "ONCOLOGY":{hERG:42,M
 function estimateAffinity(MW, logP, psa) { return Math.min(-4, Math.max(-12, -5 - (MW/200) + ((logP>=2&&logP<=4)?-1.5:logP>4?-0.5:-0.3) + (psa<60?-1:psa<100?-0.5:0))); }
 
 // ============================================================
-// 10. ENHANCED WITHDRAWN PATTERNS + NEW ALERT INTEGRATION
+// 10. ADDITIONAL ADMET PREDICTIONS (rule-based)
+// ============================================================
+function estimateRotatableBonds(mw, selectedGroups) {
+    let rb = Math.floor(mw / 80);
+    if (selectedGroups.includes('amide')) rb += 1;
+    if (selectedGroups.includes('ester')) rb += 1;
+    if (selectedGroups.includes('ether')) rb += 1;
+    return Math.min(15, rb);
+}
+function estimateAromaticRings(selectedGroups) {
+    return selectedGroups.includes('aromatic') ? 1 : 0;
+}
+function predictLogS(logP, mw, selectedGroups) {
+    let rb = estimateRotatableBonds(mw, selectedGroups);
+    let ar = estimateAromaticRings(selectedGroups);
+    let logs = -0.8 - logP + 0.5 * rb - 0.2 * ar;
+    return logs.toFixed(2);
+}
+function predictCaco2(logP, psa, mw) {
+    if (mw > 500) return "Low (<1)";
+    let papp = 0.5 * logP - 0.02 * psa - 1.5;
+    if (papp > 0.5) return "High (>10)";
+    if (papp > -0.5) return "Medium (1-10)";
+    return "Low (<1)";
+}
+function predictBBB(logP, psa) {
+    // Classic CNS MPO rule: high BBB permeability requires lipophilicity and low polar surface
+    if (logP > 2.0 && psa < 70) return "High (CNS active)";
+    if (logP > 1.0 && psa < 90) return "Moderate";
+    return "Low (CNS inactive)";
+}
+function predictPPB(logP, mw) {
+    let ppb = 70 + 5 * logP + 0.02 * mw;
+    ppb = Math.min(99.5, Math.max(0, ppb));
+    return ppb.toFixed(1) + "%";
+}
+function predictRenalClearance(psa, mw) {
+    let base = 120;
+    if (psa > 100) base *= 1.0;
+    else base *= 0.5;
+    if (mw < 300) base *= 1.0;
+    else base *= 0.6;
+    return Math.min(140, Math.max(5, Math.floor(base))) + " mL/min";
+}
+function isPGPSubstrate(logP, mw, selectedGroups) {
+    const hasBasicAmine = selectedGroups.some(g => ['piperazine','piperidine','tertiary_amine','primary_amine','morpholine'].includes(g));
+    const hasAromatic = selectedGroups.includes('aromatic');
+    return (mw > 400 && (hasBasicAmine || hasAromatic) && logP > 2) ? "Yes (likely)" : "No (unlikely)";
+}
+function detectCYPInduction(mw, logP, selectedGroups) {
+    const hasPolycyclicAromatic = selectedGroups.includes('anthracenedione') || (selectedGroups.includes('aromatic') && mw > 300 && logP > 4);
+    if (hasPolycyclicAromatic && mw > 300) return "Possible CYP3A4 inducer";
+    return "No induction predicted";
+}
+
+// ============================================================
+// 11. ENHANCED WITHDRAWN PATTERNS + ALERT INTEGRATION
 // ============================================================
 function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     let gates=[], advice=[], hardReject=false, successProb=85, riskMultiplier=1.0;
     let hergCalibrated = predictHerbRisk(logP, MW, selectedGroups, PSA);
     let hergPercent = parseFloat(hergCalibrated.percent);
     
-    // ---- INTEGRATE ALL ALERT LIBRARIES ----
     const bbAlerts = detectBenigniBossaAlerts(selectedGroups, MW, logP);
     if (bbAlerts.length > 0) {
         gates.push(`⛔ MUTAGENICITY ALERT (Benigni/Bossa): ${bbAlerts[0]}`);
@@ -578,31 +634,23 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
             hardReject = true; successProb = 0;
         } else successProb = Math.min(successProb, 50);
     }
-    
-    // ---- NEW CYP ALERTS (non-hard-reject, informative) ----
     const cypAlerts = detectCYPInhibition(selectedGroups, MW, logP);
     if (cypAlerts.length > 0) {
         gates.push(`⚠️ CYP inhibition: ${cypAlerts[0]}`);
         if (cypAlerts.length > 1) gates.push(`   + ${cypAlerts.slice(1).join('; ')}`);
-        // Not hard reject, but risk multiplier adjustment
         riskMultiplier *= 0.95;
     }
-    
-    // ---- NEW PHOSPHOLIPIDOSIS ALERT ----
     const pldAlerts = detectPhospholipidosis(selectedGroups, logP, MW);
     if (pldAlerts.length > 0) {
         gates.push(`⚠️ ${pldAlerts[0]}`);
         riskMultiplier *= 0.94;
     }
-    
-    // ---- NEW 5-HT2B AGONISM ALERT ----
     const serotoninAlerts = detectSerotoninAgonism(selectedGroups);
     if (serotoninAlerts.length > 0) {
         gates.push(`⚠️ ${serotoninAlerts[0]}`);
         riskMultiplier *= 0.92;
     }
     
-    // Biologic detection
     let isLikelyBiologic = false;
     let groupsLower = selectedGroups.map(g => g.toLowerCase());
     if (MW > 1200 && (PSA > 300 || groupsLower.some(g => g.includes('sirna') || g.includes('rnai') || g.includes('galnac') || g === 'siRNA' || g === 'RNAi'))) isLikelyBiologic = true;
@@ -612,23 +660,11 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
         hardReject = true; successProb = 0;
     }
     
-    // Existing withdrawn drug patterns (abbreviated for brevity, but all are active)
+    // Existing withdrawn patterns (kept as in original)
     if ((trackName === "RENAL" || trackName === "GENERIC") && MW >= 380 && MW <= 420 && logP >= 2.5 && logP <= 3.5 && PSA >= 100 && PSA <= 110) { gates.push("⛔ HIF‑PH INHIBITOR – INCREASED CARDIOVASCULAR RISK"); hardReject = true; successProb = 0; }
     if (trackName === "ENDOCRINE" && MW >= 200 && MW <= 210 && logP >= -0.8 && logP <= -0.6 && PSA >= 80 && PSA <= 90 && selectedGroups.includes("imine")) { gates.push("⛔ PHENFORMIN-LIKE LACTIC ACIDOSIS"); hardReject = true; successProb = 0; }
     if ((trackName === "RESPIRATORY" || trackName === "GENERIC") && MW >= 450 && MW <= 470 && logP >= 5.3 && logP <= 5.7 && PSA >= 50 && PSA <= 60 && selectedGroups.includes("fluoro")) { gates.push("⛔ ASTEMIZOLE-LIKE QT PROLONGATION (withdrawn)"); hardReject = true; successProb = 0; }
-    // Specific Cisapride rule
-    if ((trackName === "GASTRO" || trackName === "GENERIC") && 
-        MW >= 460 && MW <= 500 && 
-        logP >= 2.5 && logP <= 3.5 && 
-        PSA >= 50 && PSA <= 90 &&
-        selectedGroups.includes('amide') && 
-        selectedGroups.includes('piperidine') && 
-        selectedGroups.includes('aromatic') && 
-        selectedGroups.includes('fluoro')) { 
-        gates.push("⛔ CISAPRIDE-LIKE ARRHYTHMIA (withdrawn)"); 
-        hardReject = true; 
-        successProb = 0; 
-    }
+    if ((trackName === "GASTRO" || trackName === "GENERIC") && MW >= 460 && MW <= 500 && logP >= 2.5 && logP <= 3.5 && PSA >= 50 && PSA <= 90 && selectedGroups.includes('amide') && selectedGroups.includes('piperidine') && selectedGroups.includes('aromatic') && selectedGroups.includes('fluoro')) { gates.push("⛔ CISAPRIDE-LIKE ARRHYTHMIA (withdrawn)"); hardReject = true; successProb = 0; }
     if(trackName==="GASTRO" && MW>=290 && MW<=300 && logP>=2.8 && logP<=3.2 && PSA>=45 && PSA<=60){ gates.push("⛔ ALOSETRON-LIKE ISCHEMIC COLITIS"); hardReject=true; successProb=0; }
     if(trackName==="ANTI-INFECTIVE" && MW>=305 && MW<=315 && logP>=1.0 && logP<=1.6 && PSA>=110 && PSA<=120){ gates.push("⛔ FIALURIDINE-LIKE FATAL HEPATOTOXICITY"); hardReject=true; successProb=0; }
     if(trackName==="CNS_NEURO" && MW>=440 && MW<=470 && logP>=4.8 && logP<=5.5 && PSA>=45 && PSA<=50){ gates.push("⛔ RIMONABANT-LIKE CB1 ANTAGONIST"); hardReject=true; successProb=0; }
@@ -648,21 +684,11 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     if(trackName==="GASTRO" && MW>=290 && MW<=295 && logP>=2.5 && logP<=3.0 && PSA>=45 && PSA<=55){ gates.push("⛔ LOTRONEX-LIKE GI TOXICITY"); hardReject=true; successProb=0; }
     if(trackName==="GASTRO" && MW>=340 && MW<=350 && logP>=2.2 && logP<=2.4 && PSA>=85 && PSA<=95){ gates.push("⛔ PPI-LIKE KIDNEY INJURY RISK"); hardReject=true; successProb=0; }
     
-    // ==================== FIXED COX-2 RULE ====================
-    // Now requires sulfonamide, sulfone, or (furan + aromatic) to trigger
-    const hasCox2Groups = selectedGroups.includes('sulfonamide') || 
-                          selectedGroups.includes('sulfone') ||
-                          (selectedGroups.includes('furan') && selectedGroups.includes('aromatic'));
-    if((trackName==="INFLAMMATION"||trackName==="GENERIC") && 
-       MW >= 280 && MW <= 340 && 
-       logP >= 1.8 && logP <= 4.5 && 
-       PSA >= 45 && PSA <= 85 &&
-       hasCox2Groups) {
-        gates.push("⛔ COX-2 CARDIOTOXICITY (Vioxx/Rofecoxib)"); 
-        hardReject = true; 
-        successProb = 0;
+    // Fixed COX-2 rule
+    const hasCox2Groups = selectedGroups.includes('sulfonamide') || selectedGroups.includes('sulfone') || (selectedGroups.includes('furan') && selectedGroups.includes('aromatic'));
+    if((trackName==="INFLAMMATION"||trackName==="GENERIC") && MW >= 280 && MW <= 340 && logP >= 1.8 && logP <= 4.5 && PSA >= 45 && PSA <= 85 && hasCox2Groups) {
+        gates.push("⛔ COX-2 CARDIOTOXICITY (Vioxx/Rofecoxib)"); hardReject = true; successProb = 0;
     }
-    // ============================================================
     
     if(trackName==="INFLAMMATION" && MW>=310 && MW<=315 && logP>=3.6 && logP<=3.8 && PSA>=58 && PSA<=65){ gates.push("⛔ VALDECOXIB-LIKE SJS/TEN"); hardReject=true; successProb=0; }
     if(trackName==="INFLAMMATION" && MW>=290 && MW<=300 && logP>=4.2 && logP<=4.8 && PSA>=65 && PSA<=75){ gates.push("⛔ LUMIRACOXIB-LIKE HEPATOTOXICITY"); hardReject=true; successProb=0; }
@@ -683,7 +709,8 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     if(trackName==="DERMAL" && MW>=350 && MW<=355 && logP>=4.4 && logP<=4.6 && PSA>=50 && PSA<=60){ gates.push("⛔ TAZAROTENE-LIKE TERATOGENICITY"); hardReject=true; successProb=0; }
     if(trackName==="GENERIC" && MW>=470 && MW<=480 && logP>=4.8 && logP<=5.2 && PSA>=65 && PSA<=75){ gates.push("⛔ PDE5 INHIBITOR-LIKE VISUAL RISK"); hardReject=true; successProb=0; }
     if(logP>=6.0 && MW>=600 && PSA<=80 && trackName!=="ONCOLOGY"){ gates.push("⛔ HIGH DILI RISK PATTERN"); hardReject=true; successProb=0; }
-    // Functional group toxicity (keeping previous)
+    
+    // Functional group toxicity (preserved)
     if(selectedGroups.includes("nitro") && selectedGroups.includes("aromatic")){ gates.push("⛔ NITROAROMATIC MUTAGENICITY"); hardReject=true; successProb=0; }
     if(selectedGroups.includes("aniline") || (selectedGroups.includes("aromatic") && selectedGroups.includes("primary_amine"))){ gates.push("⛔ AROMATIC AMINE CARCINOGENICITY"); hardReject=true; successProb=0; }
     if(selectedGroups.includes("hydrazine") || (selectedGroups.includes("imine") && MW<300)){ gates.push("⛔ HYDRAZINE GENOTOXICITY"); hardReject=true; successProb=0; }
@@ -713,11 +740,9 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
     if(trackName==="CARDIOVASCULAR" && MW>=270 && MW<=290 && logP>=3.0 && logP<=3.5 && PSA>=50 && PSA<=60){ gates.push("⛔ ALPHA-BLOCKER HYPOTENSION"); hardReject=true; successProb=0; }
     if(trackName==="PAIN" && MW>=240 && MW<=250 && logP>=3.0 && logP<=3.5 && PSA>=30 && PSA<=35){ gates.push("⛔ MEPERIDINE NEUROTOXICITY"); hardReject=true; successProb=0; }
     if(logP>9){ hardReject=true; gates.push("⛔ LOGP > 9 (insoluble/toxic)"); successProb=0; }
-    // High hERG alone is enough to reject for drug‑like molecules
     if (hergPercent > 60 && MW > 300 && !hardReject) {
         gates.push(`⛔ EXTREME hERG RISK (${hergPercent}%) – cardiotoxicity concern`);
-        hardReject = true;
-        successProb = 0;
+        hardReject = true; successProb = 0;
     }
     if(!hardReject){
         if(logP>=4.5 && MW>=450 && PSA<=70) riskMultiplier*=0.94;
@@ -729,7 +754,7 @@ function universalFailureGates(trackName, logP, MW, PSA, selectedGroups = []) {
 }
 
 // ============================================================
-// 11. MAIN ENGINE
+// 12. MAIN ENGINE
 // ============================================================
 let fullHistoryData = [];
 
@@ -800,6 +825,23 @@ function runEngine(manualDisplayName, manualGroups = null) {
     
     let lipinskiStatus = (mw>=550 && logP>=5.5 && psa>=140)?"2+ VIOLATIONS":(mw>=500 || logP>=5?"1 VIOLATION":"PASSED");
     document.getElementById('pred-lipinski').innerText = lipinskiStatus;
+    
+    // ADMET predictions
+    let logs = predictLogS(logP, mw, selectedGroups);
+    let caco2 = predictCaco2(logP, psa, mw);
+    let bbb = predictBBB(logP, psa);
+    let ppb = predictPPB(logP, mw);
+    let renalClear = predictRenalClearance(psa, mw);
+    let pgp = isPGPSubstrate(logP, mw, selectedGroups);
+    let cypInd = detectCYPInduction(mw, logP, selectedGroups);
+    document.getElementById('pred-logs').innerText = logs;
+    document.getElementById('pred-caco2').innerText = caco2;
+    document.getElementById('pred-bbb').innerText = bbb;
+    document.getElementById('pred-ppb').innerText = ppb;
+    document.getElementById('pred-renal').innerText = renalClear;
+    document.getElementById('pred-pgp').innerText = pgp;
+    document.getElementById('pred-cypind').innerText = cypInd;
+    
     document.getElementById('fgSummary').innerHTML = selectedGroups.slice(0,5).join(', ') + (selectedGroups.length>5 ? '...' : '') || 'none';
     
     let analysis = universalFailureGates(track, logP, mw, psa, augmentedGroups);
@@ -849,18 +891,20 @@ function runEngine(manualDisplayName, manualGroups = null) {
     
     fullHistoryData.unshift({ 
         Track: displayName, Affinity: affinity.toFixed(1), LogP: logP, MW: mw, PSA: psa, FG_Score: fg.normalized.toFixed(1), Final_Score: finalScore.toFixed(1), Risk_Score: universalRisk.score.toFixed(1), Rank: rank,
-        hERG: hergVal+"%", DILI: diliRisk, Ames: amesResult, Lipinski: lipinskiStatus, Bioavailability: bio.toFixed(1)+"%", Metabolic_Stability: metStab+"%", Synthesis_Steps: steps, Sieve_Violations: sieveViolationsText
+        hERG: hergVal+"%", DILI: diliRisk, Ames: amesResult, Lipinski: lipinskiStatus,
+        LogS: logs, Caco2: caco2, BBB: bbb, PPB: ppb, Pgp: pgp,
+        Bioavailability: bio.toFixed(1)+"%", Metabolic_Stability: metStab+"%", Synthesis_Steps: steps, Sieve_Violations: sieveViolationsText
     });
     
     let tbody = document.getElementById('history-log-body');
     let newRow = document.createElement('tr');
-    newRow.innerHTML = `<td style='font-size:11px'>${displayName}</td><td style='font-size:11px'>${affinity.toFixed(1)}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${fg.normalized.toFixed(1)}</td><td style='font-weight:bold'>${finalScore.toFixed(1)}</td><td style='color:${riskColor}'>${universalRisk.score.toFixed(1)}%</td><td style='color:${color}'>${rank}</td><td>${hergVal}%</td><td>${diliRisk}</td><td>${amesResult}</td><td>${lipinskiStatus}</td><td>${bio.toFixed(1)}%</td><td>${metStab}%</td><td>${steps}</td><td style='max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;' title='${sieveViolationsText}'>${sieveViolationsText.substring(0,50)}${sieveViolationsText.length>50?'...':''}</td>`;
+    newRow.innerHTML = `<td style='font-size:11px'>${displayName}</td><td style='font-size:11px'>${affinity.toFixed(1)}</td><td>${logP}</td><td>${mw}</td><td>${psa}</td><td>${fg.normalized.toFixed(1)}</td><td style='font-weight:bold'>${finalScore.toFixed(1)}</td><td style='color:${riskColor}'>${universalRisk.score.toFixed(1)}%</td><td style='color:${color}'>${rank}</td><td>${hergVal}%</td><td>${diliRisk}</td><td>${amesResult}</td><td>${lipinskiStatus}</td><td>${logs}</td><td>${caco2}</td><td>${bbb}</td><td>${ppb}</td><td>${pgp}</td><td>${bio.toFixed(1)}%</td><td>${metStab}%</td><td>${steps}</td><td style='max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;' title='${sieveViolationsText}'>${sieveViolationsText.substring(0,50)}${sieveViolationsText.length>50?'...':''}</td>`;
     tbody.prepend(newRow);
     if(tbody.children.length>50) tbody.removeChild(tbody.lastChild);
 }
 
 // ============================================================
-// 12. BATCH CSV PROCESSOR
+// 13. BATCH CSV PROCESSOR
 // ============================================================
 function parseCSVLine(line) {
     const result = [];
@@ -929,7 +973,7 @@ function runBatchScan() {
 
 function exportBatchReport() {
     if (fullHistoryData.length === 0) return;
-    const headers = ["Track", "Est.Affinity", "LogP", "MW", "PSA", "FG_Score", "Final_Score", "Risk_Score", "Rank", "hERG", "DILI", "Ames", "Lipinski", "Bioavailability", "Metabolic_Stability", "Synthesis_Steps", "Sieve_Violations"];
+    const headers = ["Track", "Est.Affinity", "LogP", "MW", "PSA", "FG_Score", "Final_Score", "Risk_Score", "Rank", "hERG", "DILI", "Ames", "Lipinski", "LogS", "Caco2", "BBB", "PPB", "Pgp", "Bioavailability", "Metabolic_Stability", "Synthesis_Steps", "Sieve_Violations"];
     let csv = headers.join(",") + "\n";
     fullHistoryData.forEach(item => {
         let row = headers.map(h => `"${(item[h] || "").toString().replace(/"/g, '""')}"`).join(",");
@@ -945,7 +989,7 @@ function exportBatchReport() {
 }
 
 updateFGScore();
-console.log("GROW-WIN v1.0 ready – CYP, phospholipidosis, 5-HT2B, and disclaimer added.");
+console.log("GROW-WIN v1.0 ready – Full ADMET + safety alerts.");
 </script>
 </body>
 </html>
